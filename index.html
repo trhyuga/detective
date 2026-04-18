@@ -1236,7 +1236,13 @@ const endingDefs = [
   { id: 'end_normal_c',             type: 'normal', num: 'ED 8', title: '嵐の明けた朝 (C)' },
   { id: 'end_true_standard',        type: 'true',   num: 'ED 9', title: '二重奏の終止符' },
   { id: 'end_true_plus',            type: 'true',   num: 'ED10', title: '雪解けの約束' },
-  { id: 'end_bad_fuyuki_unproven',  type: 'bad',    num: '---',  title: '証拠なき告発', extra: true }
+  { id: 'end_bad_fuyuki_unproven',  type: 'bad',    num: '---',  title: '証拠なき告発', extra: true },
+  { id: 'serial_end_stopped2',      type: 'bad',    num: 'SR 1', title: '二度目の朝、仮犯人', extra: true },
+  { id: 'serial_end_stopped3',      type: 'bad',    num: 'SR 2', title: '三度目の朝、仮犯人', extra: true },
+  { id: 'serial_end_fuyuki_mid',    type: 'bad',    num: 'SR 3', title: '告発された真犯人、証拠は無し', extra: true },
+  { id: 'serial_end_fuyuki_late',   type: 'bad',    num: 'SR 4', title: '遅すぎた直感', extra: true },
+  { id: 'serial_end_wrong_mid',     type: 'bad',    num: 'SR 5', title: '誤った告発、崩れる館', extra: true },
+  { id: 'serial_end_massacre',      type: 'bad',    num: 'SR 6', title: '白嶺、全滅', extra: true }
 ];
 
 // ==========================================================================
@@ -1691,6 +1697,7 @@ const scenes = {
         { tx: '瀬戸 美咲 を告発する', next: 'end_check', apply: () => { gameState.accuse = 'misaki'; } },
         { tx: '久遠寺 貞三 を告発する', next: 'end_check', apply: () => { gameState.accuse = 'kuonji'; } },
         { tx: '水無月 透 を告発する', next: 'end_check', apply: () => { gameState.accuse = 'mizuki'; } },
+        { tx: '今は告発せず、警戒態勢で朝を待つ', next: 'serial_01', apply: () => { gameState.accuse = 'wait'; } },
         { tx: '犯人はいない（事故・自殺）と述べる', next: 'end_check', apply: () => { gameState.accuse = 'none'; } }
       ]
     }
@@ -1885,6 +1892,272 @@ const scenes = {
       tag: '― BAD END ―',
       title: '証拠なき告発',
       text: '真犯人を見抜いた直感は正しかった。\nしかし証拠が足りない。薬と、血痕と、出血量と、過去――四つ全てが揃わなければ、あの女は落ちない。'
+    })
+  },
+
+  // ============== 連続殺人ルート ==============
+  'serial_01': {
+    chapter: { num: '― 第 六 章 ―', name: '二夜目の影' },
+    bg: 'hall',
+    lines: [
+      { sp: '神原 律', tx: '「……確証がないまま告発して、\nもし間違っていたら、取り返しがつかない」' },
+      { sp: '神原 律', tx: '「皆で、朝を待ちましょう。\n警察が来れば、きちんと調べてもらえる」' },
+      { sp: '冬木 綾乃', tx: '「……賢明な判断ね、神原さん」' },
+      { sp: '', tx: '冬木が、微かに微笑んだ。\nその唇の端の角度に、律はなぜか小さな寒気を覚えた。' },
+      { sp: '水無月 透', tx: '（律、大丈夫か？）' },
+      { sp: '神原 律', tx: '（……透。今夜は、交代で眠りましょう。\n誰か一人でも欠けたら、すべてが崩れる）' }
+    ],
+    next: 'serial_02'
+  },
+
+  'serial_02': {
+    bg: 'bedroom',
+    lines: [
+      { sp: '', tx: '――二日目、深夜三時二十分。' },
+      { sp: '', tx: '館のどこかで、鈍い物音がした。\n木材が軋むような、何かが滑り落ちるような、短く途切れた音。' },
+      { sp: '神原 律', tx: '（……いま、地下のほうから？）' },
+      { sp: '', tx: '透は交代で浅く眠っている。\n律はベッドから身を起こし、耳を澄ませた。' },
+      { sp: '', tx: 'だが、続く音はない。\n吹雪の唸りだけが、再び館を包んでいた。' },
+      { sp: '神原 律', tx: '（……気のせい、と思いたい）' }
+    ],
+    next: 'serial_03'
+  },
+
+  'serial_03': {
+    bg: 'dawn',
+    lines: [
+      { sp: '', tx: '三日目、早朝。\n雪はやんでいたが、空はまだ鉛色に沈んでいた。' },
+      { sp: '冬木 綾乃', tx: '「……神原さん、起きて」' },
+      { sp: '冬木 綾乃', tx: '「久遠寺さんが、地下のワインセラーの階段の下で、\n倒れているのが見つかったの」' },
+      { sp: '神原 律', tx: '「――！？」' }
+    ],
+    next: 'serial_04'
+  },
+
+  'serial_04': {
+    bg: 'study',
+    lines: [
+      { sp: '', tx: '地下へ続く石の階段。\nその下に、久遠寺貞三の老いた体が、不自然な角度で折れ重なっていた。' },
+      { sp: '', tx: '首は、あってはならない方向へ曲がっている。\n明らかに、即死。' },
+      { sp: '水無月 透', tx: '「事故、か……？」' },
+      { sp: '神原 律', tx: '（……いいえ。久遠寺さんが、この石段で足を滑らせる？\n三十年勤め上げた人が？）' },
+      { sp: '', tx: '律は階段の縁に目を凝らした。' },
+      { sp: '神原 律', tx: '（手すりの端に、布の繊維が擦れた跡。\n久遠寺さんの寝間着と色が一致しない）' },
+      { sp: '神原 律', tx: '（誰かが、後ろから押した）' },
+      { sp: '', tx: '昨夜、警戒態勢で朝を待つと決めたのに。\n犯人は、その隙を見逃さなかった。' },
+      { sp: '神原 律', tx: '（これは、連続殺人だ）' }
+    ],
+    next: 'serial_mid_prompt'
+  },
+
+  'serial_mid_prompt': {
+    bg: 'hall',
+    lines: [
+      { sp: '', tx: '律は全員をホールに集めた。' },
+      { sp: '瀬戸 美咲', tx: '「やだ……やだやだ、次は私なの……？」' },
+      { sp: '榊 亮', tx: '「おい、もう耐えられねえぞ。\n誰だよ、やったのは！」' },
+      { sp: '冬木 綾乃', tx: '「落ち着いて。感情的になれば、次の犠牲者が出るわ」' },
+      { sp: '水無月 透', tx: '「律、もう迷ってる場合じゃない。\n一人でも多く、生きて朝を迎えるために――」' },
+      { sp: '神原 律', tx: '（冷静に整理する。\n白鷺さんの殺害、そして久遠寺さん）' }
+    ],
+    next: 'serial_mid_choice'
+  },
+
+  'serial_mid_choice': {
+    bg: 'hall',
+    choice: {
+      prompt: '── この場で、誰を告発する？ ──',
+      options: [
+        { tx: '榊 亮 を告発する（白鷺殺害）', next: 'serial_check_mid', apply: () => { gameState.accuse = 'sakaki'; } },
+        { tx: '冬木 綾乃 を告発する', next: 'serial_check_mid', apply: () => { gameState.accuse = 'fuyuki'; } },
+        { tx: '瀬戸 美咲 を告発する', next: 'serial_check_mid', apply: () => { gameState.accuse = 'misaki'; } },
+        { tx: 'まだ確証がない。もう一晩、警戒で耐える', next: 'serial_night3', apply: () => { gameState.accuse = 'wait'; } }
+      ]
+    }
+  },
+
+  'serial_check_mid': {
+    bg: 'hall',
+    lines: [{ sp: '', tx: '…………。' }],
+    onEnd: () => {
+      const accuse = gameState.accuse;
+      if (accuse === 'sakaki' && gameState.has_clue_C && gameState.has_clue_D) {
+        goToScene('serial_end_stopped2');
+      } else if (accuse === 'fuyuki') {
+        goToScene('serial_end_fuyuki_mid');
+      } else if (accuse === 'misaki') {
+        goToScene('serial_end_wrong_mid');
+      } else {
+        goToScene('serial_end_wrong_mid');
+      }
+    }
+  },
+
+  'serial_night3': {
+    chapter: { num: '― 第 七 章 ―', name: '三夜目の雪' },
+    bg: 'corridor',
+    lines: [
+      { sp: '', tx: '三日目の夜。\n警察はまだ来ない。通信は依然、死んだまま。' },
+      { sp: '', tx: '律と透は、全員を大広間に集めて一晩を明かそうとした。' },
+      { sp: '瀬戸 美咲', tx: '「……私、お手洗いに……ちょっとだけ」' },
+      { sp: '神原 律', tx: '「美咲さん、一人で行っては――」' },
+      { sp: '瀬戸 美咲', tx: '「すぐ戻る。お願い、本当にすぐだから」' },
+      { sp: '', tx: '美咲は律の制止を振り切り、廊下へ出ていった。\n――五分経っても、十分経っても、彼女は戻らなかった。' }
+    ],
+    next: 'serial_victim3'
+  },
+
+  'serial_victim3': {
+    bg: 'dawn',
+    lines: [
+      { sp: '', tx: '四日目の朝。' },
+      { sp: '', tx: '中庭の雪の中から、瀬戸美咲が発見された。' },
+      { sp: '', tx: 'その首には、細く深い絞め痕。\n凍りついた睫毛に、涙の跡が残っていた。' },
+      { sp: '水無月 透', tx: '「……律。もう、限界だ」' },
+      { sp: '神原 律', tx: '（三人。\n白鷺さん、久遠寺さん、美咲さん）' },
+      { sp: '神原 律', tx: '（警察は、まだ来ない。\nここで決断しなければ、次は私たち）' }
+    ],
+    next: 'serial_late_choice'
+  },
+
+  'serial_late_choice': {
+    bg: 'hall',
+    choice: {
+      prompt: '━━ これが最後の告発。誰を？ ━━',
+      options: [
+        { tx: '榊 亮 を告発する（白鷺殺害）', next: 'serial_check_late', apply: () => { gameState.accuse = 'sakaki'; } },
+        { tx: '冬木 綾乃 を告発する', next: 'serial_check_late', apply: () => { gameState.accuse = 'fuyuki'; } },
+        { tx: 'もう誰も疑えない。このまま朝を待つ', next: 'serial_check_late', apply: () => { gameState.accuse = 'wait'; } }
+      ]
+    }
+  },
+
+  'serial_check_late': {
+    bg: 'hall',
+    lines: [{ sp: '', tx: '…………。' }],
+    onEnd: () => {
+      const accuse = gameState.accuse;
+      if (accuse === 'sakaki' && gameState.has_clue_C && gameState.has_clue_D) {
+        goToScene('serial_end_stopped3');
+      } else if (accuse === 'fuyuki') {
+        goToScene('serial_end_fuyuki_late');
+      } else {
+        goToScene('serial_end_massacre');
+      }
+    }
+  },
+
+  // --- 連続殺人ルートのエンディング ---
+  'serial_end_stopped2': {
+    bg: 'dawn',
+    lines: [
+      { sp: '神原 律', tx: '「榊さん。白鷺さんを殺害したのは、あなたです」' },
+      { sp: '神原 律', tx: '「凶器の文鎮、袖口の血痕、\n二十三時二十分の廊下でのあなたの様子。すべてが繋がっています」' },
+      { sp: '榊 亮', tx: '「……ああ。俺が、殺した」' },
+      { sp: '神原 律', tx: '「では、久遠寺さんは？」' },
+      { sp: '榊 亮', tx: '「知らねえ！　俺は自室にいた！」' },
+      { sp: '', tx: '榊は泣き崩れるが、二件目を否定し続けた。\n律は、それ以上追い詰めなかった。' },
+      { sp: '', tx: '翌日、雪が緩み、警察が山を上ってきた。\n榊は白鷺殺害のみを自供し、連行された。' },
+      { sp: '', tx: '久遠寺の死は「転落事故」として処理された。\n――誰も、その真相を知ることはなかった。' },
+      { sp: '', tx: '山を下りる時、玄関で冬木が会釈した。\nその唇の端には、確かに、微かな笑みが浮かんでいた。' }
+    ],
+    onEnd: () => showEndingScreen({
+      type: 'bad',
+      tag: '― SERIAL END (2) ―',
+      title: '二度目の朝、仮犯人',
+      text: '白鷺と久遠寺、二名の犠牲の上で、仮犯人だけは突き止められた。\nしかし、本当の旋律は、雪解けの微笑みの奥に消えていった。'
+    })
+  },
+
+  'serial_end_stopped3': {
+    bg: 'dawn',
+    lines: [
+      { sp: '神原 律', tx: '「……榊さん。白鷺さんを殺したのは、あなたです」' },
+      { sp: '神原 律', tx: '「文鎮、袖口、廊下――\nもう、逃げ場はありません」' },
+      { sp: '榊 亮', tx: '「……ああ、俺だ。\n俺が白鷺を殺した。それは認める」' },
+      { sp: '榊 亮', tx: '「でも、久遠寺さんも、美咲も、俺じゃない！\nほんとうに、違うんだ！」' },
+      { sp: '', tx: '榊の慟哭は、もう誰の耳にも届かなかった。\nそれほどに、館の空気は疲弊していた。' },
+      { sp: '', tx: '翌日、警察は榊を白鷺殺害容疑で連行した。\n久遠寺・美咲の死は、後日別件として捜査されることになった。' },
+      { sp: '', tx: '三人の遺体。\n冬木綾乃は、律の横を通り過ぎる時、囁くように言った。' },
+      { sp: '冬木 綾乃', tx: '「……もう少し、早く決めていれば。\n二人の命は、助かったかもしれないわね」' },
+      { sp: '', tx: 'その声に、律は振り返ることができなかった。' }
+    ],
+    onEnd: () => showEndingScreen({
+      type: 'bad',
+      tag: '― SERIAL END (3) ―',
+      title: '三度目の朝、仮犯人',
+      text: '仮犯人は捕まえた。だが、代償として、さらに二人の命が雪の下に埋もれた。\n決断の遅さという、もう一つの罪。'
+    })
+  },
+
+  'serial_end_fuyuki_mid': {
+    bg: 'hall',
+    lines: [
+      { sp: '神原 律', tx: '「犯人は、あなたです。冬木綾乃さん」' },
+      { sp: '冬木 綾乃', tx: '「……根拠は？」' },
+      { sp: '神原 律', tx: '「……っ」' },
+      { sp: '冬木 綾乃', tx: '「直感だけの告発は、法廷では通らないわ。\nましてや、この密室で、他の皆を巻き込んではいけない」' },
+      { sp: '', tx: '他の人々の視線が、冬木から律へ、不信と共に戻ってくる。\nそしてその夜、律は自室で冷たくなって発見された。' },
+      { sp: '', tx: '死因は急性心不全。\n――二人目の犠牲者の後、三人目はもう、律自身だった。' }
+    ],
+    onEnd: () => showEndingScreen({
+      type: 'bad',
+      tag: '― SERIAL END ―',
+      title: '告発された真犯人、証拠は無し',
+      text: '直感は正しかった。だが、証拠が足りなかった。\n真犯人に『次の標的』として選ばれたのは、告発者そのものだった。'
+    })
+  },
+
+  'serial_end_fuyuki_late': {
+    bg: 'hall',
+    lines: [
+      { sp: '神原 律', tx: '「冬木綾乃さん。あなたが、三人を殺した真犯人です」' },
+      { sp: '冬木 綾乃', tx: '「……証拠は？　まだ揃わないのでしょう？」' },
+      { sp: '', tx: '冬木の声は、静かだった。\nその目には、もう隠す気のない黒い光が灯っていた。' },
+      { sp: '冬木 綾乃', tx: '「これで四人目。\n――もう、止まらないわよ」' },
+      { sp: '', tx: 'その夜、館が燃えた。\n冬木は全ての証拠ごと山荘を焼き払い、自身も炎の中に姿を消した。' },
+      { sp: '', tx: '律と透だけが、辛うじて雪の中に逃れた。\n――しかし、真相は灰の下。仮犯人すら、裁かれないまま。' }
+    ],
+    onEnd: () => showEndingScreen({
+      type: 'bad',
+      tag: '― SERIAL END ―',
+      title: '遅すぎた直感',
+      text: '三人の犠牲の末に真犯人に辿り着いた。\nだが、証拠は手の中に残らなかった。真実は、炎と共に雪の下へ。'
+    })
+  },
+
+  'serial_end_wrong_mid': {
+    bg: 'hall',
+    lines: [
+      { sp: '神原 律', tx: '「……あなたが、犯人だ」' },
+      { sp: '', tx: '律が指さしたのは、事件と何の関係もない人物だった。' },
+      { sp: '', tx: '疑心暗鬼はもはや制御不能となり、\n館の中で、もう誰も誰も信用できなくなった。' },
+      { sp: '', tx: 'その夜、さらに一人が冷たくなり、また一人が消えた。\n気がつくと、生き残っていたのは、冬木綾乃ただ一人だった。' }
+    ],
+    onEnd: () => showEndingScreen({
+      type: 'bad',
+      tag: '― SERIAL END ―',
+      title: '誤った告発、崩れる館',
+      text: '見当違いの告発は、最後の秩序を壊した。\n真犯人は、静かにすべてを刈り取って朝を迎えた。'
+    })
+  },
+
+  'serial_end_massacre': {
+    bg: 'corridor',
+    lines: [
+      { sp: '神原 律', tx: '「……もう、誰を疑えばいいのかも、わからない」' },
+      { sp: '水無月 透', tx: '「律。……まだ、お前だけは、俺が守るから」' },
+      { sp: '', tx: 'だが、その夜。' },
+      { sp: '', tx: '食卓に並んだブランデーには、\n全員に等しく、静かな毒が注がれていた。' },
+      { sp: '冬木 綾乃', tx: '「……皆さん、お疲れ様でした。\n長い夜に、乾杯を」' },
+      { sp: '', tx: '律の視界が揺らぐ中、最後に見えたのは――\n暖炉の炎を背に、静かに微笑む冬木綾乃の横顔だった。' },
+      { sp: '', tx: '白嶺荘の七つの命は、吹雪が止んだ朝、すべて雪の下に沈んでいた。\n真相は、誰の口からも語られることはなかった。' }
+    ],
+    onEnd: () => showEndingScreen({
+      type: 'bad',
+      tag: '― SERIAL END MASSACRE ―',
+      title: '白嶺、全滅',
+      text: '迷いが、七つの命を奪った。\n真犯人は、雪解けの朝、自分一人だけが雪山を下りる用意を整えていた。'
     })
   },
 
