@@ -832,6 +832,62 @@
     text-align: center;
   }
 
+  /* ===== 登場人物プロフィール ===== */
+  .profile-card {
+    padding: 1em 1.1em;
+    background: rgba(18, 23, 31, 0.7);
+    border: 1px solid var(--choice-border);
+    border-left: 3px solid var(--accent-gold);
+    margin-bottom: 0.8em;
+    border-radius: 2px;
+  }
+  .profile-card.locked {
+    border-left-color: rgba(184, 153, 104, 0.2);
+    opacity: 0.55;
+  }
+  .profile-name {
+    color: var(--accent-gold);
+    font-size: 1.05rem;
+    letter-spacing: 0.2em;
+    margin-bottom: 0.15em;
+    font-weight: 500;
+  }
+  .profile-nameEn {
+    color: var(--ink-dim);
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    margin-bottom: 0.55em;
+  }
+  .profile-meta {
+    color: var(--accent-ice);
+    font-size: 0.76rem;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.8em;
+  }
+  .profile-row {
+    font-size: 0.85rem;
+    line-height: 1.75;
+    color: var(--ink);
+    margin-bottom: 0.5em;
+  }
+  .profile-row strong {
+    color: var(--accent-ice);
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    display: block;
+    margin-bottom: 0.15em;
+    font-weight: 500;
+  }
+  .profile-sample {
+    font-style: italic;
+    color: var(--ink-dim);
+    font-size: 0.82rem;
+    padding: 0.55em 0.9em;
+    border-left: 2px solid var(--choice-border);
+    margin-top: 0.6em;
+    line-height: 1.7;
+  }
+
   /* ===== 手がかりノート ===== */
   .clue-item {
     padding: 0.8em 1em;
@@ -1014,6 +1070,15 @@
     <div class="panel-body" id="save-body"></div>
   </div>
 
+  <!-- 汎用パネル: 登場人物 -->
+  <div class="panel" id="panel-profiles">
+    <div class="panel-header">
+      <div class="panel-title">登 場 人 物</div>
+      <button class="panel-close" data-close>閉じる</button>
+    </div>
+    <div class="panel-body" id="profiles-body"></div>
+  </div>
+
   <!-- 汎用パネル: 手がかりノート -->
   <div class="panel" id="panel-clues">
     <div class="panel-header">
@@ -1095,6 +1160,7 @@
     <div class="panel-body">
       <button class="jump-btn" data-menu="panel-save">セーブ／ロード</button>
       <button class="jump-btn" data-menu="panel-log">バックログ</button>
+      <button class="jump-btn" data-menu="panel-profiles">登場人物</button>
       <button class="jump-btn" data-menu="panel-clues">手がかりノート</button>
       <button class="jump-btn" data-menu="panel-endings">エンディング一覧</button>
       <button class="jump-btn" data-menu="panel-settings">設定</button>
@@ -1208,6 +1274,96 @@ function restoreState(snap) {
     }
   }
 }
+
+// ==========================================================================
+// 登場人物プロフィール
+// ==========================================================================
+const characterProfiles = [
+  {
+    id: 'ritsu',
+    name: '神原 律',
+    nameEn: 'KANBARA Ritsu',
+    role: '主人公 ／ フリーの校正者',
+    age: 28,
+    summary: '元警察官僚の父を持ち、幼い頃から事件の機微に敏感。校正者として文章の綻びを拾うように、場に漂う「違和感」を逃さない観察眼の持ち主。',
+    charm: '静かな知性と、弱い立場の者への穏やかな義憤。幼馴染・透への信頼だけが、彼女の中の柔らかい領域。',
+    voice: '丁寧で端正な標準語。内心で自分の言葉を「いや、違う」と校正するクセ。括弧内独白が長い。',
+    sample: '（文鎮の欠片――違う。装飾が剥がれた、一片？）',
+    unlock: 'prologue_01'
+  },
+  {
+    id: 'mizuki',
+    name: '水無月 透',
+    nameEn: 'MINAZUKI Toru',
+    role: '同行者 ／ 雑誌編集者',
+    age: 30,
+    summary: '律の幼馴染で、雑誌の編集者。人間観察に長け、律の論理を感情の側から補強する。',
+    charm: '柔らかな物腰と、機を逃さない気配り。律を「お前」と呼べる唯一の人間。',
+    voice: '穏やかな男性口調。「俺」「律」（呼び捨て）。思案のときに「～かな」「～っぽい」が出る。',
+    sample: '「律、お前、誰を見ているんだ」',
+    unlock: 'prologue_01'
+  },
+  {
+    id: 'shirasagi',
+    name: '白鷺 清吾',
+    nameEn: 'SHIRASAGI Seigo',
+    role: '白嶺荘の主 ／ 実業家',
+    age: 62,
+    summary: '製薬業界を一代で築いた資産家。表向き温和だが、部下や競合を静かに切り捨ててきた過去を持つ。',
+    charm: '旧家の威厳と、奥に潜む冷酷。抑えた低い声が、相手に逃げ場を与えない。',
+    voice: '落ち着いた「～だね」「～しなさい」。相手を姓＋くん付けで呼び、言葉の棘を笑みで隠す。',
+    sample: '「ああ、示談金の件だったな。……いいだろう。二十三時に書斎へ来なさい」',
+    unlock: 'prologue_02'
+  },
+  {
+    id: 'kuonji',
+    name: '久遠寺 貞三',
+    nameEn: 'KUONJI Teizo',
+    role: '白嶺荘 老管理人',
+    age: 71,
+    summary: '三十年この山荘に仕える。歳月の分だけ、主家の秘密を胸に沈めてきた生き証人。',
+    charm: '揺るぎない誇り。深い影のある瞳、そして古い旋律のように丁寧な言葉遣い。',
+    voice: '古風な丁寧語。「～ございます」「旦那様」「お嬢様」。古い端整な響きで「寒ゅうございました」のような語尾も時折。',
+    sample: '「冬木先生は、ずっと暖炉の前にいらっしゃいました」',
+    unlock: 'prologue_02'
+  },
+  {
+    id: 'fuyuki',
+    name: '冬木 綾乃',
+    nameEn: 'FUYUKI Ayano',
+    role: '白鷺の顧問弁護士',
+    age: 45,
+    summary: '冷徹な論理と完璧な自制を武器にする弁護士。二十年という歳月を、ただ一つの目的のために費やした女性。',
+    charm: '凍った湖のような静けさ。微笑ひとつにも、計算された間がある。',
+    voice: '温度の低い丁寧語。「～のよ」「～ね」を使うが、語尾は常に静か。感情の昂りを決して見せない。',
+    sample: '「……根拠のない告発は、あなた自身を傷つけることになるわ」',
+    unlock: 'prologue_03'
+  },
+  {
+    id: 'sakaki',
+    name: '榊 亮',
+    nameEn: 'SAKAKI Ryo',
+    role: '白鷺の元部下 ／ 独立経営者',
+    age: 34,
+    summary: '五年前、白鷺に会社を奪われた男。怒りと脆さが表裏一体で、家族を路頭に迷わせた痛みを抱え続けている。',
+    charm: '荒々しい口調の奥に潜む、消えない家族への未練と、剥き出しの生身。',
+    voice: '粗野な男性口調。「俺」「あいつ」「～じゃねえ」「～だろ」。感情が昂ると語尾が切れる。',
+    sample: '「ふざけるな！　証拠はあるのか、証拠は！」',
+    unlock: 'prologue_03'
+  },
+  {
+    id: 'misaki',
+    name: '瀬戸 美咲',
+    nameEn: 'SETO Misaki',
+    role: '白鷺の姪',
+    age: 29,
+    summary: '華やかな社交界的な外見の下に、人に言えない秘めた恋を抱える。今夜の山荘を、密会のための三日間に使う予定だった。',
+    charm: '脆い煌めき。怯えに浸ると幼子のような口調に戻り、見ていて庇いたくなる危うさ。',
+    voice: '軽く速い現代口調。「～なの」「～じゃない？」。動揺すると「やだやだ」の連呼や語尾の途切れ。',
+    sample: '「やだ……やだやだ、次は私なの……？」',
+    unlock: 'prologue_03'
+  }
+];
 
 // ==========================================================================
 // 章定義（ジャンプ用）
@@ -1340,8 +1496,8 @@ const scenes = {
       { sp: '水無月 透', tx: '（律、あの二人……ただの元上司と部下じゃないみたいだ）' },
       { sp: '神原 律', tx: '（五年前、榊さんの会社を飲み込んだのは白鷺さん……\nそう噂に聞いたことがある）' },
       { sp: '', tx: '二人が階段の奥へ消えるのを、律は暖炉の前から眺めていた。' },
-      { sp: '水無月 透', tx: '「……なんか、嫌な空気だったな」' },
-      { sp: '神原 律', tx: '「透、この山荘――少し、気をつけたほうがいいかもしれない」' }
+      { sp: '水無月 透', tx: '「……なんかさ、いま凄く嫌な空気だったな」' },
+      { sp: '神原 律', tx: '「透、この山荘――少し、気をつけたほうがいい」' }
     ],
     next: 'choice_01'
   },
@@ -1399,11 +1555,11 @@ const scenes = {
     bg: 'hall',
     lines: [
       { sp: '神原 律', tx: '「久遠寺さん。この館について、少し聞かせていただけませんか」' },
-      { sp: '久遠寺 貞三', tx: '「……三十年、お仕えしております。お話しできることは、限られておりますが」' },
+      { sp: '久遠寺 貞三', tx: '「……もう、三十年。お仕えしてございます。\nお話しできることは、限られておりますれども」' },
       { sp: '', tx: '久遠寺は暖炉に薪をくべながら、ぽつりと呟いた。' },
       { sp: '久遠寺 貞三', tx: '「そういえば……ちょうど二十年ほど前のことでしたか」' },
       { sp: '久遠寺 貞三', tx: '「若いご夫婦が、この山荘を訪ねてこられたことがございました。\n旦那様に――白鷺様に、何かを懇願なさっているご様子で」' },
-      { sp: '久遠寺 貞三', tx: '「お二人は、ずいぶん憔悴しておられました。\nその後、お噂を耳にすることはございませんでしたが」' },
+      { sp: '久遠寺 貞三', tx: '「お二人は、ずいぶん憔悴しておられました。\nその後のお噂は、この爺の耳には届きませんでしたが」' },
       { sp: '神原 律', tx: '（二十年前の、若い夫婦……）' }
     ],
     onEnd: () => { addClue('has_clue_H'); gameState.investigate_count++; },
@@ -1546,8 +1702,8 @@ const scenes = {
       { sp: '榊 亮', tx: '「………………」' },
       { sp: '榊 亮', tx: '「……見間違いだろう。\n俺は、部屋から一歩も出てねえよ」' },
       { sp: '', tx: '榊は目を逸らした。\nその声は、さっきよりも一段、弱くなっていた。' },
-      { sp: '瀬戸 美咲', tx: '「ねえ、もう外に出して！　私、こんな……こんなの耐えられない！」' },
-      { sp: '冬木 綾乃', tx: '「美咲さん、落ち着いて。外は吹雪よ。\n感情的になれば助からない」' },
+      { sp: '瀬戸 美咲', tx: '「ねえ、もうお外に出してぇ！　\n私、こんなの……こんなの、無理、無理だって……！」' },
+      { sp: '冬木 綾乃', tx: '「美咲さん。落ち着いて――外は吹雪。\n感情的になれば、助からないわよ」' },
       { sp: '', tx: 'それぞれが、それぞれの理由で動揺している。\n律は静かに深呼吸をした。' }
     ],
     onEnd: () => { addClue('has_clue_D'); },
@@ -1885,7 +2041,7 @@ const scenes = {
     lines: [
       { sp: '神原 律', tx: '「美咲さん。あなたが深夜、空き客室の窓から外へ出て、\n再び戻ってきたところを、私は見ました」' },
       { sp: '神原 律', tx: '「あなたが、白鷺さんを殺したのでは？」' },
-      { sp: '瀬戸 美咲', tx: '「違う……違うの！\n私はただ、あの人と会っていただけ……信じて、律さん！」' },
+      { sp: '瀬戸 美咲', tx: '「ちが……ちがうの、違うってば！\n私、ただ会ってただけなの、ねぇ信じて、律さぁん……！」' },
       { sp: '', tx: '美咲は錯乱し、玄関の扉を開け放った。' },
       { sp: '冬木 綾乃', tx: '「美咲さん、やめなさい！　吹雪よ！」' },
       { sp: '', tx: '白い嵐の中へ、美咲の背中は飲み込まれていった。' },
@@ -2602,6 +2758,7 @@ function openPanel(id) {
   if (id === 'panel-log') renderLog();
   if (id === 'panel-save') renderSlots();
   if (id === 'panel-clues') renderClues();
+  if (id === 'panel-profiles') renderProfiles();
   if (id === 'panel-chapter') renderChapters();
   if (id === 'panel-endings') renderEndings();
   if (id === 'panel-settings') renderSettings();
@@ -2709,6 +2866,31 @@ function renderSlotHtml(idx, snap, canSave, isAuto) {
     </div>
     <div class="slot-actions">${saveBtn}${loadBtn}${delBtn}</div>
   </div>`;
+}
+
+function renderProfiles() {
+  const body = document.getElementById('profiles-body');
+  body.innerHTML = characterProfiles.map(p => {
+    const unlocked = !!meta.readScenes[p.unlock];
+    const cls = unlocked ? '' : ' locked';
+    if (!unlocked) {
+      return `<div class="profile-card${cls}">
+        <div class="profile-name">？？？</div>
+        <div class="profile-nameEn">UNKNOWN</div>
+        <div class="profile-meta">──────</div>
+        <div class="profile-row">まだ出会っていない人物。</div>
+      </div>`;
+    }
+    return `<div class="profile-card${cls}">
+      <div class="profile-name">${escapeHtml(p.name)}</div>
+      <div class="profile-nameEn">${escapeHtml(p.nameEn)} ／ ${p.age}</div>
+      <div class="profile-meta">${escapeHtml(p.role)}</div>
+      <div class="profile-row"><strong>人物</strong>${escapeHtml(p.summary)}</div>
+      <div class="profile-row"><strong>魅力</strong>${escapeHtml(p.charm)}</div>
+      <div class="profile-row"><strong>口調</strong>${escapeHtml(p.voice)}</div>
+      <div class="profile-sample">${escapeHtml(p.sample)}</div>
+    </div>`;
+  }).join('');
 }
 
 function renderClues() {
