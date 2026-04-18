@@ -849,6 +849,180 @@ const scenes = {
     ],
     onEnd: () => { addClue('has_clue_H'); },
     next: 'ch5_01'
+  },
+
+  // ============== 終章：二重奏の真実 ==============
+  'ch5_01': {
+    chapter: { num: '― 終 章 ―', name: '二重奏の真実' },
+    bg: 'hall',
+    lines: [
+      { sp: '', tx: '――午後四時。\n短い冬の陽が、山の稜線に沈もうとしている。' },
+      { sp: '', tx: '律の中で、すべてのピースが、ようやく一つの音になり始めていた。' },
+      { sp: '神原 律', tx: '（二つの旋律が重なっている。\n一人は、実際に手を下した者）' },
+      { sp: '神原 律', tx: '（もう一人は、死の種を先に蒔いた者。\n――そう、これは「二重奏」だった）' },
+      { sp: '水無月 透', tx: '「律。みんなが、ホールに集まった」' },
+      { sp: '水無月 透', tx: '「……誰が、犯人か。分かったのか？」' },
+      { sp: '', tx: '吹雪は、少しずつ衰え始めている。\n夜明けを待っていては、もう遅い。' },
+      { sp: '神原 律', tx: '（答えを出さなければ）' }
+    ],
+    next: 'ch5_02'
+  },
+
+  'ch5_02': {
+    bg: 'hall',
+    lines: [
+      { sp: '', tx: '暖炉の炎を背に、六人が律を見つめている。' },
+      { sp: '冬木 綾乃', tx: '「……神原さん。あなたが何かを掴んだことは、分かるわ」' },
+      { sp: '冬木 綾乃', tx: '「でも、覚えておいて。\n根拠のない告発は、あなた自身を傷つけることになる」' },
+      { sp: '榊 亮', tx: '「俺じゃねえ！　俺は何もしてない！」' },
+      { sp: '瀬戸 美咲', tx: '「私だって……私、関係ない……」' },
+      { sp: '久遠寺 貞三', tx: '「どうか、ゆっくりと。お嬢様の、仰る通りに」' },
+      { sp: '水無月 透', tx: '「律。お前の見立てを、聞かせてくれ」' },
+      { sp: '', tx: '律は一度、目を閉じた。\n――そして、告発の口を開いた。' }
+    ],
+    next: 'final_accuse'
+  },
+
+  'final_accuse': {
+    bg: 'hall',
+    choice: {
+      prompt: '━━ 犯人は、誰？ ━━',
+      options: [
+        { tx: '榊 亮 を告発する', next: 'end_check', apply: () => { gameState.accuse = 'sakaki'; } },
+        { tx: '瀬戸 美咲 を告発する', next: 'end_check', apply: () => { gameState.accuse = 'misaki'; } },
+        { tx: '冬木 綾乃 を告発する', next: 'end_check', apply: () => { gameState.accuse = 'fuyuki'; } },
+        { tx: '犯人はいない（事故・自殺）と述べる', next: 'end_check', apply: () => { gameState.accuse = 'none'; } }
+      ]
+    }
+  },
+
+  'end_check': {
+    bg: 'hall',
+    lines: [
+      { sp: '', tx: '…………。' }
+    ],
+    onEnd: () => {
+      const accuse = gameState.accuse;
+      const trueClues = gameState.has_clue_A && gameState.has_clue_D && gameState.has_clue_E && gameState.has_clue_F;
+
+      if (accuse === 'fuyuki' && trueClues) {
+        goToScene('end_true');
+      } else if (accuse === 'fuyuki') {
+        goToScene('end_bad_fuyuki_unproven');
+      } else if (accuse === 'sakaki' && gameState.has_clue_C) {
+        goToScene('end_normal');
+      } else if (accuse === 'misaki') {
+        goToScene('end_bad_misaki');
+      } else {
+        goToScene('end_bad_generic');
+      }
+    }
+  },
+
+  // ============== エンディング ==============
+  'end_true': {
+    bg: 'dawn',
+    lines: [
+      { sp: '神原 律', tx: '「犯人はあなたです、冬木綾乃さん」' },
+      { sp: '冬木 綾乃', tx: '「……根拠を、聞かせてもらえるかしら」' },
+      { sp: '神原 律', tx: '「榊さんは確かに白鷺さんを殴りました。\nでも、その時――白鷺さんは、すでに死んでいた」' },
+      { sp: '神原 律', tx: '「死後数分が経過し、心臓が止まっていたからこそ、\n打撲痕からの出血が異常に少なかった」' },
+      { sp: '神原 律', tx: '「殴打は、死因ではない。ただの死後損傷です」' },
+      { sp: '神原 律', tx: '「本当の凶器は――夕食時、あなたが手を添えた薬入れ。\n白鷺さんが常用していた心臓薬に混ぜられた、遅効性の毒」' },
+      { sp: '神原 律', tx: '「あなたは、白鷺さんが自ら毒を飲む瞬間を見届けることさえしなかった。\n――あなたは、ホールで私たちと一緒にブランデーを飲んでいた」' },
+      { sp: '神原 律', tx: '「それが、二十年越しの復讐の形だったのでしょう」' },
+      { sp: '冬木 綾乃', tx: '「………………」' },
+      { sp: '冬木 綾乃', tx: '「……お見事ね、神原さん」' },
+      { sp: '冬木 綾乃', tx: '「私の両親は、この男に全てを奪われて自ら命を絶った。\n私は身分を変え、弁護士になり、二十年かけてこの男の傍に潜り込んだ」' },
+      { sp: '冬木 綾乃', tx: '「榊さんが、ちょうど昨夜、あの人を殺したがっていた。\n――だから、私はその『偶然』を使わせてもらった。それだけのこと」' },
+      { sp: '', tx: '冬木は窓辺に歩み寄り、雪のやんだ空を見上げた。\nその横顔に、もう迷いはなかった。' },
+      { sp: '冬木 綾乃', tx: '「ありがとう。\n……これで、ようやく父と母の元へ帰れる」' },
+      { sp: '', tx: '朝が来る。\n吹雪は止み、山肌に淡い光が差し始めていた。' },
+      { sp: '', tx: '二つの凶行が重なっていた、静かな二重奏の夜。\nその終止符を打ったのは、一人の校正者の観察眼だった。' }
+    ],
+    onEnd: () => showEndingScreen({
+      type: 'true',
+      tag: '― TRUE END ―',
+      title: '二重奏の終止符',
+      text: '真犯人の二十年越しの復讐を、あなたは論理で解き明かした。\n雪は止み、ようやく朝が訪れる。'
+    })
+  },
+
+  'end_normal': {
+    bg: 'dawn',
+    lines: [
+      { sp: '神原 律', tx: '「榊さん。あなたが、白鷺さんを殺害しましたね」' },
+      { sp: '神原 律', tx: '「凶器の文鎮は、暖炉脇の薪入れに隠されていた。\nあなたの袖口の血痕と一致します」' },
+      { sp: '榊 亮', tx: '「……クソッ！　あいつが悪いんだ！\nあいつが俺の人生を、何もかも奪ったんだ！」' },
+      { sp: '', tx: '榊は崩れ落ち、声を殺して泣いた。\nその場の誰もが、疲れ切った沈黙の中に沈んだ。' },
+      { sp: '', tx: '翌朝、吹雪は嘘のように晴れた。\n駆けつけた警察に、榊は連行されていく。' },
+      { sp: '神原 律', tx: '（事件は、解決した。……はずだ）' },
+      { sp: '神原 律', tx: '（でも、あの出血量の少なさ。\nあれは、何だったのだろう）' },
+      { sp: '', tx: '山を下りる車の中で、律はふと振り返った。\n玄関先で、冬木綾乃が微かに微笑んでいるのが見えた。' },
+      { sp: '', tx: 'その微笑みの意味を、律はまだ、知らない。' }
+    ],
+    onEnd: () => showEndingScreen({
+      type: 'normal',
+      tag: '― NORMAL END ―',
+      title: '嵐の明けた朝',
+      text: '榊は自白した。事件は解決した――ように見えた。\nあなたの胸に残る「違和感」が、この物語のもう一つの入り口。'
+    })
+  },
+
+  'end_bad_misaki': {
+    bg: 'corridor',
+    lines: [
+      { sp: '神原 律', tx: '「美咲さん。あなたが深夜、空き客室の窓から外へ出て、\n再び戻ってきたところを、私は見ました」' },
+      { sp: '神原 律', tx: '「あなたが、白鷺さんを殺したのでは？」' },
+      { sp: '瀬戸 美咲', tx: '「違う……違うの！\n私はただ、あの人と会っていただけ……信じて、律さん！」' },
+      { sp: '', tx: '美咲は錯乱し、玄関の扉を開け放った。' },
+      { sp: '冬木 綾乃', tx: '「美咲さん、やめなさい！　吹雪よ！」' },
+      { sp: '', tx: '白い嵐の中へ、美咲の背中は飲み込まれていった。' },
+      { sp: '', tx: '――翌朝、彼女が戻ることはなかった。\nそして、真の犯人は、雪の下にすべてを葬った。' }
+    ],
+    onEnd: () => showEndingScreen({
+      type: 'bad',
+      tag: '― BAD END ―',
+      title: '誤った告発',
+      text: '美咲の秘密は「不倫」でしかなかった。\n無実の告発が、一人の命を吹雪の中へ追いやった。'
+    })
+  },
+
+  'end_bad_fuyuki_unproven': {
+    bg: 'hall',
+    lines: [
+      { sp: '神原 律', tx: '「……冬木さん。あなたが、真犯人ですね」' },
+      { sp: '冬木 綾乃', tx: '「神原さん。あなたの直感は、確かに鋭い。\n――でも、それを裏づける証拠は？」' },
+      { sp: '神原 律', tx: '「……………………」' },
+      { sp: '冬木 綾乃', tx: '「根拠のない告発は、名誉毀損ですよ。\n私は顧問弁護士として、この館の秩序を守る立場にある」' },
+      { sp: '', tx: ' 冬木の声は、弁護士のそれに戻っていた。\n周囲の視線は、律から冬木へ、そしてまた律へ。' },
+      { sp: '榊 亮', tx: '「なんだよ……結局、見当違いかよ！」' },
+      { sp: '', tx: '律の推理は空転し、事件は振り出しに戻った。\nそして、冬木だけが知っていた。\n――あと一歩、彼女に届かなかった証拠の所在を。' }
+    ],
+    onEnd: () => showEndingScreen({
+      type: 'bad',
+      tag: '― BAD END ―',
+      title: '証拠なき告発',
+      text: '真犯人を見抜いた直感は正しかった。\nしかし証拠が足りない。薬と、血痕と、出血量と、過去――四つ全てが揃わなければ、あの女は落ちない。'
+    })
+  },
+
+  'end_bad_generic': {
+    bg: 'corridor',
+    lines: [
+      { sp: '神原 律', tx: '「……この事件は、事故でも自殺でもない。\nでも、私にはまだ、決定打が見えない」' },
+      { sp: '', tx: '律の推理は、決定的な証拠を掴み損ねていた。' },
+      { sp: '', tx: '疑心暗鬼に陥った客たちは、\n互いを罵り合い、館の空気は冷え切っていく。' },
+      { sp: '冬木 綾乃', tx: '「……こんな時は、全員でじっと朝を待ちましょう。\n警察が来れば、すべてはっきりするはずよ」' },
+      { sp: '', tx: '吹雪の夜、真犯人は暖炉の炎を見つめ、\n静かに勝利の美酒を味わっていた。' },
+      { sp: '', tx: '――事件は、迷宮入りとして処理された。\n真相は、雪の下に埋もれたまま。' }
+    ],
+    onEnd: () => showEndingScreen({
+      type: 'bad',
+      tag: '― BAD END ―',
+      title: '雪に閉ざされた沈黙',
+      text: '手がかりは散っていた。\nでも、あなたはそれを一本の線に繋げ損ねた。'
+    })
   }
 };
 
@@ -968,6 +1142,39 @@ function goToScene(key) {
   } else {
     if (scene.lines && scene.lines.length > 0) showLine();
   }
+}
+
+function showEndingScreen(info) {
+  const el = document.getElementById('ending-screen');
+  const tag = document.getElementById('ending-tag');
+  tag.textContent = info.tag;
+  tag.className = 'ending-tag ' + info.type;
+  document.getElementById('ending-title').textContent = info.title;
+  document.getElementById('ending-text').innerHTML = info.text.replace(/\n/g, '<br>');
+
+  const clues = Object.keys(gameState)
+    .filter(k => k.startsWith('has_clue_') && gameState[k])
+    .map(k => '・' + clueDescriptions[k])
+    .join('<br>');
+  const count = Object.keys(gameState).filter(k => k.startsWith('has_clue_') && gameState[k]).length;
+
+  let routeLabel = '（未選択）';
+  switch (gameState.route_choice) {
+    case 'fuyuki': routeLabel = '冬木ルート'; break;
+    case 'misaki': routeLabel = '美咲ルート'; break;
+    case 'kuonji': routeLabel = '久遠寺ルート'; break;
+  }
+
+  document.getElementById('ending-summary').innerHTML = `
+    <strong>第一章ルート:</strong> ${routeLabel}<br>
+    <strong>入手した手がかり: ${count} / 8</strong><br><br>
+    ${clues || '（手がかりなし）'}<br><br>
+    <span style="font-size:0.78rem; color:var(--ink-dim)">
+    TRUE END 到達には、伏線 A・D・E・F の四つが必須。<br>
+    別のルートを通ると、違う伏線が手に入ります。
+    </span>
+  `;
+  el.classList.add('show');
 }
 
 function showChoices(choice) {
