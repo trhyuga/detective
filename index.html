@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>雪嶺の二重奏</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;500;700&family=Shippori+Mincho:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #e8e4d8;
+    --ink-dim: #a8a494;
+    --paper: #0a0e14;
+    --paper-2: #12171f;
+    --accent-ice: #7ab8d4;
+    --accent-ember: #c9593a;
+    --accent-gold: #b89968;
+    --choice-bg: rgba(18, 23, 31, 0.88);
+    --choice-border: rgba(184, 153, 104, 0.4);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Shippori Mincho', 'Noto Serif JP', serif;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  #game {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .scene-bg {
+    position: absolute;
+    inset: 0;
+    transition: opacity 1.2s ease, filter 1.2s ease;
+    z-index: 1;
+  }
+
+  .scene-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 120%, rgba(122, 184, 212, 0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 30% -20%, rgba(201, 89, 58, 0.04) 0%, transparent 50%),
+      linear-gradient(180deg, #050810 0%, #0a0e14 50%, #0d1119 100%);
+  }
+
+  .snow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    overflow: hidden;
+  }
+  .snow span {
+    position: absolute;
+    top: -10px;
+    color: rgba(232, 228, 216, 0.6);
+    font-size: 10px;
+    animation: fall linear infinite;
+  }
+  @keyframes fall {
+    0% { transform: translateY(-10vh) translateX(0); opacity: 0; }
+    10% { opacity: 0.8; }
+    100% { transform: translateY(110vh) translateX(40px); opacity: 0; }
+  }
+
+  .bg-exterior::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 50% 85%, rgba(30, 40, 55, 0.8) 0%, transparent 70%),
+      radial-gradient(circle at 50% 70%, rgba(201, 150, 80, 0.15) 0%, transparent 30%);
+  }
+  .bg-dining::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 60%, rgba(201, 89, 58, 0.18) 0%, transparent 70%),
+      radial-gradient(circle at 50% 40%, rgba(184, 153, 104, 0.2) 0%, transparent 40%);
+  }
+  .bg-hall::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 50% at 30% 70%, rgba(201, 89, 58, 0.3) 0%, transparent 60%),
+      radial-gradient(circle at 80% 30%, rgba(122, 100, 80, 0.1) 0%, transparent 40%);
+  }
+  .bg-study::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 50% 30% at 50% 50%, rgba(100, 140, 80, 0.18) 0%, transparent 70%);
+  }
+  .bg-corridor::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 40% 80% at 50% 50%, rgba(80, 70, 60, 0.2) 0%, transparent 80%);
+  }
+  .bg-bedroom::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 50% 60%, rgba(180, 140, 90, 0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 70% 60% at 30% 20%, rgba(80, 100, 140, 0.1) 0%, transparent 60%);
+  }
+  .bg-dawn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(220, 200, 180, 0.25) 0%, rgba(200, 180, 160, 0.1) 40%, transparent 70%),
+      radial-gradient(ellipse 80% 30% at 50% 15%, rgba(240, 200, 170, 0.18) 0%, transparent 60%);
+  }
+
+  #title-screen {
+    position: absolute;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: var(--paper);
+    transition: opacity 1.5s ease;
+  }
+  #title-screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .title-main {
+    font-family: 'Shippori Mincho', serif;
+    font-weight: 900;
+    font-size: clamp(2.2rem, 10vw, 3.8rem);
+    letter-spacing: 0.3em;
+    color: var(--ink);
+    text-shadow:
+      0 0 20px rgba(122, 184, 212, 0.3),
+      0 0 40px rgba(122, 184, 212, 0.15);
+    margin-bottom: 0.5em;
+    animation: title-fade-in 3s ease-out;
+    text-align: center;
+  }
+  .title-sub {
+    font-size: 0.9rem;
+    letter-spacing: 0.5em;
+    color: var(--accent-ice);
+    opacity: 0.7;
+    margin-bottom: 3em;
+    animation: title-fade-in 3s ease-out 0.8s both;
+  }
+  .title-ornament {
+    width: 40vw;
+    max-width: 200px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
+    margin: 1.5em 0;
+    animation: title-fade-in 3s ease-out 1.2s both;
+  }
+  .title-start {
+    font-size: 1rem;
+    letter-spacing: 0.4em;
+    padding: 0.8em 2em;
+    border: 1px solid var(--choice-border);
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.4s ease;
+    font-family: inherit;
+    animation: title-fade-in 3s ease-out 1.8s both, pulse-subtle 3s ease-in-out 3s infinite;
+  }
+  .title-start:hover, .title-start:active {
+    background: rgba(184, 153, 104, 0.15);
+    border-color: var(--accent-gold);
+    color: var(--accent-gold);
+  }
+  .title-caption {
+    position: absolute;
+    bottom: 2em;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    color: var(--ink-dim);
+    opacity: 0.5;
+  }
+  @keyframes title-fade-in {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse-subtle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  #story-area {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 1.5em 1.5em 2em;
+    z-index: 10;
+    background: linear-gradient(180deg, transparent 0%, rgba(5, 8, 16, 0.85) 20%, rgba(5, 8, 16, 0.95) 100%);
+    min-height: 45%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .speaker {
+    font-size: 0.95rem;
+    color: var(--accent-gold);
+    letter-spacing: 0.15em;
+    margin-bottom: 0.6em;
+    min-height: 1.2em;
+    font-weight: 500;
+  }
+  .text-box {
+    font-size: 1rem;
+    line-height: 1.9;
+    letter-spacing: 0.05em;
+    color: var(--ink);
+    min-height: 7em;
+    margin-bottom: 1em;
+    font-weight: 300;
+  }
+  .text-box .caret {
+    display: inline-block;
+    width: 0.5em;
+    height: 1em;
+    background: var(--accent-gold);
+    margin-left: 0.2em;
+    vertical-align: -0.1em;
+    animation: blink 1s steps(2) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .next-hint {
+    text-align: right;
+    font-size: 0.8rem;
+    color: var(--ink-dim);
+    letter-spacing: 0.3em;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .next-hint.show {
+    opacity: 1;
+    animation: hint-float 1.5s ease-in-out infinite;
+  }
+  @keyframes hint-float {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(5px); }
+  }
+
+  #choices {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2em 1.5em;
+    background: rgba(5, 8, 16, 0.7);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+  #choices.show { display: flex; }
+  .choice-prompt {
+    color: var(--accent-ice);
+    font-size: 0.85rem;
+    letter-spacing: 0.3em;
+    margin-bottom: 2em;
+    text-align: center;
+    opacity: 0.8;
+  }
+  .choice-btn {
+    width: 100%;
+    max-width: 400px;
+    padding: 1.2em 1.5em;
+    margin: 0.5em 0;
+    background: var(--choice-bg);
+    border: 1px solid var(--choice-border);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    line-height: 1.5;
+  }
+  .choice-btn:hover, .choice-btn:active {
+    background: rgba(184, 153, 104, 0.18);
+    border-color: var(--accent-gold);
+    transform: translateX(4px);
+  }
+  .choice-btn::before {
+    content: '◇';
+    color: var(--accent-gold);
+    margin-right: 0.8em;
+    opacity: 0.6;
+  }
+
+  #clue-notify {
+    position: absolute;
+    top: 1em;
+    left: 50%;
+    transform: translateX(-50%) translateY(-120%);
+    background: rgba(10, 14, 20, 0.95);
+    border: 1px solid var(--accent-gold);
+    padding: 0.8em 1.5em;
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    color: var(--accent-gold);
+    z-index: 50;
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    max-width: 85%;
+    text-align: center;
+  }
+  #clue-notify.show {
+    transform: translateX(-50%) translateY(0);
+  }
+  .clue-label {
+    font-size: 0.7rem;
+    color: var(--accent-ice);
+    display: block;
+    margin-bottom: 0.3em;
+    letter-spacing: 0.3em;
+  }
+
+  #chapter-title {
+    position: absolute;
+    inset: 0;
+    z-index: 40;
+    background: var(--paper);
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    animation: chapter-fade 4s ease-in-out forwards;
+  }
+  #chapter-title.show { display: flex; }
+  .chapter-num {
+    font-size: 0.9rem;
+    letter-spacing: 0.6em;
+    color: var(--accent-gold);
+    margin-bottom: 1em;
+    opacity: 0;
+    animation: text-appear 1.2s ease 0.3s forwards;
+  }
+  .chapter-name {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    color: var(--ink);
+    opacity: 0;
+    animation: text-appear 1.2s ease 1s forwards;
+    text-align: center;
+  }
+  @keyframes chapter-fade {
+    0% { opacity: 0; }
+    15% { opacity: 1; }
+    85% { opacity: 1; }
+    100% { opacity: 0; pointer-events: none; }
+  }
+  @keyframes text-appear {
+    from { opacity: 0; transform: translateY(20px); letter-spacing: 1em; }
+    to { opacity: 1; transform: translateY(0); letter-spacing: 0.3em; }
+  }
+
+  #hud {
+    position: absolute;
+    top: 0.8em;
+    right: 0.8em;
+    z-index: 15;
+    font-size: 0.7rem;
+    color: var(--ink-dim);
+    letter-spacing: 0.2em;
+    padding: 0.4em 0.8em;
+    background: rgba(5, 8, 16, 0.6);
+    border: 1px solid rgba(184, 153, 104, 0.2);
+    border-radius: 2px;
+  }
+  #hud .clue-count {
+    color: var(--accent-gold);
+    font-weight: 500;
+  }
+
+  #ending-screen {
+    position: absolute;
+    inset: 0;
+    z-index: 60;
+    background: var(--paper);
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2em 1.5em;
+    text-align: center;
+    overflow-y: auto;
+  }
+  #ending-screen.show { display: flex; }
+  .ending-tag {
+    font-size: 0.75rem;
+    letter-spacing: 0.5em;
+    color: var(--accent-ice);
+    margin-bottom: 1em;
+    opacity: 0.8;
+  }
+  .ending-tag.true { color: var(--accent-gold); }
+  .ending-tag.bad { color: var(--accent-ember); }
+  .ending-title {
+    font-size: 1.6rem;
+    letter-spacing: 0.3em;
+    color: var(--ink);
+    margin-bottom: 1.5em;
+    font-weight: 700;
+  }
+  .ending-text {
+    font-size: 0.95rem;
+    line-height: 2;
+    color: var(--ink);
+    max-width: 90%;
+    margin-bottom: 2em;
+  }
+  .ending-summary {
+    font-size: 0.8rem;
+    color: var(--ink-dim);
+    border-top: 1px solid var(--choice-border);
+    border-bottom: 1px solid var(--choice-border);
+    padding: 1em 0;
+    margin: 1em 0 2em;
+    max-width: 90%;
+    line-height: 1.8;
+  }
+  .ending-summary strong {
+    color: var(--accent-ice);
+  }
+  .ending-restart {
+    padding: 0.8em 2em;
+    background: transparent;
+    border: 1px solid var(--accent-gold);
+    color: var(--accent-gold);
+    font-family: inherit;
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .ending-restart:hover {
+    background: rgba(184, 153, 104, 0.15);
+  }
+</style>
+</head>
+<body>
+<div id="game">
+  <div class="scene-bg" id="scene-bg"></div>
+  <div class="snow" id="snow"></div>
+
+  <div id="hud">伏線 <span class="clue-count" id="clue-count">0</span>/8</div>
+
+  <div id="story-area">
+    <div class="speaker" id="speaker"></div>
+    <div class="text-box" id="text-box"></div>
+    <div class="next-hint" id="next-hint">▶ タップで進む</div>
+  </div>
+
+  <div id="choices">
+    <div class="choice-prompt" id="choice-prompt">━━ 選択 ━━</div>
+    <div id="choice-list"></div>
+  </div>
+
+  <div id="clue-notify">
+    <span class="clue-label">── 手がかり入手 ──</span>
+    <span id="clue-text"></span>
+  </div>
+
+  <div id="chapter-title">
+    <div class="chapter-num" id="chapter-num"></div>
+    <div class="chapter-name" id="chapter-name"></div>
+  </div>
+
+  <div id="title-screen">
+    <div class="title-main">雪嶺の二重奏</div>
+    <div class="title-sub">SETSUREI NO DUET</div>
+    <div class="title-ornament"></div>
+    <button class="title-start" id="start-btn">は じ め る</button>
+    <div class="title-caption">— A CLOSED-CIRCLE MYSTERY —</div>
+  </div>
+
+  <div id="ending-screen">
+    <div class="ending-tag" id="ending-tag">― ENDING ―</div>
+    <div class="ending-title" id="ending-title"></div>
+    <div class="ending-text" id="ending-text"></div>
+    <div class="ending-summary" id="ending-summary"></div>
+    <button class="ending-restart" id="restart-btn">も う 一 度</button>
+  </div>
+</div>
+
+<script>
+// ==========================================================================
+// ゲーム状態
+// ==========================================================================
+const gameState = {
+  has_clue_A: false, has_clue_B: false, has_clue_C: false, has_clue_D: false,
+  has_clue_E: false, has_clue_F: false, has_clue_G: false, has_clue_H: false,
+  investigate_count: 0,
+  route_choice: null,
+  accuse: null,
+  alone: false,
+  choice_empathy: false,
+  talk_to_mizuki_final: false,
+  current_scene: 'prologue_01'
+};
+
+const clueDescriptions = {
+  has_clue_A: '冬木の薬入れへの接触',
+  has_clue_B: '白鷺の「薬の効きが悪い」発言',
+  has_clue_C: '暖炉の不自然な金属片',
+  has_clue_D: '榊の袖口の微かな血痕',
+  has_clue_E: '遺体の異常な出血量',
+  has_clue_F: '冬木の手帳と古い新聞',
+  has_clue_G: '美咲の電話の男性の声',
+  has_clue_H: '久遠寺の20年前の証言'
+};
+
+// ==========================================================================
+// 雪パーティクル
+// ==========================================================================
+function initSnow() {
+  const snow = document.getElementById('snow');
+  const chars = ['❄', '❅', '❆', '·', '*'];
+  for (let i = 0; i < 40; i++) {
+    const s = document.createElement('span');
+    s.textContent = chars[Math.floor(Math.random() * chars.length)];
+    s.style.left = Math.random() * 100 + '%';
+    s.style.animationDuration = (5 + Math.random() * 8) + 's';
+    s.style.animationDelay = -Math.random() * 10 + 's';
+    s.style.fontSize = (6 + Math.random() * 10) + 'px';
+    s.style.opacity = 0.3 + Math.random() * 0.6;
+    snow.appendChild(s);
+  }
+}
+
+// シナリオ／エンジン／入力はこの後のステップで追加
+initSnow();
+</script>
+
+</body>
+</html>
