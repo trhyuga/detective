@@ -784,21 +784,35 @@ const scenes = {
       { sp: '', tx: 'それぞれが、それぞれの理由で動揺している。\n律は静かに深呼吸をした。' }
     ],
     onEnd: () => { addClue('has_clue_D'); },
+    next: 'ch5_intro'
+  },
+
+  // ============== 第五章：夜の書斎 ==============
+  'ch5_intro': {
+    chapter: { num: '― 第 五 章 ―', name: '夜の書斎' },
+    bg: 'corridor',
+    lines: [
+      { sp: '', tx: '――二日目、二十一時。' },
+      { sp: '', tx: '短い冬の陽はとうに落ち、\n窓の外は再び雪と夜に閉ざされていた。' },
+      { sp: '', tx: '容疑者たちはそれぞれの部屋に引き上げ、\nホールには暖炉の炎と、律と透だけが残っていた。' },
+      { sp: '水無月 透', tx: '「……律。本当に一人で動くのか？」' },
+      { sp: '神原 律', tx: '「今夜中に、決定的な証拠を一つ掴みたいの。\nこの違和感の正体を、朝が来る前に」' },
+      { sp: '神原 律', tx: '（――二つの旋律のうち、少なくとも一つを完全に聞き分けなければ。\n誰が、本当に白鷺さんを殺したのかを）' }
+    ],
     next: 'choice_investigation'
   },
 
   'choice_investigation': {
     bg: 'hall',
     lines: [
-      { sp: '神原 律', tx: '（手がかりを、もう一つ。\n二つの死が重なっている以上、決定的な証拠が要る）' },
-      { sp: '', tx: '律は、次に何を調べるかを決めなければならない。' }
+      { sp: '神原 律', tx: '（何を、最初に確かめる？）' }
     ],
     choice: {
-      prompt: '── どこを重点的に調べる？ ──',
+      prompt: '── 夜の白嶺荘で、どこを調べる？ ──',
       options: [
         { tx: '冬木綾乃の持ち物を確認する', next: 'investigate_fuyuki' },
-        { tx: '昨夜の暖炉の周りを調べる', next: 'investigate_fireplace' },
-        { tx: '久遠寺に昔の話を詳しく聞く', next: 'investigate_past' }
+        { tx: '暖炉と薪入れを、もう一度調べる', next: 'investigate_fireplace' },
+        { tx: '久遠寺に、昔の話を詳しく聞く', next: 'investigate_past' }
       ]
     }
   },
@@ -817,7 +831,7 @@ const scenes = {
       { sp: '', tx: '冬木の声音は静かだった。\nだが、その目は冷たく凍っていた。' }
     ],
     onEnd: () => { addClue('has_clue_F'); },
-    next: 'ch5_01'
+    next: 'finale_01'
   },
 
   'investigate_fireplace': {
@@ -833,7 +847,7 @@ const scenes = {
       { sp: '神原 律', tx: '（暖炉で燃やすつもりだったのかもしれない。\nだが金属は燃えない。咄嗟に奥へ押し込んだ……）' }
     ],
     onEnd: () => { addClue('has_clue_C'); },
-    next: 'ch5_01'
+    next: 'finale_01'
   },
 
   'investigate_past': {
@@ -848,11 +862,11 @@ const scenes = {
       { sp: '神原 律', tx: '（二十年前。少女。\nそして、今この館にいる誰か……）' }
     ],
     onEnd: () => { addClue('has_clue_H'); },
-    next: 'ch5_01'
+    next: 'finale_01'
   },
 
   // ============== 終章：二重奏の真実 ==============
-  'ch5_01': {
+  'finale_01': {
     chapter: { num: '― 終 章 ―', name: '二重奏の真実' },
     bg: 'hall',
     lines: [
@@ -865,10 +879,10 @@ const scenes = {
       { sp: '', tx: '吹雪は、少しずつ衰え始めている。\n夜明けを待っていては、もう遅い。' },
       { sp: '神原 律', tx: '（答えを出さなければ）' }
     ],
-    next: 'ch5_02'
+    next: 'finale_02'
   },
 
-  'ch5_02': {
+  'finale_02': {
     bg: 'hall',
     lines: [
       { sp: '', tx: '暖炉の炎を背に、六人が律を見つめている。' },
