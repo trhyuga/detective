@@ -468,6 +468,309 @@
   .ending-restart:hover {
     background: rgba(184, 153, 104, 0.15);
   }
+
+  /* ===== アクションバー ===== */
+  #action-bar {
+    position: absolute;
+    top: 0.8em;
+    left: 0.8em;
+    z-index: 25;
+    display: none;
+    gap: 0.3em;
+    flex-wrap: wrap;
+    max-width: calc(100% - 8em);
+  }
+  #action-bar.show { display: flex; }
+  .action-btn {
+    background: rgba(5, 8, 16, 0.6);
+    border: 1px solid rgba(184, 153, 104, 0.3);
+    color: var(--ink-dim);
+    font-family: inherit;
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    padding: 0.35em 0.65em;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 2px;
+  }
+  .action-btn:hover, .action-btn.active {
+    color: var(--accent-gold);
+    border-color: var(--accent-gold);
+    background: rgba(184, 153, 104, 0.18);
+  }
+
+  /* ===== 汎用パネル ===== */
+  .panel {
+    position: absolute;
+    inset: 0;
+    z-index: 70;
+    background: rgba(5, 8, 16, 0.96);
+    display: none;
+    flex-direction: column;
+    padding: 1.2em 1.2em 1em;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  .panel.show { display: flex; }
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 0.8em;
+    border-bottom: 1px solid var(--choice-border);
+    margin-bottom: 1em;
+  }
+  .panel-title {
+    color: var(--accent-gold);
+    font-size: 1rem;
+    letter-spacing: 0.4em;
+    font-weight: 700;
+  }
+  .panel-close {
+    background: transparent;
+    border: 1px solid var(--choice-border);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    padding: 0.4em 0.8em;
+    cursor: pointer;
+    border-radius: 2px;
+  }
+  .panel-body {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 0.3em;
+  }
+  .panel-body::-webkit-scrollbar {
+    width: 4px;
+  }
+  .panel-body::-webkit-scrollbar-thumb {
+    background: rgba(184, 153, 104, 0.35);
+  }
+  .panel-section {
+    margin-bottom: 1.4em;
+  }
+  .panel-section h3 {
+    font-size: 0.8rem;
+    color: var(--accent-ice);
+    letter-spacing: 0.3em;
+    margin-bottom: 0.6em;
+    font-weight: 500;
+  }
+
+  /* ===== セグメントボタン ===== */
+  .seg-group {
+    display: flex;
+    gap: 0.3em;
+    flex-wrap: wrap;
+  }
+  .seg-btn {
+    flex: 1 1 auto;
+    min-width: 4em;
+    background: rgba(18, 23, 31, 0.7);
+    border: 1px solid var(--choice-border);
+    color: var(--ink-dim);
+    font-family: inherit;
+    font-size: 0.78rem;
+    letter-spacing: 0.2em;
+    padding: 0.55em 0.3em;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .seg-btn.active {
+    color: var(--accent-gold);
+    border-color: var(--accent-gold);
+    background: rgba(184, 153, 104, 0.15);
+  }
+
+  /* ===== バックログ ===== */
+  .log-entry {
+    padding: 0.7em 0;
+    border-bottom: 1px dashed rgba(184, 153, 104, 0.15);
+    font-size: 0.9rem;
+    line-height: 1.8;
+  }
+  .log-entry .log-sp {
+    color: var(--accent-gold);
+    font-size: 0.8rem;
+    margin-bottom: 0.25em;
+    letter-spacing: 0.1em;
+  }
+  .log-entry .log-tx {
+    color: var(--ink);
+  }
+
+  /* ===== セーブ／ロード スロット ===== */
+  .slot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.8em 1em;
+    background: rgba(18, 23, 31, 0.6);
+    border: 1px solid var(--choice-border);
+    margin-bottom: 0.6em;
+    border-radius: 2px;
+  }
+  .slot-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .slot-name {
+    font-size: 0.8rem;
+    color: var(--accent-ice);
+    letter-spacing: 0.2em;
+    margin-bottom: 0.2em;
+  }
+  .slot-meta {
+    font-size: 0.72rem;
+    color: var(--ink-dim);
+  }
+  .slot-actions {
+    display: flex;
+    gap: 0.3em;
+  }
+  .slot-btn {
+    background: transparent;
+    border: 1px solid var(--choice-border);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    padding: 0.4em 0.7em;
+    cursor: pointer;
+    border-radius: 2px;
+  }
+  .slot-btn:hover {
+    border-color: var(--accent-gold);
+    color: var(--accent-gold);
+  }
+  .slot-btn.danger:hover {
+    border-color: var(--accent-ember);
+    color: var(--accent-ember);
+  }
+
+  /* ===== 章選択・エンディング一覧 ===== */
+  .jump-btn, .ending-entry {
+    display: block;
+    width: 100%;
+    background: rgba(18, 23, 31, 0.6);
+    border: 1px solid var(--choice-border);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    padding: 0.85em 1em;
+    text-align: left;
+    margin-bottom: 0.5em;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .jump-btn:hover, .ending-entry:hover {
+    border-color: var(--accent-gold);
+    color: var(--accent-gold);
+    background: rgba(184, 153, 104, 0.1);
+  }
+  .jump-btn.locked, .ending-entry.locked {
+    color: var(--ink-dim);
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .jump-btn.locked:hover, .ending-entry.locked:hover {
+    border-color: var(--choice-border);
+    background: rgba(18, 23, 31, 0.6);
+  }
+  .ending-entry .ending-etitle {
+    display: block;
+    color: inherit;
+    font-weight: 500;
+  }
+  .ending-entry .ending-edesc {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--ink-dim);
+    margin-top: 0.3em;
+    letter-spacing: 0.08em;
+  }
+  .collection-stat {
+    font-size: 0.9rem;
+    color: var(--accent-gold);
+    letter-spacing: 0.2em;
+    margin-bottom: 1em;
+    text-align: center;
+  }
+
+  /* ===== 手がかりノート ===== */
+  .clue-item {
+    padding: 0.8em 1em;
+    background: rgba(18, 23, 31, 0.6);
+    border-left: 2px solid var(--accent-gold);
+    margin-bottom: 0.5em;
+    font-size: 0.85rem;
+    line-height: 1.7;
+  }
+  .clue-item.locked {
+    border-left-color: rgba(184, 153, 104, 0.2);
+    color: var(--ink-dim);
+    font-style: italic;
+  }
+  .clue-item .clue-key {
+    color: var(--accent-ice);
+    font-size: 0.8rem;
+    letter-spacing: 0.3em;
+    margin-right: 0.8em;
+  }
+
+  /* ===== タイトル拡張 ===== */
+  .title-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    margin-top: 1.5em;
+    animation: title-fade-in 3s ease-out 2.2s both;
+  }
+  .title-menu-btn {
+    background: transparent;
+    border: 1px solid var(--choice-border);
+    color: var(--ink-dim);
+    font-family: inherit;
+    font-size: 0.8rem;
+    letter-spacing: 0.4em;
+    padding: 0.6em 1.5em;
+    cursor: pointer;
+    transition: all 0.3s;
+    border-radius: 2px;
+  }
+  .title-menu-btn:hover {
+    border-color: var(--accent-gold);
+    color: var(--accent-gold);
+  }
+
+  /* ===== オートモードインジケータ ===== */
+  #auto-indicator, #skip-indicator {
+    position: absolute;
+    top: 3.2em;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 18;
+    font-size: 0.7rem;
+    letter-spacing: 0.4em;
+    color: var(--accent-ember);
+    padding: 0.3em 1em;
+    background: rgba(5, 8, 16, 0.7);
+    border: 1px solid var(--accent-ember);
+    border-radius: 2px;
+    display: none;
+    animation: pulse-subtle 1.5s ease-in-out infinite;
+  }
+  #auto-indicator.show, #skip-indicator.show { display: block; }
+  #skip-indicator {
+    color: var(--accent-ice);
+    border-color: var(--accent-ice);
+  }
 </style>
 </head>
 <body>
@@ -476,6 +779,18 @@
   <div class="snow" id="snow"></div>
 
   <div id="hud">伏線 <span class="clue-count" id="clue-count">0</span>/8</div>
+
+  <div id="action-bar">
+    <button class="action-btn" id="btn-auto" title="オート (A)">AUTO</button>
+    <button class="action-btn" id="btn-skip" title="既読スキップ (S)">SKIP</button>
+    <button class="action-btn" id="btn-log" title="バックログ (L)">LOG</button>
+    <button class="action-btn" id="btn-save" title="セーブ">SAVE</button>
+    <button class="action-btn" id="btn-clues" title="手がかり">CLUES</button>
+    <button class="action-btn" id="btn-menu" title="メニュー (Esc)">MENU</button>
+  </div>
+
+  <div id="auto-indicator">● AUTO</div>
+  <div id="skip-indicator">» SKIP</div>
 
   <div id="story-area">
     <div class="speaker" id="speaker"></div>
@@ -503,7 +818,119 @@
     <div class="title-sub">SETSUREI NO DUET</div>
     <div class="title-ornament"></div>
     <button class="title-start" id="start-btn">は じ め る</button>
+    <div class="title-menu">
+      <button class="title-menu-btn" id="btn-title-continue">続きから</button>
+      <button class="title-menu-btn" id="btn-title-chapter">章選択</button>
+      <button class="title-menu-btn" id="btn-title-endings">エンディング</button>
+      <button class="title-menu-btn" id="btn-title-settings">設定</button>
+    </div>
     <div class="title-caption">— A CLOSED-CIRCLE MYSTERY —</div>
+  </div>
+
+  <!-- 汎用パネル: バックログ -->
+  <div class="panel" id="panel-log">
+    <div class="panel-header">
+      <div class="panel-title">バ ッ ク ロ グ</div>
+      <button class="panel-close" data-close>閉じる</button>
+    </div>
+    <div class="panel-body" id="log-body"></div>
+  </div>
+
+  <!-- 汎用パネル: セーブ／ロード -->
+  <div class="panel" id="panel-save">
+    <div class="panel-header">
+      <div class="panel-title">セ ー ブ ／ ロ ー ド</div>
+      <button class="panel-close" data-close>閉じる</button>
+    </div>
+    <div class="panel-body" id="save-body"></div>
+  </div>
+
+  <!-- 汎用パネル: 手がかりノート -->
+  <div class="panel" id="panel-clues">
+    <div class="panel-header">
+      <div class="panel-title">手 が か り ノ ー ト</div>
+      <button class="panel-close" data-close>閉じる</button>
+    </div>
+    <div class="panel-body" id="clues-body"></div>
+  </div>
+
+  <!-- 汎用パネル: 章選択 -->
+  <div class="panel" id="panel-chapter">
+    <div class="panel-header">
+      <div class="panel-title">章 選 択</div>
+      <button class="panel-close" data-close>閉じる</button>
+    </div>
+    <div class="panel-body" id="chapter-body"></div>
+  </div>
+
+  <!-- 汎用パネル: エンディングコレクション -->
+  <div class="panel" id="panel-endings">
+    <div class="panel-header">
+      <div class="panel-title">エ ン デ ィ ン グ</div>
+      <button class="panel-close" data-close>閉じる</button>
+    </div>
+    <div class="panel-body" id="endings-body"></div>
+  </div>
+
+  <!-- 汎用パネル: 設定 -->
+  <div class="panel" id="panel-settings">
+    <div class="panel-header">
+      <div class="panel-title">設 定</div>
+      <button class="panel-close" data-close>閉じる</button>
+    </div>
+    <div class="panel-body">
+      <div class="panel-section">
+        <h3>テキスト速度</h3>
+        <div class="seg-group" id="seg-speed">
+          <button class="seg-btn" data-speed="90">遅い</button>
+          <button class="seg-btn" data-speed="45">普通</button>
+          <button class="seg-btn" data-speed="20">速い</button>
+          <button class="seg-btn" data-speed="0">瞬間</button>
+        </div>
+      </div>
+      <div class="panel-section">
+        <h3>オート送り待ち時間</h3>
+        <div class="seg-group" id="seg-auto-delay">
+          <button class="seg-btn" data-delay="800">短</button>
+          <button class="seg-btn" data-delay="1600">中</button>
+          <button class="seg-btn" data-delay="2800">長</button>
+        </div>
+      </div>
+      <div class="panel-section">
+        <h3>その他</h3>
+        <div class="seg-group">
+          <button class="seg-btn" id="btn-reset-progress" style="flex: 1;">
+            全プレイ進捗をリセット
+          </button>
+        </div>
+      </div>
+      <div class="panel-section">
+        <h3>キーボード操作</h3>
+        <div style="font-size: 0.78rem; color: var(--ink-dim); line-height: 2;">
+          <strong style="color:var(--accent-ice)">Space / Enter</strong>：進める<br>
+          <strong style="color:var(--accent-ice)">A</strong>：オート切替<br>
+          <strong style="color:var(--accent-ice)">S</strong>：スキップ切替<br>
+          <strong style="color:var(--accent-ice)">L</strong>：ログ<br>
+          <strong style="color:var(--accent-ice)">Esc</strong>：メニュー／閉じる
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 汎用パネル: メニュー（ハブ） -->
+  <div class="panel" id="panel-menu">
+    <div class="panel-header">
+      <div class="panel-title">メ ニ ュ ー</div>
+      <button class="panel-close" data-close>閉じる</button>
+    </div>
+    <div class="panel-body">
+      <button class="jump-btn" data-menu="panel-save">セーブ／ロード</button>
+      <button class="jump-btn" data-menu="panel-log">バックログ</button>
+      <button class="jump-btn" data-menu="panel-clues">手がかりノート</button>
+      <button class="jump-btn" data-menu="panel-endings">エンディング一覧</button>
+      <button class="jump-btn" data-menu="panel-settings">設定</button>
+      <button class="jump-btn" id="btn-return-title">タイトルに戻る</button>
+    </div>
   </div>
 
   <div id="ending-screen">
@@ -541,6 +968,116 @@ const clueDescriptions = {
   has_clue_G: '美咲の電話の男性の声',
   has_clue_H: '久遠寺の20年前の証言'
 };
+
+// ==========================================================================
+// 永続化（localStorage）・メタ状態
+// ==========================================================================
+const STORAGE_KEY = 'setsurei_v1';
+
+const meta = {
+  settings: {
+    textSpeed: 45,
+    autoDelay: 1600
+  },
+  readScenes: {},            // scene key -> true（既読フラグ）
+  seenEndings: {},           // ending id -> count
+  slots: [null, null, null], // 3スロット
+  autoSlot: null             // 章境界でのオートセーブ
+};
+
+function loadMeta() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const obj = JSON.parse(raw);
+    Object.assign(meta.settings, obj.settings || {});
+    Object.assign(meta.readScenes, obj.readScenes || {});
+    Object.assign(meta.seenEndings, obj.seenEndings || {});
+    if (Array.isArray(obj.slots)) meta.slots = obj.slots;
+    if (obj.autoSlot) meta.autoSlot = obj.autoSlot;
+  } catch (e) { /* ignore */ }
+}
+
+function saveMeta() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(meta));
+  } catch (e) { /* quota etc */ }
+}
+
+function resetAllProgress() {
+  meta.readScenes = {};
+  meta.seenEndings = {};
+  meta.slots = [null, null, null];
+  meta.autoSlot = null;
+  saveMeta();
+}
+
+// 現在のゲーム状態をスナップショット
+function snapshotState() {
+  return {
+    gameState: JSON.parse(JSON.stringify(gameState)),
+    sceneKey: currentSceneKey,
+    lineIdx: currentLineIdx,
+    textLog: textLog.slice(-50),
+    timestamp: Date.now()
+  };
+}
+
+function restoreState(snap) {
+  Object.keys(gameState).forEach(k => delete gameState[k]);
+  Object.assign(gameState, snap.gameState);
+  textLog.length = 0;
+  if (Array.isArray(snap.textLog)) textLog.push(...snap.textLog);
+  updateClueCount();
+  currentSceneKey = snap.sceneKey;
+  currentLineIdx = snap.lineIdx;
+  const scene = scenes[currentSceneKey];
+  if (scene) {
+    if (scene.bg) setBackground(scene.bg);
+    if (scene.lines && currentLineIdx < scene.lines.length) {
+      showLine();
+    }
+  }
+}
+
+// ==========================================================================
+// 章定義（ジャンプ用）
+// ==========================================================================
+const chapterJumps = [
+  { key: 'prologue_01', title: '序 章　招かれざる客たち' },
+  { key: 'prologue_03', title: '一 章　暖炉の夜' },
+  { key: 'converge_02', title: '二 章　最初の違和感' },
+  { key: 'ch3_01',      title: '三 章　朝の発見' },
+  { key: 'ch4_01',      title: '四 章　疑惑の迷路' },
+  { key: 'ch5_intro',   title: '五 章　夜の書斎' },
+  { key: 'finale_01',   title: '終 章　二重奏の真実' }
+];
+
+// ==========================================================================
+// エンディング定義（コレクション表示用）
+// ==========================================================================
+const endingDefs = [
+  { id: 'end_bad_generic',          type: 'bad',    num: 'ED 1', title: '雪に閉ざされた沈黙' },
+  { id: 'end_bad_misaki',           type: 'bad',    num: 'ED 2', title: '誤った告発' },
+  { id: 'end_bad_ice',              type: 'bad',    num: 'ED 3', title: '探偵、氷の下に' },
+  { id: 'end_bad_fire',             type: 'bad',    num: 'ED 4', title: '燃える山荘' },
+  { id: 'end_bad_silent',           type: 'bad',    num: 'ED 5', title: '静かなる共犯' },
+  { id: 'end_normal',               type: 'normal', num: 'ED 6', title: '嵐の明けた朝 (A)' },
+  { id: 'end_normal_b',             type: 'normal', num: 'ED 7', title: '嵐の明けた朝 (B)' },
+  { id: 'end_normal_c',             type: 'normal', num: 'ED 8', title: '嵐の明けた朝 (C)' },
+  { id: 'end_true_standard',        type: 'true',   num: 'ED 9', title: '二重奏の終止符' },
+  { id: 'end_true_plus',            type: 'true',   num: 'ED10', title: '雪解けの約束' },
+  { id: 'end_bad_fuyuki_unproven',  type: 'bad',    num: '---',  title: '証拠なき告発', extra: true }
+];
+
+// ==========================================================================
+// テキストログ
+// ==========================================================================
+const textLog = [];
+function pushLog(speaker, text) {
+  textLog.push({ sp: speaker || '', tx: text });
+  if (textLog.length > 200) textLog.shift();
+}
 
 // ==========================================================================
 // 雪パーティクル
@@ -1272,6 +1809,53 @@ let isTyping = false;
 let typingTimeout = null;
 let currentFullText = '';
 
+// モード
+let autoMode = false;
+let skipMode = false;
+let autoAdvanceTimer = null;
+let skipAdvanceTimer = null;
+
+function setAutoMode(on) {
+  autoMode = !!on;
+  document.getElementById('btn-auto').classList.toggle('active', autoMode);
+  document.getElementById('auto-indicator').classList.toggle('show', autoMode);
+  if (!autoMode) clearTimeout(autoAdvanceTimer);
+  if (autoMode) scheduleAutoAdvance();
+}
+
+function setSkipMode(on) {
+  skipMode = !!on;
+  document.getElementById('btn-skip').classList.toggle('active', skipMode);
+  document.getElementById('skip-indicator').classList.toggle('show', skipMode);
+  if (!skipMode) clearTimeout(skipAdvanceTimer);
+  if (skipMode) scheduleSkipAdvance();
+}
+
+function scheduleAutoAdvance() {
+  clearTimeout(autoAdvanceTimer);
+  if (!autoMode) return;
+  if (document.querySelector('.panel.show')) return;
+  if (document.getElementById('choices').classList.contains('show')) return;
+  if (document.getElementById('ending-screen').classList.contains('show')) return;
+  if (isTyping) return;
+  autoAdvanceTimer = setTimeout(() => { advance(); }, meta.settings.autoDelay);
+}
+
+function scheduleSkipAdvance() {
+  clearTimeout(skipAdvanceTimer);
+  if (!skipMode) return;
+  if (document.querySelector('.panel.show')) return;
+  if (document.getElementById('choices').classList.contains('show')) return;
+  if (document.getElementById('ending-screen').classList.contains('show')) return;
+  // 既読シーンのみスキップ。未読に入ったら自動停止
+  if (!meta.readScenes[currentSceneKey]) {
+    setSkipMode(false);
+    return;
+  }
+  if (isTyping) skipTyping();
+  skipAdvanceTimer = setTimeout(() => { advance(); }, 40);
+}
+
 function addClue(key) {
   if (gameState[key]) return;
   gameState[key] = true;
@@ -1321,8 +1905,16 @@ function typeText(text, cb) {
   tb.innerHTML = '';
   currentFullText = text;
   isTyping = true;
+  const speed = meta.settings.textSpeed;
+  if (speed === 0) {
+    tb.innerHTML = text.replace(/\n/g, '<br>');
+    isTyping = false;
+    hint.classList.add('show');
+    if (cb) cb();
+    afterLineRendered();
+    return;
+  }
   let i = 0;
-  const speed = 45;
   function step() {
     if (i <= text.length) {
       tb.innerHTML = text.substring(0, i).replace(/\n/g, '<br>') + '<span class="caret"></span>';
@@ -1333,9 +1925,15 @@ function typeText(text, cb) {
       isTyping = false;
       hint.classList.add('show');
       if (cb) cb();
+      afterLineRendered();
     }
   }
   step();
+}
+
+function afterLineRendered() {
+  scheduleAutoAdvance();
+  scheduleSkipAdvance();
 }
 
 function skipTyping() {
@@ -1344,6 +1942,7 @@ function skipTyping() {
   document.getElementById('text-box').innerHTML = currentFullText.replace(/\n/g, '<br>');
   isTyping = false;
   document.getElementById('next-hint').classList.add('show');
+  afterLineRendered();
 }
 
 function showLine() {
@@ -1351,6 +1950,7 @@ function showLine() {
   if (!scene || !scene.lines) return;
   const line = scene.lines[currentLineIdx];
   document.getElementById('speaker').textContent = line.sp || '';
+  pushLog(line.sp || '', line.tx);
   typeText(line.tx);
 }
 
@@ -1369,10 +1969,21 @@ function advance() {
 }
 
 function goToScene(key) {
+  const wasUnread = !meta.readScenes[key];
   currentSceneKey = key;
   currentLineIdx = 0;
   const scene = scenes[key];
   if (!scene) return;
+  // スキップモードは未読シーンに入ったら自動停止
+  if (skipMode && wasUnread) setSkipMode(false);
+  // 既読フラグ
+  meta.readScenes[key] = true;
+  // 章境界でオートセーブ
+  if (scene.chapter) {
+    meta.autoSlot = snapshotState();
+  }
+  saveMeta();
+
   if (scene.bg) setBackground(scene.bg);
   if (scene.chapter) {
     showChapterTitle(scene.chapter.num, scene.chapter.name, () => showLine());
@@ -1382,6 +1993,13 @@ function goToScene(key) {
 }
 
 function showEndingScreen(info) {
+  // エンディング到達記録
+  meta.seenEndings[currentSceneKey] = (meta.seenEndings[currentSceneKey] || 0) + 1;
+  saveMeta();
+  // オート・スキップを解除
+  if (autoMode) setAutoMode(false);
+  if (skipMode) setSkipMode(false);
+
   const el = document.getElementById('ending-screen');
   const tag = document.getElementById('ending-tag');
   tag.textContent = info.tag;
@@ -1416,6 +2034,9 @@ function showEndingScreen(info) {
 }
 
 function showChoices(choice) {
+  // 選択肢中は自動送り・スキップを解除
+  if (autoMode) setAutoMode(false);
+  if (skipMode) setSkipMode(false);
   const wrap = document.getElementById('choices');
   const list = document.getElementById('choice-list');
   document.getElementById('choice-prompt').textContent = choice.prompt;
@@ -1436,14 +2057,203 @@ function showChoices(choice) {
 }
 
 // ==========================================================================
-// 入力ハンドラ
+// パネル制御
 // ==========================================================================
-document.getElementById('start-btn').addEventListener('click', () => {
-  document.getElementById('title-screen').classList.add('hidden');
-  setTimeout(() => goToScene('prologue_01'), 800);
-});
+function openPanel(id) {
+  document.querySelectorAll('.panel.show').forEach(p => p.classList.remove('show'));
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (id === 'panel-log') renderLog();
+  if (id === 'panel-save') renderSlots();
+  if (id === 'panel-clues') renderClues();
+  if (id === 'panel-chapter') renderChapters();
+  if (id === 'panel-endings') renderEndings();
+  if (id === 'panel-settings') renderSettings();
+  el.classList.add('show');
+  // パネル表示中はオート・スキップを停止
+  clearTimeout(autoAdvanceTimer);
+  clearTimeout(skipAdvanceTimer);
+}
 
-document.getElementById('restart-btn').addEventListener('click', () => {
+function closeAllPanels() {
+  document.querySelectorAll('.panel.show').forEach(p => p.classList.remove('show'));
+  scheduleAutoAdvance();
+  scheduleSkipAdvance();
+}
+
+function renderLog() {
+  const body = document.getElementById('log-body');
+  const recent = textLog.slice(-80);
+  if (recent.length === 0) {
+    body.innerHTML = '<div style="color:var(--ink-dim);text-align:center;padding:2em;">まだログがありません。</div>';
+    return;
+  }
+  body.innerHTML = recent.map(e =>
+    `<div class="log-entry">` +
+    (e.sp ? `<div class="log-sp">${escapeHtml(e.sp)}</div>` : '') +
+    `<div class="log-tx">${escapeHtml(e.tx).replace(/\n/g, '<br>')}</div>` +
+    `</div>`
+  ).join('');
+  body.scrollTop = body.scrollHeight;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[c]);
+}
+
+function renderSlots() {
+  const body = document.getElementById('save-body');
+  const inGame = !!currentSceneKey && !document.getElementById('title-screen').classList.contains('hidden') === false;
+  const canSave = !!currentSceneKey && document.getElementById('title-screen').classList.contains('hidden');
+  let html = '';
+  // オートスロット
+  html += renderSlotHtml('auto', meta.autoSlot, canSave, true);
+  // 手動3スロット
+  for (let i = 0; i < 3; i++) {
+    html += renderSlotHtml(i, meta.slots[i], canSave, false);
+  }
+  body.innerHTML = html;
+  body.querySelectorAll('[data-save-idx]').forEach(b => {
+    b.onclick = () => {
+      const idx = b.dataset.saveIdx;
+      if (idx === 'auto') return; // autoは保存ボタンなし
+      meta.slots[parseInt(idx, 10)] = snapshotState();
+      saveMeta();
+      renderSlots();
+    };
+  });
+  body.querySelectorAll('[data-load-idx]').forEach(b => {
+    b.onclick = () => {
+      const idx = b.dataset.loadIdx;
+      const snap = idx === 'auto' ? meta.autoSlot : meta.slots[parseInt(idx, 10)];
+      if (!snap) return;
+      document.getElementById('title-screen').classList.add('hidden');
+      document.getElementById('ending-screen').classList.remove('show');
+      document.getElementById('choices').classList.remove('show');
+      document.getElementById('action-bar').classList.add('show');
+      restoreState(snap);
+      closeAllPanels();
+    };
+  });
+  body.querySelectorAll('[data-del-idx]').forEach(b => {
+    b.onclick = () => {
+      const idx = b.dataset.delIdx;
+      if (idx === 'auto') meta.autoSlot = null;
+      else meta.slots[parseInt(idx, 10)] = null;
+      saveMeta();
+      renderSlots();
+    };
+  });
+}
+
+function renderSlotHtml(idx, snap, canSave, isAuto) {
+  const name = isAuto ? 'オートセーブ（章境界）' : `スロット ${parseInt(idx, 10) + 1}`;
+  let meta_ = '（空）';
+  if (snap) {
+    const sc = scenes[snap.sceneKey];
+    const chap = chapterJumps.slice().reverse().find(c => {
+      const scIdx = chapterJumps.findIndex(x => x.key === c.key);
+      const curIdx = chapterJumps.findIndex(x => x.key === snap.sceneKey);
+      return scIdx <= curIdx;
+    });
+    const d = new Date(snap.timestamp);
+    const ts = `${d.getFullYear()}/${('0'+(d.getMonth()+1)).slice(-2)}/${('0'+d.getDate()).slice(-2)} ${('0'+d.getHours()).slice(-2)}:${('0'+d.getMinutes()).slice(-2)}`;
+    const clueN = Object.keys(snap.gameState).filter(k => k.startsWith('has_clue_') && snap.gameState[k]).length;
+    meta_ = `${chap ? chap.title : snap.sceneKey} ／ 伏線 ${clueN}/8 ／ ${ts}`;
+  }
+  const saveBtn = (canSave && !isAuto) ? `<button class="slot-btn" data-save-idx="${idx}">保存</button>` : '';
+  const loadBtn = snap ? `<button class="slot-btn" data-load-idx="${idx}">読込</button>` : '';
+  const delBtn = snap ? `<button class="slot-btn danger" data-del-idx="${idx}">削除</button>` : '';
+  return `<div class="slot">
+    <div class="slot-info">
+      <div class="slot-name">${name}</div>
+      <div class="slot-meta">${meta_}</div>
+    </div>
+    <div class="slot-actions">${saveBtn}${loadBtn}${delBtn}</div>
+  </div>`;
+}
+
+function renderClues() {
+  const body = document.getElementById('clues-body');
+  const keys = ['has_clue_A','has_clue_B','has_clue_C','has_clue_D','has_clue_E','has_clue_F','has_clue_G','has_clue_H'];
+  const detail = {
+    has_clue_A: '冬木綾乃が夕食時、白鷺の薬入れに自然に手を添えていた。',
+    has_clue_B: '白鷺が「最近、薬の効きが悪い」と冬木にだけ零した。',
+    has_clue_C: '暖炉の薪入れに鈍く光る金属片／青銅の文鎮。',
+    has_clue_D: '榊の袖口に、くすんだ茶褐色の微かな血痕。',
+    has_clue_E: '白鷺遺体の打撲傷、周辺の血の飛び散りが異常に少ない。',
+    has_clue_F: '冬木の手帳に「20年」の書き込みと、古い新聞記事の切り抜き。',
+    has_clue_G: '美咲の電話相手「佐伯」――水無月透の元同僚。',
+    has_clue_H: '二十年前、若い夫婦が白鷺を訪ねて追い返された。'
+  };
+  body.innerHTML = keys.map(k => {
+    const got = gameState[k];
+    const cls = got ? '' : ' locked';
+    const label = clueDescriptions[k];
+    const detailText = got ? detail[k] : '（未取得）';
+    return `<div class="clue-item${cls}">
+      <span class="clue-key">${k.replace('has_clue_','伏線 ')}</span>
+      ${label}<br>
+      <span style="font-size:0.78rem; color:var(--ink-dim)">${detailText}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderChapters() {
+  const body = document.getElementById('chapter-body');
+  body.innerHTML = chapterJumps.map(c => {
+    const unlocked = !!meta.readScenes[c.key] || c.key === 'prologue_01';
+    return `<button class="jump-btn${unlocked ? '' : ' locked'}" data-jump="${c.key}" ${unlocked ? '' : 'disabled'}>
+      ${c.title}${unlocked ? '' : '　（未到達）'}
+    </button>`;
+  }).join('');
+  body.querySelectorAll('[data-jump]').forEach(b => {
+    b.onclick = () => {
+      if (b.disabled) return;
+      // 章開始にジャンプ：gameState を初期化
+      resetGameState();
+      document.getElementById('title-screen').classList.add('hidden');
+      document.getElementById('action-bar').classList.add('show');
+      document.getElementById('ending-screen').classList.remove('show');
+      closeAllPanels();
+      goToScene(b.dataset.jump);
+    };
+  });
+}
+
+function renderEndings() {
+  const body = document.getElementById('endings-body');
+  const main = endingDefs.filter(e => !e.extra);
+  const mainSeen = main.filter(e => meta.seenEndings[e.id]).length;
+  let html = `<div class="collection-stat">到達 ${mainSeen} / ${main.length}</div>`;
+  html += endingDefs.map(e => {
+    const seen = !!meta.seenEndings[e.id];
+    const cls = seen ? '' : ' locked';
+    const typeMap = { bad: 'BAD', normal: 'NORMAL', true: 'TRUE' };
+    const typeColor = { bad: 'var(--accent-ember)', normal: 'var(--accent-ice)', true: 'var(--accent-gold)' };
+    return `<div class="ending-entry${cls}" data-ending="${e.id}">
+      <span class="ending-etitle">
+        <span style="color:${typeColor[e.type]};margin-right:0.8em;font-size:0.72rem;letter-spacing:0.3em;">${e.num}</span>
+        ${seen ? e.title : '??????'}
+      </span>
+      <span class="ending-edesc">${seen ? typeMap[e.type] + ' END' : '未到達'}</span>
+    </div>`;
+  }).join('');
+  body.innerHTML = html;
+}
+
+function renderSettings() {
+  document.querySelectorAll('#seg-speed .seg-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.speed, 10) === meta.settings.textSpeed);
+  });
+  document.querySelectorAll('#seg-auto-delay .seg-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.delay, 10) === meta.settings.autoDelay);
+  });
+}
+
+function resetGameState() {
   Object.keys(gameState).forEach(k => {
     if (k.startsWith('has_clue_')) gameState[k] = false;
   });
@@ -1453,21 +2263,140 @@ document.getElementById('restart-btn').addEventListener('click', () => {
   gameState.choice_empathy = false;
   gameState.talk_to_mizuki_final = false;
   gameState.investigate_count = 0;
+  textLog.length = 0;
   updateClueCount();
+}
+
+// ==========================================================================
+// 入力ハンドラ
+// ==========================================================================
+function startNewGame() {
+  resetGameState();
+  document.getElementById('title-screen').classList.add('hidden');
+  document.getElementById('action-bar').classList.add('show');
+  setTimeout(() => goToScene('prologue_01'), 800);
+}
+
+document.getElementById('start-btn').addEventListener('click', startNewGame);
+
+document.getElementById('btn-title-continue').addEventListener('click', () => {
+  const snap = meta.autoSlot || meta.slots.find(s => s);
+  if (!snap) {
+    alert('セーブデータがありません。');
+    return;
+  }
+  document.getElementById('title-screen').classList.add('hidden');
+  document.getElementById('action-bar').classList.add('show');
+  restoreState(snap);
+});
+
+document.getElementById('btn-title-chapter').addEventListener('click', () => openPanel('panel-chapter'));
+document.getElementById('btn-title-endings').addEventListener('click', () => openPanel('panel-endings'));
+document.getElementById('btn-title-settings').addEventListener('click', () => openPanel('panel-settings'));
+
+document.getElementById('restart-btn').addEventListener('click', () => {
+  resetGameState();
   document.getElementById('ending-screen').classList.remove('show');
+  document.getElementById('action-bar').classList.remove('show');
   document.getElementById('title-screen').classList.remove('hidden');
 });
 
+// アクションバー
+document.getElementById('btn-auto').addEventListener('click', () => setAutoMode(!autoMode));
+document.getElementById('btn-skip').addEventListener('click', () => {
+  if (!meta.readScenes[currentSceneKey]) {
+    // 未読シーンではスキップ不可
+    return;
+  }
+  setSkipMode(!skipMode);
+});
+document.getElementById('btn-log').addEventListener('click', () => openPanel('panel-log'));
+document.getElementById('btn-save').addEventListener('click', () => openPanel('panel-save'));
+document.getElementById('btn-clues').addEventListener('click', () => openPanel('panel-clues'));
+document.getElementById('btn-menu').addEventListener('click', () => openPanel('panel-menu'));
+
+// 設定
+document.querySelectorAll('#seg-speed .seg-btn').forEach(b => {
+  b.addEventListener('click', () => {
+    meta.settings.textSpeed = parseInt(b.dataset.speed, 10);
+    saveMeta();
+    renderSettings();
+  });
+});
+document.querySelectorAll('#seg-auto-delay .seg-btn').forEach(b => {
+  b.addEventListener('click', () => {
+    meta.settings.autoDelay = parseInt(b.dataset.delay, 10);
+    saveMeta();
+    renderSettings();
+  });
+});
+document.getElementById('btn-reset-progress').addEventListener('click', () => {
+  if (!confirm('全ての進捗・セーブ・既読情報をリセットします。よろしいですか？')) return;
+  resetAllProgress();
+  alert('リセットしました。');
+  closeAllPanels();
+  document.getElementById('title-screen').classList.remove('hidden');
+  document.getElementById('action-bar').classList.remove('show');
+});
+
+// メニューハブ → 各パネル
+document.querySelectorAll('[data-menu]').forEach(b => {
+  b.addEventListener('click', () => openPanel(b.dataset.menu));
+});
+document.getElementById('btn-return-title').addEventListener('click', () => {
+  if (!confirm('タイトルに戻ります。\n未セーブの進行は失われます（オートセーブは維持）。')) return;
+  closeAllPanels();
+  document.getElementById('ending-screen').classList.remove('show');
+  document.getElementById('action-bar').classList.remove('show');
+  document.getElementById('title-screen').classList.remove('hidden');
+});
+
+// パネル閉じる
+document.querySelectorAll('[data-close]').forEach(b => {
+  b.addEventListener('click', closeAllPanels);
+});
+
+// クリックで進める
 document.getElementById('game').addEventListener('click', (e) => {
   if (!document.getElementById('title-screen').classList.contains('hidden')) return;
   if (document.getElementById('choices').classList.contains('show')) return;
   if (document.getElementById('ending-screen').classList.contains('show')) return;
   if (document.getElementById('chapter-title').classList.contains('show')) return;
+  if (document.querySelector('.panel.show')) return;
   if (e.target.closest('#hud')) return;
+  if (e.target.closest('#action-bar')) return;
   advance();
 });
 
+// キーボード
+document.addEventListener('keydown', (e) => {
+  const inGame = document.getElementById('title-screen').classList.contains('hidden');
+  if (e.key === 'Escape') {
+    if (document.querySelector('.panel.show')) closeAllPanels();
+    else if (inGame) openPanel('panel-menu');
+    return;
+  }
+  if (!inGame) return;
+  if (document.querySelector('.panel.show')) return;
+  if (document.getElementById('ending-screen').classList.contains('show')) return;
+  if (document.getElementById('choices').classList.contains('show')) return;
+
+  if (e.key === ' ' || e.key === 'Enter') {
+    e.preventDefault();
+    advance();
+  } else if (e.key === 'a' || e.key === 'A') {
+    setAutoMode(!autoMode);
+  } else if (e.key === 's' || e.key === 'S') {
+    if (meta.readScenes[currentSceneKey]) setSkipMode(!skipMode);
+  } else if (e.key === 'l' || e.key === 'L') {
+    openPanel('panel-log');
+  }
+});
+
+// 初期化
+loadMeta();
 initSnow();
+// 続きから・章選択・エンディングは autoSlot/seenEndings/readScenes をロード後に反映
 </script>
 
 </body>
