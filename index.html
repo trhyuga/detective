@@ -1276,6 +1276,46 @@ function restoreState(snap) {
 }
 
 // ==========================================================================
+// 周回判定ヘルパー
+// ==========================================================================
+function hasReachedNormal() {
+  return !!(meta.seenEndings['end_normal']
+         || meta.seenEndings['end_normal_b']
+         || meta.seenEndings['end_normal_c']);
+}
+function isReplay() {
+  return Object.keys(meta.seenEndings).length > 0;
+}
+
+// シーンの effective lines（replayInserts を反映）
+function effectiveLines(scene) {
+  if (!scene || !scene.lines) return [];
+  const base = scene.lines;
+  const inserts = [];
+  if (scene.replayInserts) {
+    scene.replayInserts.forEach(ins => {
+      if (!ins.when || ins.when()) inserts.push(ins);
+    });
+  }
+  if (inserts.length === 0) return base;
+  // at が大きい順に差し込む
+  const sorted = [...inserts].sort((a, b) => b.at - a.at);
+  const result = [...base];
+  sorted.forEach(ins => result.splice(ins.at, 0, ...ins.lines));
+  return result;
+}
+
+// シーンの effective choice（replayOptions を反映）
+function effectiveChoice(scene) {
+  if (!scene || !scene.choice) return scene ? scene.choice : null;
+  const base = scene.choice;
+  if (!base.replayOptions) return base;
+  const extras = base.replayOptions.filter(o => !o.when || o.when());
+  if (extras.length === 0) return base;
+  return { prompt: base.prompt, options: [...base.options, ...extras] };
+}
+
+// ==========================================================================
 // 登場人物プロフィール
 // ==========================================================================
 const characterProfiles = [
@@ -1477,8 +1517,22 @@ const scenes = {
         { tx: '「あんたの原稿の雑さに比べたら可愛いものよ」', next: 'flavor_unpack_a' },
         { tx: '「それ、十五年前に言われてから直したつもりなんだけど」', next: 'flavor_unpack_b' },
         { tx: '無言で、透のおでこを指でひとつ小突く', next: 'flavor_unpack_c' }
+      ],
+      replayOptions: [
+        { tx: '★「一周目の私は、もっと優しかったわよ？」', next: 'flavor_unpack_meta', when: isReplay }
       ]
     }
+  },
+  'flavor_unpack_meta': {
+    bg: 'bedroom',
+    lines: [
+      { sp: '水無月 透', tx: '「……一周目？　なに、時間遡行系ミステリだったっけこれ」' },
+      { sp: '神原 律', tx: '「知らないわ。私の頭の中でだけ進んでる話よ」' },
+      { sp: '水無月 透', tx: '「校正者は第四の壁も校正するんだな……」' },
+      { sp: '神原 律', tx: '「当然」' },
+      { sp: '', tx: '透は苦笑いしながら、律の荷物を運んでくれた。' }
+    ],
+    next: 'prologue_03'
   },
   'flavor_unpack_a': {
     bg: 'bedroom',
@@ -1534,8 +1588,23 @@ const scenes = {
         { tx: '美咲のネイルの発色を褒める', next: 'flavor_dinner_nail' },
         { tx: '白鷺の持ち込んだワインを褒める', next: 'flavor_dinner_wine' },
         { tx: '透の姿勢を寸評する', next: 'flavor_dinner_toru' }
+      ],
+      replayOptions: [
+        { tx: '★久遠寺さんに、お得意料理を尋ねる', next: 'flavor_dinner_kuonji', when: isReplay }
       ]
     }
+  },
+  'flavor_dinner_kuonji': {
+    bg: 'dining',
+    lines: [
+      { sp: '神原 律', tx: '「久遠寺さん、この山菜の煮付け、絶妙ですね」' },
+      { sp: '久遠寺 貞三', tx: '「お恥ずかしい限りでございます。\nこの爺、かれこれ三十年、同じ味を出そうと努めておりますが」' },
+      { sp: '水無月 透', tx: '「三十年同じ味って、逆に凄くないですか？」' },
+      { sp: '久遠寺 貞三', tx: '「凄いかどうかは、ご舌の判定に委ねまする」' },
+      { sp: '榊 亮', tx: '「……お前ら、よく笑えるな、こんな晩に」' },
+      { sp: '', tx: '榊の一言で、空気が少し緊張を取り戻した。\n久遠寺は一礼して、黙々と次の皿を運んだ。' }
+    ],
+    next: 'prologue_03_pill'
   },
   'flavor_dinner_nail': {
     bg: 'dining',
@@ -1584,6 +1653,22 @@ const scenes = {
       { sp: '冬木 綾乃', tx: '「……承知いたしました」' },
       { sp: '', tx: '冬木は一瞬、視線を伏せた。\n銀の小箱の蓋を、指先でそっと閉じながら。' },
       { sp: '神原 律', tx: '（……少し、奇妙な間）' }
+    ],
+    replayInserts: [
+      {
+        when: hasReachedNormal,
+        at: 3,  // "――その一瞬、指が" の後に挿入
+        lines: [
+          { sp: '神原 律', tx: '（……前にも、こんな光景を見た気がする。\nこの指先の動き、一度、目を焼きつけておいたほうがいい）' }
+        ]
+      },
+      {
+        when: hasReachedNormal,
+        at: 9,
+        lines: [
+          { sp: '神原 律', tx: '（冬木さんの「承知いたしました」。\n――あの声の温度が、白鷺さんへの忠誠としては、少し、冷たすぎる）' }
+        ]
+      }
     ],
     onEnd: () => { addClue('has_clue_A'); addClue('has_clue_B'); },
     next: 'prologue_04'
@@ -1712,8 +1797,24 @@ const scenes = {
         { tx: '透を起こさないよう、こっそり台所へ', next: 'flavor_thirst_tea' },
         { tx: '書斎の棚に見えたシェリーを、一口だけ', next: 'flavor_thirst_sherry' },
         { tx: '「こういう時こそ、相方を叩き起こす」', next: 'flavor_thirst_mizuki' }
+      ],
+      replayOptions: [
+        { tx: '★ベッドで透に「好きな作家の話」を振る', next: 'flavor_thirst_books', when: isReplay }
       ]
     }
+  },
+  'flavor_thirst_books': {
+    bg: 'bedroom',
+    lines: [
+      { sp: '神原 律', tx: '「透、眠れない時の本、何読む？」' },
+      { sp: '水無月 透', tx: '「深夜二時の主語がでかい問い、やめろ」' },
+      { sp: '神原 律', tx: '「あら、編集者がそれ言っちゃうの？」' },
+      { sp: '水無月 透', tx: '「……クリスティの短編、かな。\n短いからって油断すると、一番効く」' },
+      { sp: '神原 律', tx: '「その感想、いま言っちゃダメな気がする」' },
+      { sp: '水無月 透', tx: '「何でだよ」' },
+      { sp: '', tx: '律は苦笑いしながら、それでも毛布を跳ね除けた。\n廊下の冷気が、ふくらはぎを撫でた。' }
+    ],
+    next: 'ch2_01'
   },
   'flavor_thirst_tea': {
     bg: 'corridor',
@@ -1821,6 +1922,15 @@ const scenes = {
       { sp: '神原 律', tx: '（それに、応急処置をもう済ませている。\nあの血の滲み方なら、きっちり巻けばここまで滲まないはずなのに）' },
       { sp: '神原 律', tx: '（……考えすぎかしら。\n今は、白鷺さんのことが先）' }
     ],
+    replayInserts: [
+      {
+        when: hasReachedNormal,
+        at: 15,
+        lines: [
+          { sp: '神原 律', tx: '（――そうだ、前回も、この傷の違和感は確かに感じていた。\n「考えすぎ」で流していい違和感じゃない。今回は覚えておこう）' }
+        ]
+      }
+    ],
     next: 'ch4_01'
   },
 
@@ -1853,6 +1963,15 @@ const scenes = {
       { sp: '冬木 綾乃', tx: '「美咲さん。落ち着いて――外は吹雪。\n感情的になれば、助からないわよ」' },
       { sp: '', tx: 'それぞれが、それぞれの理由で動揺している。\n律は静かに深呼吸をした。' }
     ],
+    replayInserts: [
+      {
+        when: hasReachedNormal,
+        at: 13,
+        lines: [
+          { sp: '神原 律', tx: '（「時間が溶けていく」――\n犯行時刻にぴったり重なるアリバイの、なんと優雅な言い方）' }
+        ]
+      }
+    ],
     onEnd: () => { addClue('has_clue_D'); },
     next: 'ch5_intro'
   },
@@ -1880,8 +1999,24 @@ const scenes = {
         { tx: '透と校正の仕事の話をして気を紛らす', next: 'flavor_breath_work' },
         { tx: '父の昔話を、透に一つだけ', next: 'flavor_breath_father' },
         { tx: '無言で、暖炉の炎を一分だけ見る', next: 'flavor_breath_silence' }
+      ],
+      replayOptions: [
+        { tx: '★透と「別ルートだったら」を妄想する', next: 'flavor_breath_imagine', when: isReplay }
       ]
     }
+  },
+  'flavor_breath_imagine': {
+    bg: 'hall',
+    lines: [
+      { sp: '神原 律', tx: '「……ねえ透。もしも違う選択を積み重ねていたら、\n私たち、どんな朝を迎えていたのかしらね」' },
+      { sp: '水無月 透', tx: '「珍しいな、そういうの考えるの」' },
+      { sp: '神原 律', tx: '「なんとなく、そんな気がして」' },
+      { sp: '水無月 透', tx: '「どの道を歩いても、俺はお前の隣にいるよ」' },
+      { sp: '神原 律', tx: '「……それ、校正者的には語尾が若干甘いけど、\n今は減点しない」' },
+      { sp: '水無月 透', tx: '「おい、そこは取っておいてくれ……！」' },
+      { sp: '', tx: '透が苦笑する。\n吹雪の夜に、ほんの少しだけ、温度が戻った。' }
+    ],
+    next: 'ch5_intro_think'
   },
   'flavor_breath_work': {
     bg: 'hall',
@@ -2840,8 +2975,10 @@ function skipTyping() {
 
 function showLine() {
   const scene = scenes[currentSceneKey];
-  if (!scene || !scene.lines) return;
-  const line = scene.lines[currentLineIdx];
+  if (!scene) return;
+  const lines = effectiveLines(scene);
+  const line = lines[currentLineIdx];
+  if (!line) return;
   document.getElementById('speaker').textContent = line.sp || '';
   pushLog(line.sp || '', line.tx);
   typeText(line.tx);
@@ -2851,10 +2988,12 @@ function advance() {
   if (isTyping) { skipTyping(); return; }
   const scene = scenes[currentSceneKey];
   if (!scene) return;
+  const lines = effectiveLines(scene);
   currentLineIdx++;
-  if (currentLineIdx >= (scene.lines ? scene.lines.length : 0)) {
+  if (currentLineIdx >= lines.length) {
     if (scene.onEnd) scene.onEnd();
-    if (scene.choice) { showChoices(scene.choice); return; }
+    const ch = effectiveChoice(scene);
+    if (ch) { showChoices(ch); return; }
     if (scene.next) { goToScene(scene.next); return; }
   } else {
     showLine();
