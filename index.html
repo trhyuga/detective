@@ -902,9 +902,12 @@ const scenes = {
     choice: {
       prompt: '━━ 犯人は、誰？ ━━',
       options: [
-        { tx: '榊 亮 を告発する', next: 'end_check', apply: () => { gameState.accuse = 'sakaki'; } },
-        { tx: '瀬戸 美咲 を告発する', next: 'end_check', apply: () => { gameState.accuse = 'misaki'; } },
+        { tx: '榊 亮 を、皆の前で告発する', next: 'end_check', apply: () => { gameState.accuse = 'sakaki'; gameState.alone = false; } },
+        { tx: '榊 亮 を、一人で追い詰める', next: 'end_check', apply: () => { gameState.accuse = 'sakaki'; gameState.alone = true; } },
         { tx: '冬木 綾乃 を告発する', next: 'end_check', apply: () => { gameState.accuse = 'fuyuki'; } },
+        { tx: '瀬戸 美咲 を告発する', next: 'end_check', apply: () => { gameState.accuse = 'misaki'; } },
+        { tx: '久遠寺 貞三 を告発する', next: 'end_check', apply: () => { gameState.accuse = 'kuonji'; } },
+        { tx: '水無月 透 を告発する', next: 'end_check', apply: () => { gameState.accuse = 'mizuki'; } },
         { tx: '犯人はいない（事故・自殺）と述べる', next: 'end_check', apply: () => { gameState.accuse = 'none'; } }
       ]
     }
@@ -923,10 +926,16 @@ const scenes = {
         goToScene('end_true');
       } else if (accuse === 'fuyuki') {
         goToScene('end_bad_fuyuki_unproven');
+      } else if (accuse === 'sakaki' && gameState.alone) {
+        goToScene('end_bad_ice');
       } else if (accuse === 'sakaki' && gameState.has_clue_C) {
         goToScene('end_normal');
       } else if (accuse === 'misaki') {
         goToScene('end_bad_misaki');
+      } else if (accuse === 'kuonji' || accuse === 'mizuki') {
+        goToScene('end_bad_fire');
+      } else if (accuse === 'none' && gameState.has_clue_F) {
+        goToScene('end_bad_silent');
       } else {
         goToScene('end_bad_generic');
       }
@@ -1036,6 +1045,69 @@ const scenes = {
       tag: '― BAD END ―',
       title: '雪に閉ざされた沈黙',
       text: '手がかりは散っていた。\nでも、あなたはそれを一本の線に繋げ損ねた。'
+    })
+  },
+
+  'end_bad_ice': {
+    bg: 'corridor',
+    lines: [
+      { sp: '神原 律', tx: '（証拠は揃っている。\n榊さんを、一人で問い質したほうがいい。他人を巻き込む前に）' },
+      { sp: '', tx: '律は、榊の自室へと一人で向かった。' },
+      { sp: '神原 律', tx: '「榊さん。文鎮は、暖炉脇の薪入れにありました。\nあなたの袖口の血痕と、一致します」' },
+      { sp: '榊 亮', tx: '「…………」' },
+      { sp: '榊 亮', tx: '「……お前、どうしてそんなに、落ち着いていられるんだ」' },
+      { sp: '', tx: '榊の瞳に、どす黒い何かが灯った。' },
+      { sp: '榊 亮', tx: '「俺は、もう終わりなんだろう。\n――だったら、お前も道連れだ」' },
+      { sp: '', tx: '階段の踊り場で、律は突き飛ばされた。\n踏み板を踏み外した体が、重力に引かれる。' },
+      { sp: '', tx: '最後に見えたのは、吹雪の夜を照らす、冷たいシャンデリアの光。' }
+    ],
+    onEnd: () => showEndingScreen({
+      type: 'bad',
+      tag: '― BAD END ―',
+      title: '探偵、氷の下に',
+      text: '追い詰められた男を、一人で相手にしてはならなかった。\n推理の正しさと、生き残る賢さは別の話だ。'
+    })
+  },
+
+  'end_bad_fire': {
+    bg: 'hall',
+    lines: [
+      { sp: '神原 律', tx: '「犯人は、あなただ」' },
+      { sp: '', tx: '律の指が差したのは、\n――事件に何の関わりもない人物だった。' },
+      { sp: '水無月 透', tx: '「律、待て、それは……」' },
+      { sp: '冬木 綾乃', tx: '「……神原さん。あなたは、本当に推理できていたの？」' },
+      { sp: '', tx: '糾弾会は、泥沼の口論へと崩れていく。\nそして、その混乱に紛れて――' },
+      { sp: '', tx: '地下の薪置き場から、細い煙が立ちのぼっていた。\n誰かが、証拠を灰にしようとしている。' },
+      { sp: '神原 律', tx: '「火事……！？」' },
+      { sp: '', tx: '乾いた木材は、瞬く間に炎に飲まれた。\n吹雪が外から酸素を送り込み、館は一気に火柱となる。' },
+      { sp: '', tx: '誰一人として、雪の中まで辿り着けなかった。\n白嶺荘は、真相ごと灰になった。' }
+    ],
+    onEnd: () => showEndingScreen({
+      type: 'bad',
+      tag: '― BAD END ―',
+      title: '燃える山荘',
+      text: '無関係な誰かを犯人に仕立てれば、真犯人は証拠ごと燃やす決断をする。\n白嶺荘と、七人の命と、真相。すべてが雪の中で灰になった。'
+    })
+  },
+
+  'end_bad_silent': {
+    bg: 'hall',
+    lines: [
+      { sp: '神原 律', tx: '（……冬木さんの動機は、分かった。\n二十年。両親を奪われた、その長さは）' },
+      { sp: '神原 律', tx: '（そして、白鷺という男が、\n私の父にも何をしていたか――父は、最期まで語らなかった）' },
+      { sp: '神原 律', tx: '（この事件は……事故ということに、しておこう）' },
+      { sp: '神原 律', tx: '「――皆さん。やはり、白鷺さんは自ら倒れられたようです」' },
+      { sp: '冬木 綾乃', tx: '「………………」' },
+      { sp: '', tx: '冬木の瞳が、律を一瞬だけ射抜いた。\nそこには、奇妙な感謝と――もう一つの何かが灯っていた。' },
+      { sp: '', tx: '半年後。\n律は、自宅のポストに届いた一通の封筒を開いた。' },
+      { sp: '', tx: '中には、古びた万年筆と、一枚の紙片。\n「貴方も、あの夜を知る者になった。――F」' },
+      { sp: '', tx: '翌朝、律は冷たくなって発見された。\n死因は急性心不全。遺体のどこにも、外傷はなかった。' }
+    ],
+    onEnd: () => showEndingScreen({
+      type: 'bad',
+      tag: '― BAD END ―',
+      title: '静かなる共犯',
+      text: '真相に気づきながら、動機への同情で口を閉ざした。\nその沈黙は、真犯人にとっての「次の標的」の始まりでもあった。'
     })
   }
 };
