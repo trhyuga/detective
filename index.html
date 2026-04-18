@@ -935,20 +935,6 @@
     border-color: var(--accent-gold);
     color: var(--accent-gold);
   }
-  .title-menu-btn.detective {
-    border-color: var(--accent-gold);
-    color: var(--accent-gold);
-    background: rgba(184, 153, 104, 0.08);
-    box-shadow: 0 0 16px rgba(184, 153, 104, 0.2);
-    animation: detective-pulse 2.5s ease-in-out infinite;
-  }
-  @keyframes detective-pulse {
-    0%, 100% { box-shadow: 0 0 14px rgba(184, 153, 104, 0.18); }
-    50% { box-shadow: 0 0 24px rgba(184, 153, 104, 0.45); }
-  }
-  .title-menu-btn.hidden {
-    display: none;
-  }
   @media (hover: hover) {
     .title-menu-btn:hover {
       border-color: var(--accent-gold);
@@ -1059,7 +1045,6 @@
     <button class="title-start" id="start-btn">は じ め る</button>
     <div class="title-menu">
       <button class="title-menu-btn" id="btn-title-continue">続きから</button>
-      <button class="title-menu-btn detective hidden" id="btn-title-detective">★ 名探偵ルート ★</button>
       <button class="title-menu-btn" id="btn-title-chapter">章選択</button>
       <button class="title-menu-btn" id="btn-title-endings">エンディング</button>
       <button class="title-menu-btn" id="btn-title-settings">設定</button>
@@ -1694,7 +1679,24 @@ const scenes = {
       }
     ],
     onEnd: () => { addClue('has_clue_A'); addClue('has_clue_B'); },
-    next: 'prologue_04'
+    next: () => canDetectiveMode() ? 'detective_choice' : 'prologue_04'
+  },
+
+  // ---- 名探偵ルートへの入口（3週目以降、NORMAL + TRUE 到達時のみ） ----
+  'detective_choice': {
+    bg: 'dining',
+    lines: [
+      { sp: '神原 律', tx: '（……待って）' },
+      { sp: '神原 律', tx: '（あの指の、小箱の内側への滑り込み方。\nあの間、あの呼吸――私、これを、もう何度も見ている）' },
+      { sp: '神原 律', tx: '（この夜の、すべての結末を、\n私はもう、知っている）' }
+    ],
+    choice: {
+      prompt: '── この夜、どうする？ ──',
+      options: [
+        { tx: '★ このまま、全てを今夜で終わらせる（名探偵ルート）', next: 'detective_entry' },
+        { tx: '今回も、物語を最後まで見届ける', next: 'prologue_04' }
+      ]
+    }
   },
 
   'prologue_04': {
@@ -2433,19 +2435,17 @@ const scenes = {
     })
   },
 
-  // ============== 名探偵ルート（3週目以降） ==============
-  'detective_01': {
+  // ============== 名探偵ルート（3週目以降 / 仮犯人＋真犯人ルート既読時） ==============
+  'detective_entry': {
     chapter: { num: '― 名 探 偵 ル ー ト ―', name: '雪嶺の超特急' },
-    bg: 'exterior',
+    bg: 'dining',
     lines: [
-      { sp: '', tx: '――三度目の、白嶺荘。' },
-      { sp: '', tx: '吹雪の中、古い洋館の屋根を見た瞬間、\n律の頭の中で、すべての旋律が完璧に整列した。' },
-      { sp: '神原 律', tx: '「透。今回は、長居しないわよ」' },
-      { sp: '水無月 透', tx: '「……律、目がおかしいぞ。\nいつもの三倍くらい鋭い」' },
+      { sp: '神原 律', tx: '「透。――今夜は、長引かせない」' },
+      { sp: '水無月 透', tx: '「えっ、律？　急に目の色が変わったな」' },
       { sp: '神原 律', tx: '「犯人も、動機も、トリックも、全部見えてる」' },
-      { sp: '水無月 透', tx: '「じゃあ解決しに来たってことか」' },
-      { sp: '神原 律', tx: '「というより、解決し直しに来た。\n――夕食までに終わらせる」' },
-      { sp: '水無月 透', tx: '「……夕食まで？」' }
+      { sp: '水無月 透', tx: '「じゃあ……解決しに来たってことか？」' },
+      { sp: '神原 律', tx: '「というより、解決し直しに来たの。\n――デザートが出る前に、ぜんぶ終わらせる」' },
+      { sp: '', tx: '律の声に、なぜか凛とした確信が滲んでいた。\n透は頷き、原稿料を値切る編集者の目に戻った。' }
     ],
     onEnd: () => {
       gameState.has_clue_A = true;
@@ -2458,29 +2458,15 @@ const scenes = {
       gameState.has_clue_H = true;
       updateClueCount();
     },
-    next: 'detective_02'
-  },
-
-  'detective_02': {
-    bg: 'hall',
-    lines: [
-      { sp: '', tx: '玄関ホール。久遠寺が一礼するより先に、\n律は暖炉脇の薪入れを一瞥した。' },
-      { sp: '神原 律', tx: '「久遠寺さん。後ほど、\n暖炉の薪入れの奥を改めたほうがよろしいかと」' },
-      { sp: '久遠寺 貞三', tx: '「は、はあ……。\n畏まりましてございます、が……？」' },
-      { sp: '神原 律', tx: '「あと、お母上は百合がお好きでしたね、冬木さん」' },
-      { sp: '冬木 綾乃', tx: '「――！」' },
-      { sp: '冬木 綾乃', tx: '「……失礼、何の話でしょうか」' },
-      { sp: '神原 律', tx: '「ご挨拶の代わりです。\n私、今日は時間が惜しいので」' },
-      { sp: '水無月 透', tx: '（いま律、とんでもなく強い……）' }
-    ],
     next: 'detective_03'
   },
 
   'detective_03': {
     bg: 'dining',
     lines: [
-      { sp: '', tx: '夕食の席。冬木が銀の小箱を取り出す、その前に。' },
-      { sp: '神原 律', tx: '「冬木さん。その銀の小箱、\n蓋の内側をお見せいただいても？」' },
+      { sp: '', tx: '律は席を立ち、冬木の前に進み出た。' },
+      { sp: '神原 律', tx: '「冬木さん。\n今しがた仕舞われた、その銀の小箱」' },
+      { sp: '神原 律', tx: '「蓋の内側を、お見せいただいても？」' },
       { sp: '冬木 綾乃', tx: '「……なぜ、そのようなことを」' },
       { sp: '神原 律', tx: '「植物性アルカロイド――アコニチンの微粉末が、\n蓋の内側に付着しているはずだから」' },
       { sp: '神原 律', tx: '「白鷺さんの心臓薬のカプセルに、毎晩のように\n毒を混入し続けていた、その指先の痕跡として」' },
@@ -3118,7 +3104,11 @@ function advance() {
     if (scene.onEnd) scene.onEnd();
     const ch = effectiveChoice(scene);
     if (ch) { showChoices(ch); return; }
-    if (scene.next) { goToScene(scene.next); return; }
+    if (scene.next) {
+      const nextKey = typeof scene.next === 'function' ? scene.next() : scene.next;
+      if (nextKey) goToScene(nextKey);
+      return;
+    }
   } else {
     showLine();
   }
@@ -3472,19 +3462,6 @@ document.getElementById('btn-title-continue').addEventListener('click', () => {
   restoreState(snap);
 });
 
-document.getElementById('btn-title-detective').addEventListener('click', () => {
-  if (!canDetectiveMode()) return;
-  resetGameState();
-  document.getElementById('title-screen').classList.add('hidden');
-  document.getElementById('action-bar').classList.add('show');
-  setTimeout(() => goToScene('detective_01'), 600);
-});
-
-function refreshTitleMenu() {
-  const el = document.getElementById('btn-title-detective');
-  if (!el) return;
-  el.classList.toggle('hidden', !canDetectiveMode());
-}
 
 document.getElementById('btn-title-chapter').addEventListener('click', () => openPanel('panel-chapter'));
 document.getElementById('btn-title-endings').addEventListener('click', () => openPanel('panel-endings'));
@@ -3495,7 +3472,6 @@ document.getElementById('restart-btn').addEventListener('click', () => {
   document.getElementById('ending-screen').classList.remove('show');
   document.getElementById('action-bar').classList.remove('show');
   document.getElementById('title-screen').classList.remove('hidden');
-  refreshTitleMenu();
 });
 
 // アクションバー
@@ -3641,7 +3617,6 @@ document.addEventListener('keydown', (e) => {
 // 初期化
 loadMeta();
 initSnow();
-refreshTitleMenu();
 // 続きから・章選択・エンディングは autoSlot/seenEndings/readScenes をロード後に反映
 </script>
 
