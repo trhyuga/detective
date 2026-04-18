@@ -29,14 +29,34 @@
     color: var(--ink);
     font-family: 'Shippori Mincho', 'Noto Serif JP', serif;
     -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
     user-select: none;
+    -webkit-text-size-adjust: 100%;
+    overscroll-behavior: none;
+    touch-action: manipulation; /* iOS ダブルタップズーム抑止 */
   }
 
+  /* デスクトップは最大幅を持たせて中央寄せ、黒帯演出 */
   #game {
     position: relative;
     width: 100%;
     height: 100%;
+    max-width: 760px;
+    margin: 0 auto;
     overflow: hidden;
+    box-shadow: 0 0 80px rgba(0, 0, 0, 0.6);
+    /* iPhone ノッチ・ホームインジケータ */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    /* 子要素を inset 内に収める */
+    box-sizing: border-box;
+  }
+  @media (min-width: 761px) {
+    body {
+      background: #020408;
+    }
   }
 
   .scene-bg {
@@ -187,10 +207,18 @@
     font-family: inherit;
     animation: title-fade-in 3s ease-out 1.8s both, pulse-subtle 3s ease-in-out 3s infinite;
   }
-  .title-start:hover, .title-start:active {
-    background: rgba(184, 153, 104, 0.15);
+  .title-start:active {
+    background: rgba(184, 153, 104, 0.22);
     border-color: var(--accent-gold);
     color: var(--accent-gold);
+    transform: scale(0.97);
+  }
+  @media (hover: hover) {
+    .title-start:hover {
+      background: rgba(184, 153, 104, 0.15);
+      border-color: var(--accent-gold);
+      color: var(--accent-gold);
+    }
   }
   .title-caption {
     position: absolute;
@@ -214,13 +242,19 @@
     left: 0;
     right: 0;
     bottom: 0;
-    padding: 1.5em 1.5em 2em;
+    padding: 1.5em 1.5em calc(2em + env(safe-area-inset-bottom));
     z-index: 10;
     background: linear-gradient(180deg, transparent 0%, rgba(5, 8, 16, 0.85) 20%, rgba(5, 8, 16, 0.95) 100%);
     min-height: 45%;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+  }
+  /* モバイル下部にアクションバーが来たときは本文エリアを広げて重ねない */
+  @media (max-width: 520px) {
+    #story-area {
+      padding-bottom: calc(4.5em + env(safe-area-inset-bottom));
+    }
   }
   .speaker {
     font-size: 0.95rem;
@@ -291,9 +325,9 @@
   }
   .choice-btn {
     width: 100%;
-    max-width: 400px;
-    padding: 1.2em 1.5em;
-    margin: 0.5em 0;
+    max-width: 440px;
+    padding: 1.2em 1.3em;
+    margin: 0.4em 0;
     background: var(--choice-bg);
     border: 1px solid var(--choice-border);
     color: var(--ink);
@@ -302,14 +336,22 @@
     letter-spacing: 0.1em;
     text-align: left;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: background-color 0.25s, border-color 0.25s, transform 0.15s;
     position: relative;
     line-height: 1.5;
+    min-height: 48px; /* iOS 推奨タップ高 */
   }
-  .choice-btn:hover, .choice-btn:active {
-    background: rgba(184, 153, 104, 0.18);
+  .choice-btn:active {
+    background: rgba(184, 153, 104, 0.25);
     border-color: var(--accent-gold);
-    transform: translateX(4px);
+    transform: scale(0.985);
+  }
+  @media (hover: hover) {
+    .choice-btn:hover {
+      background: rgba(184, 153, 104, 0.18);
+      border-color: var(--accent-gold);
+      transform: translateX(4px);
+    }
   }
   .choice-btn::before {
     content: '◇';
@@ -388,13 +430,13 @@
 
   #hud {
     position: absolute;
-    top: 0.8em;
-    right: 0.8em;
+    top: calc(0.8em + env(safe-area-inset-top));
+    right: calc(0.8em + env(safe-area-inset-right));
     z-index: 15;
     font-size: 0.7rem;
     color: var(--ink-dim);
     letter-spacing: 0.2em;
-    padding: 0.4em 0.8em;
+    padding: 0.5em 0.8em;
     background: rgba(5, 8, 16, 0.6);
     border: 1px solid rgba(184, 153, 104, 0.2);
     border-radius: 2px;
@@ -465,38 +507,83 @@
     cursor: pointer;
     transition: all 0.3s;
   }
-  .ending-restart:hover {
-    background: rgba(184, 153, 104, 0.15);
+  .ending-restart {
+    min-height: 48px;
+  }
+  .ending-restart:active {
+    background: rgba(184, 153, 104, 0.22);
+  }
+  @media (hover: hover) {
+    .ending-restart:hover {
+      background: rgba(184, 153, 104, 0.15);
+    }
   }
 
   /* ===== アクションバー ===== */
   #action-bar {
     position: absolute;
-    top: 0.8em;
-    left: 0.8em;
+    top: calc(0.6em + env(safe-area-inset-top));
+    left: 0.6em;
     z-index: 25;
     display: none;
-    gap: 0.3em;
+    gap: 0.35em;
     flex-wrap: wrap;
-    max-width: calc(100% - 8em);
+    max-width: calc(100% - 7.5em);
   }
   #action-bar.show { display: flex; }
   .action-btn {
-    background: rgba(5, 8, 16, 0.6);
+    background: rgba(5, 8, 16, 0.65);
     border: 1px solid rgba(184, 153, 104, 0.3);
     color: var(--ink-dim);
     font-family: inherit;
-    font-size: 0.68rem;
+    font-size: 0.7rem;
     letter-spacing: 0.15em;
-    padding: 0.35em 0.65em;
+    padding: 0.55em 0.8em;
+    min-width: 3em;
+    min-height: 2.2em;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
     border-radius: 2px;
   }
-  .action-btn:hover, .action-btn.active {
+  .action-btn.active {
     color: var(--accent-gold);
     border-color: var(--accent-gold);
-    background: rgba(184, 153, 104, 0.18);
+    background: rgba(184, 153, 104, 0.2);
+  }
+  .action-btn:active {
+    background: rgba(184, 153, 104, 0.25);
+    transform: scale(0.96);
+  }
+  @media (hover: hover) {
+    .action-btn:hover {
+      color: var(--accent-gold);
+      border-color: var(--accent-gold);
+      background: rgba(184, 153, 104, 0.18);
+    }
+  }
+  /* 狭い画面ではアクションバーを下部中央に */
+  @media (max-width: 520px) {
+    #action-bar {
+      top: auto;
+      left: 50%;
+      bottom: calc(0.6em + env(safe-area-inset-bottom));
+      transform: translateX(-50%);
+      justify-content: center;
+      gap: 0.3em;
+      max-width: calc(100% - 1.2em);
+      padding: 0.3em;
+      background: rgba(5, 8, 16, 0.85);
+      border: 1px solid rgba(184, 153, 104, 0.2);
+      border-radius: 6px;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+    .action-btn {
+      font-size: 0.65rem;
+      padding: 0.5em 0.55em;
+      min-width: 2.6em;
+      letter-spacing: 0.1em;
+    }
   }
 
   /* ===== 汎用パネル ===== */
@@ -507,7 +594,7 @@
     background: rgba(5, 8, 16, 0.96);
     display: none;
     flex-direction: column;
-    padding: 1.2em 1.2em 1em;
+    padding: calc(1.2em + env(safe-area-inset-top)) 1.2em calc(1em + env(safe-area-inset-bottom));
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
   }
@@ -533,13 +620,21 @@
     font-family: inherit;
     font-size: 0.75rem;
     letter-spacing: 0.2em;
-    padding: 0.4em 0.8em;
+    padding: 0.55em 0.9em;
     cursor: pointer;
     border-radius: 2px;
+    min-height: 44px;
+    min-width: 44px;
+  }
+  .panel-close:active {
+    background: rgba(184, 153, 104, 0.2);
+    border-color: var(--accent-gold);
   }
   .panel-body {
     flex: 1;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch; /* iOS 慣性スクロール */
+    overscroll-behavior: contain;
     padding-right: 0.3em;
   }
   .panel-body::-webkit-scrollbar {
@@ -568,6 +663,7 @@
   .seg-btn {
     flex: 1 1 auto;
     min-width: 4em;
+    min-height: 44px;
     background: rgba(18, 23, 31, 0.7);
     border: 1px solid var(--choice-border);
     color: var(--ink-dim);
@@ -577,12 +673,22 @@
     padding: 0.55em 0.3em;
     cursor: pointer;
     border-radius: 2px;
-    transition: all 0.2s;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
   }
   .seg-btn.active {
     color: var(--accent-gold);
     border-color: var(--accent-gold);
     background: rgba(184, 153, 104, 0.15);
+  }
+  .seg-btn:active {
+    background: rgba(184, 153, 104, 0.2);
+  }
+  @media (hover: hover) {
+    .seg-btn:hover {
+      color: var(--accent-gold);
+      border-color: var(--accent-gold);
+      background: rgba(184, 153, 104, 0.12);
+    }
   }
 
   /* ===== バックログ ===== */
@@ -637,19 +743,35 @@
     border: 1px solid var(--choice-border);
     color: var(--ink);
     font-family: inherit;
-    font-size: 0.7rem;
+    font-size: 0.72rem;
     letter-spacing: 0.15em;
-    padding: 0.4em 0.7em;
+    padding: 0.55em 0.85em;
+    min-height: 40px;
     cursor: pointer;
     border-radius: 2px;
   }
-  .slot-btn:hover {
-    border-color: var(--accent-gold);
-    color: var(--accent-gold);
+  .slot-btn:active {
+    background: rgba(184, 153, 104, 0.2);
   }
-  .slot-btn.danger:hover {
-    border-color: var(--accent-ember);
-    color: var(--accent-ember);
+  @media (hover: hover) {
+    .slot-btn:hover {
+      border-color: var(--accent-gold);
+      color: var(--accent-gold);
+    }
+    .slot-btn.danger:hover {
+      border-color: var(--accent-ember);
+      color: var(--accent-ember);
+    }
+  }
+  @media (max-width: 520px) {
+    .slot {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .slot-actions {
+      justify-content: flex-end;
+      margin-top: 0.5em;
+    }
   }
 
   /* ===== 章選択・エンディング一覧 ===== */
@@ -660,19 +782,26 @@
     border: 1px solid var(--choice-border);
     color: var(--ink);
     font-family: inherit;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     letter-spacing: 0.15em;
-    padding: 0.85em 1em;
+    padding: 0.95em 1em;
+    min-height: 48px;
     text-align: left;
     margin-bottom: 0.5em;
     cursor: pointer;
     border-radius: 2px;
-    transition: all 0.2s;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
   }
-  .jump-btn:hover, .ending-entry:hover {
+  .jump-btn:active, .ending-entry:active {
+    background: rgba(184, 153, 104, 0.18);
     border-color: var(--accent-gold);
-    color: var(--accent-gold);
-    background: rgba(184, 153, 104, 0.1);
+  }
+  @media (hover: hover) {
+    .jump-btn:hover, .ending-entry:hover {
+      border-color: var(--accent-gold);
+      color: var(--accent-gold);
+      background: rgba(184, 153, 104, 0.1);
+    }
   }
   .jump-btn.locked, .ending-entry.locked {
     color: var(--ink-dim);
@@ -739,20 +868,28 @@
     font-family: inherit;
     font-size: 0.8rem;
     letter-spacing: 0.4em;
-    padding: 0.6em 1.5em;
+    padding: 0.7em 1.5em;
+    min-height: 44px;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
     border-radius: 2px;
   }
-  .title-menu-btn:hover {
+  .title-menu-btn:active {
+    background: rgba(184, 153, 104, 0.2);
     border-color: var(--accent-gold);
     color: var(--accent-gold);
+  }
+  @media (hover: hover) {
+    .title-menu-btn:hover {
+      border-color: var(--accent-gold);
+      color: var(--accent-gold);
+    }
   }
 
   /* ===== オートモードインジケータ ===== */
   #auto-indicator, #skip-indicator {
     position: absolute;
-    top: 3.2em;
+    top: calc(3.4em + env(safe-area-inset-top));
     left: 50%;
     transform: translateX(-50%);
     z-index: 18;
@@ -770,6 +907,38 @@
   #skip-indicator {
     color: var(--accent-ice);
     border-color: var(--accent-ice);
+  }
+  /* 狭い画面（アクションバーが下）ではインジケータを上端に */
+  @media (max-width: 520px) {
+    #auto-indicator, #skip-indicator {
+      top: calc(0.6em + env(safe-area-inset-top));
+    }
+  }
+
+  /* ===== 横向き対応（低い画面高さ） ===== */
+  @media (max-height: 440px) and (orientation: landscape) {
+    #story-area {
+      min-height: 55%;
+      padding: 1em 1.5em calc(1em + env(safe-area-inset-bottom));
+    }
+    .text-box {
+      font-size: 0.9rem;
+      line-height: 1.7;
+      min-height: 5em;
+    }
+    .title-main { font-size: 2rem; margin-bottom: 0.3em; }
+    .title-sub { margin-bottom: 1em; }
+    .title-menu { margin-top: 0.8em; gap: 0.35em; }
+    .title-menu-btn { padding: 0.5em 1.2em; min-height: 40px; }
+    .chapter-name { font-size: 1.4rem; }
+  }
+
+  /* ===== フォントサイズ微調整（小さい端末） ===== */
+  @media (max-width: 360px) {
+    .text-box { font-size: 0.94rem; }
+    .speaker { font-size: 0.88rem; }
+    .choice-btn { font-size: 0.92rem; padding: 1em 1.1em; }
+    .title-main { font-size: 2.4rem; letter-spacing: 0.25em; }
   }
 </style>
 </head>
@@ -2356,7 +2525,7 @@ document.querySelectorAll('[data-close]').forEach(b => {
   b.addEventListener('click', closeAllPanels);
 });
 
-// クリックで進める
+// クリック／タップで進める
 document.getElementById('game').addEventListener('click', (e) => {
   if (!document.getElementById('title-screen').classList.contains('hidden')) return;
   if (document.getElementById('choices').classList.contains('show')) return;
@@ -2366,6 +2535,54 @@ document.getElementById('game').addEventListener('click', (e) => {
   if (e.target.closest('#hud')) return;
   if (e.target.closest('#action-bar')) return;
   advance();
+});
+
+// ==========================================================================
+// 長押しでスキップ（モバイル用、既読のみ）
+// ==========================================================================
+let longPressTimer = null;
+let longPressTriggered = false;
+const LONG_PRESS_MS = 500;
+
+function isInGameplay() {
+  if (!document.getElementById('title-screen').classList.contains('hidden')) return false;
+  if (document.getElementById('choices').classList.contains('show')) return false;
+  if (document.getElementById('ending-screen').classList.contains('show')) return false;
+  if (document.querySelector('.panel.show')) return false;
+  return true;
+}
+
+function onPressStart(e) {
+  if (!isInGameplay()) return;
+  if (e.target && (e.target.closest('#hud') || e.target.closest('#action-bar'))) return;
+  longPressTriggered = false;
+  clearTimeout(longPressTimer);
+  longPressTimer = setTimeout(() => {
+    if (!meta.readScenes[currentSceneKey]) return;
+    longPressTriggered = true;
+    setSkipMode(true);
+  }, LONG_PRESS_MS);
+}
+
+function onPressEnd() {
+  clearTimeout(longPressTimer);
+  if (longPressTriggered) {
+    // 長押しで開始したスキップは離したら止める
+    setSkipMode(false);
+    longPressTriggered = false;
+  }
+}
+
+const gameEl = document.getElementById('game');
+gameEl.addEventListener('pointerdown', onPressStart);
+gameEl.addEventListener('pointerup', onPressEnd);
+gameEl.addEventListener('pointercancel', onPressEnd);
+gameEl.addEventListener('pointerleave', onPressEnd);
+
+// iOS のピンチズーム・ダブルタップ拡大を抑止
+document.addEventListener('gesturestart', (e) => e.preventDefault());
+document.addEventListener('dblclick', (e) => {
+  if (isInGameplay()) e.preventDefault();
 });
 
 // キーボード
