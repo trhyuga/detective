@@ -702,6 +702,176 @@ const scenes = {
   }
 };
 
+// ==========================================================================
+// ゲームエンジン
+// ==========================================================================
+let currentSceneKey = null;
+let currentLineIdx = 0;
+let isTyping = false;
+let typingTimeout = null;
+let currentFullText = '';
+
+function addClue(key) {
+  if (gameState[key]) return;
+  gameState[key] = true;
+  updateClueCount();
+  showClueNotify(clueDescriptions[key]);
+}
+
+function updateClueCount() {
+  const count = Object.keys(gameState).filter(k => k.startsWith('has_clue_') && gameState[k]).length;
+  document.getElementById('clue-count').textContent = count;
+}
+
+function showClueNotify(text) {
+  const n = document.getElementById('clue-notify');
+  document.getElementById('clue-text').textContent = text;
+  n.classList.add('show');
+  setTimeout(() => n.classList.remove('show'), 3200);
+}
+
+function setBackground(bgClass) {
+  const bg = document.getElementById('scene-bg');
+  bg.className = 'scene-bg bg-' + bgClass;
+}
+
+function showChapterTitle(num, name, cb) {
+  const el = document.getElementById('chapter-title');
+  document.getElementById('chapter-num').textContent = num;
+  document.getElementById('chapter-name').textContent = name;
+  el.classList.add('show');
+  const numEl = document.getElementById('chapter-num');
+  const nameEl = document.getElementById('chapter-name');
+  numEl.style.animation = 'none';
+  nameEl.style.animation = 'none';
+  void numEl.offsetWidth;
+  numEl.style.animation = '';
+  nameEl.style.animation = '';
+  setTimeout(() => {
+    el.classList.remove('show');
+    if (cb) cb();
+  }, 4000);
+}
+
+function typeText(text, cb) {
+  const tb = document.getElementById('text-box');
+  const hint = document.getElementById('next-hint');
+  hint.classList.remove('show');
+  tb.innerHTML = '';
+  currentFullText = text;
+  isTyping = true;
+  let i = 0;
+  const speed = 45;
+  function step() {
+    if (i <= text.length) {
+      tb.innerHTML = text.substring(0, i).replace(/\n/g, '<br>') + '<span class="caret"></span>';
+      i++;
+      typingTimeout = setTimeout(step, speed);
+    } else {
+      tb.innerHTML = text.replace(/\n/g, '<br>');
+      isTyping = false;
+      hint.classList.add('show');
+      if (cb) cb();
+    }
+  }
+  step();
+}
+
+function skipTyping() {
+  if (!isTyping) return;
+  clearTimeout(typingTimeout);
+  document.getElementById('text-box').innerHTML = currentFullText.replace(/\n/g, '<br>');
+  isTyping = false;
+  document.getElementById('next-hint').classList.add('show');
+}
+
+function showLine() {
+  const scene = scenes[currentSceneKey];
+  if (!scene || !scene.lines) return;
+  const line = scene.lines[currentLineIdx];
+  document.getElementById('speaker').textContent = line.sp || '';
+  typeText(line.tx);
+}
+
+function advance() {
+  if (isTyping) { skipTyping(); return; }
+  const scene = scenes[currentSceneKey];
+  if (!scene) return;
+  currentLineIdx++;
+  if (currentLineIdx >= (scene.lines ? scene.lines.length : 0)) {
+    if (scene.onEnd) scene.onEnd();
+    if (scene.choice) { showChoices(scene.choice); return; }
+    if (scene.next) { goToScene(scene.next); return; }
+  } else {
+    showLine();
+  }
+}
+
+function goToScene(key) {
+  currentSceneKey = key;
+  currentLineIdx = 0;
+  const scene = scenes[key];
+  if (!scene) return;
+  if (scene.bg) setBackground(scene.bg);
+  if (scene.chapter) {
+    showChapterTitle(scene.chapter.num, scene.chapter.name, () => showLine());
+  } else {
+    if (scene.lines && scene.lines.length > 0) showLine();
+  }
+}
+
+function showChoices(choice) {
+  const wrap = document.getElementById('choices');
+  const list = document.getElementById('choice-list');
+  document.getElementById('choice-prompt').textContent = choice.prompt;
+  list.innerHTML = '';
+  choice.options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.textContent = opt.tx;
+    btn.onclick = () => {
+      if (opt.apply) opt.apply();
+      else if (opt.flag !== undefined) gameState.route_choice = opt.flag;
+      wrap.classList.remove('show');
+      goToScene(opt.next);
+    };
+    list.appendChild(btn);
+  });
+  wrap.classList.add('show');
+}
+
+// ==========================================================================
+// 入力ハンドラ
+// ==========================================================================
+document.getElementById('start-btn').addEventListener('click', () => {
+  document.getElementById('title-screen').classList.add('hidden');
+  setTimeout(() => goToScene('prologue_01'), 800);
+});
+
+document.getElementById('restart-btn').addEventListener('click', () => {
+  Object.keys(gameState).forEach(k => {
+    if (k.startsWith('has_clue_')) gameState[k] = false;
+  });
+  gameState.route_choice = null;
+  gameState.accuse = null;
+  gameState.alone = false;
+  gameState.choice_empathy = false;
+  gameState.talk_to_mizuki_final = false;
+  gameState.investigate_count = 0;
+  updateClueCount();
+  document.getElementById('ending-screen').classList.remove('show');
+  document.getElementById('title-screen').classList.remove('hidden');
+});
+
+document.getElementById('game').addEventListener('click', (e) => {
+  if (!document.getElementById('title-screen').classList.contains('hidden')) return;
+  if (document.getElementById('choices').classList.contains('show')) return;
+  if (document.getElementById('ending-screen').classList.contains('show')) return;
+  if (document.getElementById('chapter-title').classList.contains('show')) return;
+  if (e.target.closest('#hud')) return;
+  advance();
+});
+
 initSnow();
 </script>
 
