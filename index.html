@@ -652,7 +652,7 @@ const scenes = {
       { sp: '', tx: '律は気づいた。\n「二十年」と口にした瞬間、冬木のグラスを持つ指が、ほんの一瞬、\n強く硬直したことに。' },
       { sp: '神原 律', tx: '（……二十年。何かあった年月なのだろうか）' }
     ],
-    onEnd: () => { addClue('has_clue_F'); },
+    onEnd: () => { addClue('has_clue_F'); gameState.investigate_count++; },
     next: 'converge_01'
   },
 
@@ -668,7 +668,7 @@ const scenes = {
       { sp: '神原 律', tx: '（佐伯。\n――その名前、確か透が昔こぼしていた。元同僚の、既婚の先輩だと）' },
       { sp: '', tx: '律は静かにその場を離れた。\n――この事実を、透に伝えるべきかどうか。\n判断は、後に回すしかない。' }
     ],
-    onEnd: () => { addClue('has_clue_G'); },
+    onEnd: () => { addClue('has_clue_G'); gameState.investigate_count++; },
     next: 'converge_01'
   },
 
@@ -683,7 +683,7 @@ const scenes = {
       { sp: '久遠寺 貞三', tx: '「お二人は、ずいぶん憔悴しておられました。\nその後、お噂を耳にすることはございませんでしたが」' },
       { sp: '神原 律', tx: '（二十年前の、若い夫婦……）' }
     ],
-    onEnd: () => { addClue('has_clue_H'); },
+    onEnd: () => { addClue('has_clue_H'); gameState.investigate_count++; },
     next: 'converge_01'
   },
 
@@ -833,7 +833,7 @@ const scenes = {
       { sp: '冬木 綾乃', tx: '「……神原さん。人には、誰にも触れられたくない過去があるものよ」' },
       { sp: '', tx: '冬木の声音は静かだった。\nだが、その目は冷たく凍っていた。' }
     ],
-    onEnd: () => { addClue('has_clue_F'); },
+    onEnd: () => { addClue('has_clue_F'); gameState.investigate_count++; },
     next: 'finale_01'
   },
 
@@ -849,7 +849,7 @@ const scenes = {
       { sp: '神原 律', tx: '（犯人はこれを隠したかった。\nでも、処分するには時間も機会もなかった）' },
       { sp: '神原 律', tx: '（暖炉で燃やすつもりだったのかもしれない。\nだが金属は燃えない。咄嗟に奥へ押し込んだ……）' }
     ],
-    onEnd: () => { addClue('has_clue_C'); },
+    onEnd: () => { addClue('has_clue_C'); gameState.investigate_count++; },
     next: 'finale_01'
   },
 
@@ -864,7 +864,7 @@ const scenes = {
       { sp: '久遠寺 貞三', tx: '「……あの目が、時折、この館で見えるのです。\n誰かの横顔に、重なるように」' },
       { sp: '神原 律', tx: '（二十年前。少女。\nそして、今この館にいる誰か……）' }
     ],
-    onEnd: () => { addClue('has_clue_H'); },
+    onEnd: () => { addClue('has_clue_H'); gameState.investigate_count++; },
     next: 'finale_01'
   },
 
@@ -932,6 +932,7 @@ const scenes = {
       { sp: '神原 律', tx: '「……ありがとう、透」' },
       { sp: '', tx: '律は目を閉じ、深く息を吐いた。\n告発の言葉を、選びとる時間がやってくる。' }
     ],
+    onEnd: () => { gameState.investigate_count++; },
     next: 'final_accuse'
   },
 
@@ -978,6 +979,8 @@ const scenes = {
         goToScene('end_bad_fire');
       } else if (accuse === 'none' && gameState.has_clue_F) {
         goToScene('end_bad_silent');
+      } else if (accuse === 'none' && gameState.investigate_count < 3) {
+        goToScene('end_bad_generic');
       } else {
         goToScene('end_bad_generic');
       }
@@ -1401,7 +1404,8 @@ function showEndingScreen(info) {
 
   document.getElementById('ending-summary').innerHTML = `
     <strong>第一章ルート:</strong> ${routeLabel}<br>
-    <strong>入手した手がかり: ${count} / 8</strong><br><br>
+    <strong>入手した手がかり: ${count} / 8</strong><br>
+    <strong>調査行動: ${gameState.investigate_count} 回</strong><br><br>
     ${clues || '（手がかりなし）'}<br><br>
     <span style="font-size:0.78rem; color:var(--ink-dim)">
     TRUE END 到達には、伏線 A・D・E・F の四つが必須。<br>
