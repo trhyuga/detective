@@ -935,6 +935,20 @@
     border-color: var(--accent-gold);
     color: var(--accent-gold);
   }
+  .title-menu-btn.detective {
+    border-color: var(--accent-gold);
+    color: var(--accent-gold);
+    background: rgba(184, 153, 104, 0.08);
+    box-shadow: 0 0 16px rgba(184, 153, 104, 0.2);
+    animation: detective-pulse 2.5s ease-in-out infinite;
+  }
+  @keyframes detective-pulse {
+    0%, 100% { box-shadow: 0 0 14px rgba(184, 153, 104, 0.18); }
+    50% { box-shadow: 0 0 24px rgba(184, 153, 104, 0.45); }
+  }
+  .title-menu-btn.hidden {
+    display: none;
+  }
   @media (hover: hover) {
     .title-menu-btn:hover {
       border-color: var(--accent-gold);
@@ -1045,6 +1059,7 @@
     <button class="title-start" id="start-btn">は じ め る</button>
     <div class="title-menu">
       <button class="title-menu-btn" id="btn-title-continue">続きから</button>
+      <button class="title-menu-btn detective hidden" id="btn-title-detective">★ 名探偵ルート ★</button>
       <button class="title-menu-btn" id="btn-title-chapter">章選択</button>
       <button class="title-menu-btn" id="btn-title-endings">エンディング</button>
       <button class="title-menu-btn" id="btn-title-settings">設定</button>
@@ -1283,6 +1298,13 @@ function hasReachedNormal() {
          || meta.seenEndings['end_normal_b']
          || meta.seenEndings['end_normal_c']);
 }
+function hasReachedTrue() {
+  return !!(meta.seenEndings['end_true_standard']
+         || meta.seenEndings['end_true_plus']);
+}
+function canDetectiveMode() {
+  return hasReachedNormal() && hasReachedTrue();
+}
 function isReplay() {
   return Object.keys(meta.seenEndings).length > 0;
 }
@@ -1438,7 +1460,8 @@ const endingDefs = [
   { id: 'serial_end_fuyuki_mid',    type: 'bad',    num: 'SR 3', title: '告発された真犯人、証拠は無し', extra: true },
   { id: 'serial_end_fuyuki_late',   type: 'bad',    num: 'SR 4', title: '遅すぎた直感', extra: true },
   { id: 'serial_end_wrong_mid',     type: 'bad',    num: 'SR 5', title: '誤った告発、崩れる館', extra: true },
-  { id: 'serial_end_massacre',      type: 'bad',    num: 'SR 6', title: '白嶺、全滅', extra: true }
+  { id: 'serial_end_massacre',      type: 'bad',    num: 'SR 6', title: '白嶺、全滅', extra: true },
+  { id: 'end_detective',            type: 'true',   num: 'DX',  title: '雪嶺の超特急', extra: true }
 ];
 
 // ==========================================================================
@@ -2410,6 +2433,107 @@ const scenes = {
     })
   },
 
+  // ============== 名探偵ルート（3週目以降） ==============
+  'detective_01': {
+    chapter: { num: '― 名 探 偵 ル ー ト ―', name: '雪嶺の超特急' },
+    bg: 'exterior',
+    lines: [
+      { sp: '', tx: '――三度目の、白嶺荘。' },
+      { sp: '', tx: '吹雪の中、古い洋館の屋根を見た瞬間、\n律の頭の中で、すべての旋律が完璧に整列した。' },
+      { sp: '神原 律', tx: '「透。今回は、長居しないわよ」' },
+      { sp: '水無月 透', tx: '「……律、目がおかしいぞ。\nいつもの三倍くらい鋭い」' },
+      { sp: '神原 律', tx: '「犯人も、動機も、トリックも、全部見えてる」' },
+      { sp: '水無月 透', tx: '「じゃあ解決しに来たってことか」' },
+      { sp: '神原 律', tx: '「というより、解決し直しに来た。\n――夕食までに終わらせる」' },
+      { sp: '水無月 透', tx: '「……夕食まで？」' }
+    ],
+    onEnd: () => {
+      gameState.has_clue_A = true;
+      gameState.has_clue_B = true;
+      gameState.has_clue_C = true;
+      gameState.has_clue_D = true;
+      gameState.has_clue_E = true;
+      gameState.has_clue_F = true;
+      gameState.has_clue_G = true;
+      gameState.has_clue_H = true;
+      updateClueCount();
+    },
+    next: 'detective_02'
+  },
+
+  'detective_02': {
+    bg: 'hall',
+    lines: [
+      { sp: '', tx: '玄関ホール。久遠寺が一礼するより先に、\n律は暖炉脇の薪入れを一瞥した。' },
+      { sp: '神原 律', tx: '「久遠寺さん。後ほど、\n暖炉の薪入れの奥を改めたほうがよろしいかと」' },
+      { sp: '久遠寺 貞三', tx: '「は、はあ……。\n畏まりましてございます、が……？」' },
+      { sp: '神原 律', tx: '「あと、お母上は百合がお好きでしたね、冬木さん」' },
+      { sp: '冬木 綾乃', tx: '「――！」' },
+      { sp: '冬木 綾乃', tx: '「……失礼、何の話でしょうか」' },
+      { sp: '神原 律', tx: '「ご挨拶の代わりです。\n私、今日は時間が惜しいので」' },
+      { sp: '水無月 透', tx: '（いま律、とんでもなく強い……）' }
+    ],
+    next: 'detective_03'
+  },
+
+  'detective_03': {
+    bg: 'dining',
+    lines: [
+      { sp: '', tx: '夕食の席。冬木が銀の小箱を取り出す、その前に。' },
+      { sp: '神原 律', tx: '「冬木さん。その銀の小箱、\n蓋の内側をお見せいただいても？」' },
+      { sp: '冬木 綾乃', tx: '「……なぜ、そのようなことを」' },
+      { sp: '神原 律', tx: '「植物性アルカロイド――アコニチンの微粉末が、\n蓋の内側に付着しているはずだから」' },
+      { sp: '神原 律', tx: '「白鷺さんの心臓薬のカプセルに、毎晩のように\n毒を混入し続けていた、その指先の痕跡として」' },
+      { sp: '白鷺 清吾', tx: '「……な、何の話だ、神原くん」' },
+      { sp: '神原 律', tx: '「白鷺さん、今夜のお薬は、\n私が新しい封のものと交換します。\nそれが、今日あなたが生き延びる唯一の条件」' },
+      { sp: '榊 亮', tx: '「……おい、ちょっと待て。\n今、何が起こってるんだ？」' },
+      { sp: '神原 律', tx: '「榊さん。あなたが今夜二十三時に\n書斎で文鎮を握ろうとしても、もう振り下ろす相手はいません」' },
+      { sp: '榊 亮', tx: '「――っ、なんで、それを」' },
+      { sp: '神原 律', tx: '「だから、今夜は大人しく部屋で眠ってください。\n示談金の件は、後日、私が仲介します」' }
+    ],
+    next: 'detective_04'
+  },
+
+  'detective_04': {
+    bg: 'hall',
+    lines: [
+      { sp: '冬木 綾乃', tx: '「……神原さん。あなたは何者？」' },
+      { sp: '神原 律', tx: '「フリーの校正者です。\n間違いを、本番前に直すのが仕事」' },
+      { sp: '冬木 綾乃', tx: '「……ふふ。そう」' },
+      { sp: '冬木 綾乃', tx: '「二十年かけて組み立てた計画を、\n一分で校正されるとは思わなかったわ」' },
+      { sp: '神原 律', tx: '「あなたの動機は、理解しています。\nだから、提案を一つ」' },
+      { sp: '神原 律', tx: '「白鷺さんが、二十年前の研究所の件を\n世間に正式に謝罪する。その証人に、私がなります」' },
+      { sp: '神原 律', tx: '「その代わりに――凶器はもう、握らない」' },
+      { sp: '冬木 綾乃', tx: '「…………」' },
+      { sp: '冬木 綾乃', tx: '「……ずいぶん、身の程知らずな取引ね」' },
+      { sp: '神原 律', tx: '「校正者は、身の程より文章を信じます。\nどうですか、白鷺さん」' },
+      { sp: '白鷺 清吾', tx: '「……神原くん。君の父君が、\nこんな娘を遺していたとは」' },
+      { sp: '白鷺 清吾', tx: '「……わかった。\n冬木くんには、きちんと話をする」' },
+      { sp: '', tx: '吹雪が、窓を叩いている。\nだが、この夜、誰一人として命を落とさなかった。' }
+    ],
+    next: 'end_detective'
+  },
+
+  'end_detective': {
+    bg: 'dawn',
+    lines: [
+      { sp: '', tx: '翌朝。\n雪は、少しだけやんでいた。' },
+      { sp: '', tx: '白鷺と冬木は、並んで麓の警察へ向かった。\n白鷺は二十年前の過去を、冬木は未遂の殺意を。\n二人とも、自分の言葉で、自分の足で。' },
+      { sp: '榊 亮', tx: '「神原さん。あんた、何者なんだ本当に」' },
+      { sp: '神原 律', tx: '「三度目だから、効くの。\nどんな文章でも、三度校正すれば、間違いは全部見える」' },
+      { sp: '水無月 透', tx: '「……編集者としては、聞き流せないな」' },
+      { sp: '', tx: 'ホールの暖炉前、七つの椅子に、七人がまだ揃っている。\n誰も欠けなかった朝を、律はゆっくりと見回した。' },
+      { sp: '神原 律', tx: '（……今回の出来は、我ながら悪くない）' },
+      { sp: '神原 律', tx: '（二人の旋律は、今度こそ、終止符ではなく\n「続きの一音」を鳴らせるのかもしれない）' }
+    ],
+    onEnd: () => showEndingScreen({
+      type: 'true',
+      tag: '― DETECTIVE END ―',
+      title: '雪嶺の超特急',
+      text: '三度目の白嶺荘で、律は一晩どころか一食のうちにすべてを解き明かした。\n誰も死なず、誰も失われない、完璧な再演。\n――これは、幾度も物語を読み返してきた、あなただけへのご褒美。'
+    })
+  },
+
   // ============== 連続殺人ルート ==============
   'serial_01': {
     chapter: { num: '― 第 六 章 ―', name: '二夜目の影' },
@@ -3348,6 +3472,20 @@ document.getElementById('btn-title-continue').addEventListener('click', () => {
   restoreState(snap);
 });
 
+document.getElementById('btn-title-detective').addEventListener('click', () => {
+  if (!canDetectiveMode()) return;
+  resetGameState();
+  document.getElementById('title-screen').classList.add('hidden');
+  document.getElementById('action-bar').classList.add('show');
+  setTimeout(() => goToScene('detective_01'), 600);
+});
+
+function refreshTitleMenu() {
+  const el = document.getElementById('btn-title-detective');
+  if (!el) return;
+  el.classList.toggle('hidden', !canDetectiveMode());
+}
+
 document.getElementById('btn-title-chapter').addEventListener('click', () => openPanel('panel-chapter'));
 document.getElementById('btn-title-endings').addEventListener('click', () => openPanel('panel-endings'));
 document.getElementById('btn-title-settings').addEventListener('click', () => openPanel('panel-settings'));
@@ -3357,6 +3495,7 @@ document.getElementById('restart-btn').addEventListener('click', () => {
   document.getElementById('ending-screen').classList.remove('show');
   document.getElementById('action-bar').classList.remove('show');
   document.getElementById('title-screen').classList.remove('hidden');
+  refreshTitleMenu();
 });
 
 // アクションバー
@@ -3502,6 +3641,7 @@ document.addEventListener('keydown', (e) => {
 // 初期化
 loadMeta();
 initSnow();
+refreshTitleMenu();
 // 続きから・章選択・エンディングは autoSlot/seenEndings/readScenes をロード後に反映
 </script>
 
