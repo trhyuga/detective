@@ -1214,6 +1214,12 @@
     box-shadow: 0 0 22px rgba(201, 150, 80, 0.28);
     animation: finale-pulse 3s ease-in-out infinite;
   }
+  .title-menu-btn.mizuki {
+    border: 1px solid var(--accent-ice);
+    color: var(--accent-ice);
+    letter-spacing: 0.45em;
+    background: rgba(122, 184, 212, 0.08);
+  }
   @keyframes finale-pulse {
     0%, 100% { box-shadow: 0 0 16px rgba(201, 150, 80, 0.22); }
     50% { box-shadow: 0 0 30px rgba(201, 150, 80, 0.55); }
@@ -1311,6 +1317,7 @@
     <button class="title-start" id="start-btn">は じ め る</button>
     <div class="title-menu">
       <button class="title-menu-btn finale hidden" id="btn-title-finale">最 終 回</button>
+      <button class="title-menu-btn mizuki hidden" id="btn-title-mizuki">透 の 話</button>
       <button class="title-menu-btn" id="btn-title-continue">続きから</button>
       <button class="title-menu-btn" id="btn-title-chapter">章選択</button>
       <button class="title-menu-btn" id="btn-title-endings">エンディング</button>
@@ -1553,6 +1560,9 @@ function hasReachedTrue() {
 }
 function canDetectiveMode() {
   return hasReachedNormal() && hasReachedTrue();
+}
+function hasReachedDetective() {
+  return !!meta.seenEndings['end_detective'];
 }
 function isReplay() {
   return Object.keys(meta.seenEndings).length > 0;
@@ -2255,6 +2265,13 @@ function startNewGame() {
 document.getElementById('start-btn').addEventListener('click', startNewGame);
 console.log('[init] start button wired');
 
+document.getElementById('btn-title-mizuki').addEventListener('click', () => {
+  if (!hasReachedDetective()) return;
+  resetGameState();
+  document.getElementById('title-screen').classList.add('hidden');
+  setTimeout(() => goToScene('mizuki_talk_01'), 600);
+});
+
 document.getElementById('btn-title-finale').addEventListener('click', () => {
   if (!hasSeenAllEndings()) return;
   resetGameState();
@@ -2275,9 +2292,11 @@ function refreshFinaleCTA() {
   const cont = document.getElementById('btn-title-continue');
   const chap = document.getElementById('btn-title-chapter');
   const ends = document.getElementById('btn-title-endings');
+  const miz = document.getElementById('btn-title-mizuki');
   if (cont) cont.classList.toggle('hidden', !hasSave);
   if (chap) chap.classList.toggle('hidden', !seenAny);
   if (ends) ends.classList.toggle('hidden', !seenAny);
+  if (miz)  miz.classList.toggle('hidden', !hasReachedDetective());
 }
 
 document.getElementById('btn-title-continue').addEventListener('click', () => {
