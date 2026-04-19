@@ -360,7 +360,10 @@
   /* モバイル下部にアクションバーが来たときは本文エリアを広げて重ねない */
   @media (max-width: 520px) {
     #story-area {
-      padding-bottom: calc(4.5em + env(safe-area-inset-bottom));
+      padding-bottom: calc(6em + env(safe-area-inset-bottom));
+    }
+    .next-hint {
+      margin-bottom: 0.4em;
     }
   }
   .speaker {
