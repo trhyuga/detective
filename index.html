@@ -351,7 +351,11 @@
     bottom: 0;
     padding: 1.5em 1.5em calc(2em + env(safe-area-inset-bottom));
     z-index: 10;
-    background: linear-gradient(180deg, transparent 0%, rgba(5, 8, 16, 0.85) 20%, rgba(5, 8, 16, 0.95) 100%);
+    background: linear-gradient(180deg,
+      transparent 0%,
+      rgba(5, 8, 16, 0.45) 6%,
+      rgba(5, 8, 16, 0.82) 18%,
+      rgba(5, 8, 16, 0.95) 100%);
     min-height: 45%;
     display: flex;
     flex-direction: column;
@@ -373,6 +377,18 @@
     margin-bottom: 0.6em;
     min-height: 1.2em;
     font-weight: 500;
+    text-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.95),
+      0 0 8px rgba(0, 0, 0, 0.8),
+      0 0 16px rgba(5, 8, 16, 0.6);
+  }
+  .speaker:not(:empty) {
+    display: inline-block;
+    background: rgba(5, 8, 16, 0.78);
+    padding: 0.2em 0.85em;
+    border-left: 2px solid var(--accent-gold);
+    border-radius: 0 2px 2px 0;
+    align-self: flex-start;
   }
   .text-box {
     font-size: 1rem;
