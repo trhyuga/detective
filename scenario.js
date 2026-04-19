@@ -594,7 +594,7 @@ const scenes = {
   },
 
   'ch3_02': {
-    bg: 'study',
+    bg: 'study-body',
     lines: [
       { sp: '', tx: '白鷺清吾は、重厚な革張りのソファに深く沈み込んでいた。\n首は力なく垂れ、その側頭部からは血が流れている。' },
       { sp: '水無月 透', tx: '「嘘だろ……。白鷺さん！」' },
@@ -612,7 +612,7 @@ const scenes = {
   },
 
   'ch3_fuyuki_incident': {
-    bg: 'study',
+    bg: 'study-body',
     lines: [
       { sp: '', tx: '白鷺の遺体を前に、皆が息を呑む時間だけが過ぎていった。' },
       { sp: '', tx: 'ふと、壁に寄りかかっていた冬木が、\n小さく手首を押さえて顔をしかめた。' },
@@ -838,7 +838,7 @@ const scenes = {
   },
 
   'investigate_past': {
-    bg: 'hall',
+    bg: 'salon',
     lines: [
       { sp: '神原 律', tx: '「久遠寺さん。昨日お話しになった、\n二十年前のご夫婦のこと。もう少し、聞かせていただけませんか」' },
       { sp: '久遠寺 貞三', tx: '「……そうですな。もう、話してもよろしい頃合いでしょう」' },
@@ -870,7 +870,7 @@ const scenes = {
   },
 
   'finale_02': {
-    bg: 'hall',
+    bg: 'accuse',
     lines: [
       { sp: '', tx: '暖炉の炎を背に、六人が律を見つめている。' },
       { sp: '冬木 綾乃', tx: '「……神原さん。あなたが何かを掴んだことは、分かるわ」' },
@@ -935,7 +935,7 @@ const scenes = {
   },
 
   'final_accuse': {
-    bg: 'hall',
+    bg: 'accuse',
     choice: {
       prompt: '━━ 犯人は、誰？ ━━',
       options: [
@@ -996,7 +996,7 @@ const scenes = {
 
   // ============== エンディング ==============
   'end_true': {
-    bg: 'dawn',
+    bg: 'accuse',
     lines: [
       { sp: '神原 律', tx: '「犯人はあなたです、冬木綾乃さん」' },
       { sp: '冬木 綾乃', tx: '「……根拠を、聞かせてもらえるかしら」' },
@@ -1217,7 +1217,7 @@ const scenes = {
   },
 
   'final_ep_04': {
-    bg: 'study',
+    bg: 'study-body',
     lines: [
       { sp: '', tx: '翌朝。' },
       { sp: '', tx: '白鷺清吾が、書斎のソファで倒れているのが発見された。' },
@@ -1234,7 +1234,7 @@ const scenes = {
   },
 
   'final_ep_05': {
-    bg: 'hall',
+    bg: 'salon',
     lines: [
       { sp: '', tx: '昼。' },
       { sp: '', tx: '神原律の観察眼は、確かに鋭かった。' },
@@ -1251,7 +1251,7 @@ const scenes = {
   },
 
   'final_ep_06': {
-    bg: 'hall',
+    bg: 'accuse',
     lines: [
       { sp: '', tx: '吹雪が、嘘のようにやんだ朝。' },
       { sp: '', tx: '神原律は、皆の前で榊亮を告発した。' },
@@ -1278,7 +1278,7 @@ const scenes = {
   },
 
   'final_ep_08': {
-    bg: 'dawn',
+    bg: 'flashback',
     lines: [
       { sp: '', tx: '――さて。' },
       { sp: '', tx: 'ここからは、独白を許してもらおう。' },
@@ -1458,7 +1458,7 @@ const scenes = {
   },
 
   'serial_04': {
-    bg: 'study',
+    bg: 'cellar',
     lines: [
       { sp: '', tx: '地下へ続く石の階段。\nその下に、久遠寺貞三の老いた体が、不自然な角度で折れ重なっていた。' },
       { sp: '', tx: '首は、あってはならない方向へ曲がっている。\n明らかに、即死。' },
@@ -1541,7 +1541,7 @@ const scenes = {
   },
 
   'serial_victim3': {
-    bg: 'dawn',
+    bg: 'courtyard',
     lines: [
       { sp: '', tx: '四日目の朝。' },
       { sp: '', tx: '裏庭から中庭へと続く雪の上、\n細い足跡と、もう一人分の、ゆっくりした別の足跡が並んでいた。' },
