@@ -1472,6 +1472,7 @@ const gameState = {
   has_clue_A: false, has_clue_B: false, has_clue_C: false, has_clue_D: false,
   has_clue_E: false, has_clue_F: false, has_clue_G: false, has_clue_H: false,
   investigate_count: 0,
+  investigated_fireplace: false,
   route_choice: null,
   accuse: null,
   alone: false,
@@ -2251,6 +2252,7 @@ function resetGameState() {
   gameState.choice_empathy = false;
   gameState.talk_to_mizuki_final = false;
   gameState.investigate_count = 0;
+  gameState.investigated_fireplace = false;
   textLog.length = 0;
   updateClueCount();
 }

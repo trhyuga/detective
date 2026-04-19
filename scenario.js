@@ -136,6 +136,7 @@ const endingDefs = [
   { id: 'end_true_standard',        type: 'true',   num: 'ED 9', title: '二重奏の終止符' },
   { id: 'end_true_plus',            type: 'true',   num: 'ED10', title: '雪解けの約束' },
   { id: 'end_bad_fuyuki_unproven',  type: 'bad',    num: '---',  title: '証拠なき告発', extra: true },
+  { id: 'end_sakaki_weak',          type: 'bad',    num: '---',  title: '詰め切れなかった朝', extra: true },
   { id: 'serial_end_stopped2',      type: 'bad',    num: 'SR 1', title: '二度目の朝、仮犯人', extra: true },
   { id: 'serial_end_stopped3',      type: 'bad',    num: 'SR 2', title: '三度目の朝、仮犯人', extra: true },
   { id: 'serial_end_fuyuki_mid',    type: 'bad',    num: 'SR 3', title: '告発された真犯人、証拠は無し', extra: true },
@@ -1018,7 +1019,7 @@ const scenes = {
       { sp: '神原 律', tx: '（書斎から逃げる犯人が、廊下を抜け、ホールを通り、\n咄嗟に薪入れへ放り込んだ。その道中、剥がれた装飾片が廊下に落ちた）' },
       { sp: '神原 律', tx: '（暖炉で燃やすつもりだったのかもしれない。\nだが金属は燃えない。朝までの時間稼ぎが、せいぜいだった）' }
     ],
-    onEnd: () => { addClue('has_clue_C'); gameState.investigate_count++; },
+    onEnd: () => { addClue('has_clue_C'); gameState.investigated_fireplace = true; gameState.investigate_count++; },
     next: 'finale_01'
   },
 
@@ -1234,6 +1235,9 @@ const scenes = {
         goToScene('end_bad_fuyuki_unproven');
       } else if (accuse === 'sakaki' && gameState.alone) {
         goToScene('end_bad_ice');
+      } else if (accuse === 'sakaki' && !gameState.investigated_fireplace) {
+        // 凶器本体（文鎮）まで辿っていなければ榊は認めない
+        goToScene('end_sakaki_weak');
       } else if (accuse === 'sakaki' && gameState.talk_to_mizuki_final) {
         goToScene('end_normal_b');
       } else if (accuse === 'sakaki' && gameState.has_clue_G) {
@@ -2062,6 +2066,30 @@ const scenes = {
       tag: '― SERIAL END MASSACRE ―',
       title: '白嶺、全滅',
       text: '迷いが、六つの命を奪った。\n真犯人は、雪解けの朝、自分一人だけが雪山を下りる用意を整えていた。'
+    })
+  },
+
+  'end_sakaki_weak': {
+    bg: 'hall',
+    bgm: 'bad',
+    lines: [
+      { sp: '神原 律', tx: '「榊さん。あなたが、白鷺さんを殺害しましたね」' },
+      { sp: '榊 亮', tx: '「――ふざけるな！　証拠はあるのか、証拠は！」' },
+      { sp: '神原 律', tx: '「廊下で、文鎮の装飾片を見つけました。\n昨夜、二十三時二十分にすれ違った時の、あなたの様子も」' },
+      { sp: '榊 亮', tx: '「装飾片？　廊下でのすれ違い？\n――ただのかけらと、廊下の立ち話で、俺を殺人犯に仕立てる気か」' },
+      { sp: '榊 亮', tx: '「凶器はどこにある。\n文鎮そのものが出てこない限り、俺は認めない」' },
+      { sp: '', tx: '律の喉の奥で、反論が詰まった。\n確かに、凶器本体の所在は、最後まで突き止められなかった。' },
+      { sp: '冬木 綾乃', tx: '「神原さん。物証なしの告発は、\n私の職業上、黙って見過ごすわけにはいきません」' },
+      { sp: '冬木 綾乃', tx: '「榊さんの様子はご覧の通り。\nあなたの『違和感』だけでは、この輪の中では、重みが足りない」' },
+      { sp: '', tx: '律の推理は、あと一歩のところで空転した。' },
+      { sp: '', tx: '吹雪の明けた朝、警察は事情聴取を終えて山を下りたが、\nこの事件は、迷宮入りとして処理された。' },
+      { sp: '神原 律', tx: '（……薪入れ。そう、あの時、\n暖炉のほうまで、もう一歩踏み込んで調べていれば）' }
+    ],
+    onEnd: () => showEndingScreen({
+      type: 'bad',
+      tag: '― BAD END ―',
+      title: '詰め切れなかった朝',
+      text: '廊下の欠片と、すれ違いの記憶。\n物証の山はあと一歩、凶器本体にまで届かなかった。\n――次は、暖炉の薪入れまで、覗き込んでみてほしい。'
     })
   },
 
