@@ -66,14 +66,19 @@
     z-index: 1;
   }
 
+  /* 画像未読込時のフォールバック用の薄いダーク色。bg-* が設定されていれば画像が上書きする */
+  .scene-bg {
+    background: #0a0e14;
+  }
+  /* 画面の雰囲気を足す軽いオーバーレイ。不透明にしないこと */
   .scene-bg::before {
     content: '';
     position: absolute;
     inset: 0;
+    pointer-events: none;
     background:
       radial-gradient(ellipse at 50% 120%, rgba(122, 184, 212, 0.08) 0%, transparent 60%),
-      radial-gradient(ellipse at 30% -20%, rgba(201, 89, 58, 0.04) 0%, transparent 50%),
-      linear-gradient(180deg, #050810 0%, #0a0e14 50%, #0d1119 100%);
+      radial-gradient(ellipse at 30% -20%, rgba(201, 89, 58, 0.04) 0%, transparent 50%);
   }
 
   /* ===== キャラクター ポートレート ===== */
