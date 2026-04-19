@@ -1639,10 +1639,10 @@ function scheduleAutoAdvance() {
   if (document.getElementById('choices').classList.contains('show')) return;
   if (document.getElementById('ending-screen').classList.contains('show')) return;
   if (isTyping) return;
-  // 章明けの第一文はじっくり読ませる（+1.8秒）
+  // 章明けの第一文はじっくり読ませる（+2.8秒）
+  // フラグは consume せず、advance() で line > 0 に進んだ時点で解除
   const base = meta.settings.autoDelay;
-  const delay = postChapterBoost ? base + 1800 : base;
-  postChapterBoost = false;
+  const delay = postChapterBoost ? base + 2800 : base;
   autoAdvanceTimer = setTimeout(() => { advance(); }, delay);
 }
 
@@ -1657,11 +1657,10 @@ function scheduleSkipAdvance() {
     setSkipMode(false);
     return;
   }
-  // 章明けの第一文はスキップ中でも一瞬見せる
+  // 章明けの第一文はスキップ中でも 1.5 秒見せる（fllag は advance で解除）
   if (postChapterBoost) {
-    postChapterBoost = false;
     if (isTyping) skipTyping();
-    skipAdvanceTimer = setTimeout(() => { advance(); }, 900);
+    skipAdvanceTimer = setTimeout(() => { advance(); }, 1500);
     return;
   }
   if (isTyping) skipTyping();
@@ -1758,7 +1757,9 @@ function showChapterTitle(num, name, cb) {
   nameEl.style.animation = '';
   setTimeout(() => {
     el.classList.remove('show');
-    if (cb) cb();
+    // 章タイトルのフェードアウト後、500ms の余韻を置いてから第一文を始める
+    setTimeout(() => { if (cb) cb(); }, 500);
+    return;
   }, 4000);
 }
 
@@ -1798,8 +1799,8 @@ function typeText(text, cb) {
 function afterLineRendered() {
   scheduleAutoAdvance();
   scheduleSkipAdvance();
-  // どのモードでも章明け第一文の処理が済んだらフラグを下ろす
-  postChapterBoost = false;
+  // 注：postChapterBoost はここでは消さない。
+  // advance() で実際に次の行へ進んだ時点で下ろす（下の advance 内で処理）。
 }
 
 function skipTyping() {
@@ -1833,6 +1834,8 @@ function advance() {
   if (!scene) return;
   const lines = effectiveLines(scene);
   currentLineIdx++;
+  // 章明けのブーストは、第一文を「読み終えて次へ」進んだ時点で解除
+  if (currentLineIdx >= 1) postChapterBoost = false;
   if (currentLineIdx >= lines.length) {
     if (scene.onEnd) scene.onEnd();
     const ch = effectiveChoice(scene);
