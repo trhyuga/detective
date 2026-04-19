@@ -209,6 +209,27 @@
     }, 80);
   }
 
+  // 元データの音量が弱い SE を個別に増幅する係数
+  // 1.0 基準。HTML Audio は volume の上限が 1.0 なので、それ以上は
+  // WebAudio の GainNode で底上げする。
+  const SE_GAIN = {
+    fireplace: 2.8,   // 薪爆ぜが元から小さめ
+    heartbeat: 1.3,
+    clock: 1.2
+  };
+
+  let audioCtx = null;
+  function getAudioContext() {
+    if (audioCtx) return audioCtx;
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) audioCtx = new AC();
+    } catch (e) {
+      console.warn('[audio] AudioContext unavailable:', e);
+    }
+    return audioCtx;
+  }
+
   // ---- SE 一発再生 ----
   function playSe(key) {
     if (!key) return;
@@ -222,9 +243,38 @@
       console.warn('[audio] unknown SE key:', key);
       return;
     }
+    const gain = SE_GAIN[key] || 1;
+    const baseVol = state.seVolume;
     const a = new Audio(url);
-    a.volume = state.seVolume;
-    a.play().catch(() => { /* ignored */ });
+    // 1.0 以下なら HTML audio の volume だけで済ます
+    if (gain <= 1) {
+      a.volume = Math.min(1, baseVol * gain);
+      a.play().catch(() => {});
+      return;
+    }
+    // 1.0 を超える増幅は WebAudio の GainNode で
+    const ctx = getAudioContext();
+    if (!ctx) {
+      // フォールバック：volume を 1.0 にクランプして再生
+      a.volume = Math.min(1, baseVol * gain);
+      a.play().catch(() => {});
+      return;
+    }
+    a.crossOrigin = 'anonymous';
+    a.volume = 1.0;
+    // MediaElement 経由で gain を掛ける
+    try {
+      const src = ctx.createMediaElementSource(a);
+      const g = ctx.createGain();
+      g.gain.value = baseVol * gain;
+      src.connect(g).connect(ctx.destination);
+      a.play().catch(() => {});
+    } catch (e) {
+      // 2 回目以降の createMediaElementSource は同じ element では呼べない等、
+      // 失敗したらシンプル再生にフォールバック
+      a.volume = Math.min(1, baseVol * gain);
+      a.play().catch(() => {});
+    }
   }
 
   // ---- 初回ユーザ操作で pending を流す ----
