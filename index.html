@@ -1819,6 +1819,10 @@ function showLine() {
   if (!line) return;
   document.getElementById('speaker').textContent = line.sp || '';
   setCharacter(line.sp, line.tx, line.expr);
+  // 行単位の SE（特定セリフに紐づく効果音）
+  if (line.se && window.audioEngine && window.audioEngine.playSe) {
+    window.audioEngine.playSe(line.se);
+  }
   pushLog(line.sp || '', line.tx);
   typeText(line.tx);
 }
