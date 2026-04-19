@@ -413,11 +413,40 @@ const scenes = {
         { tx: '久遠寺に、この館のことを聞く', next: 'route_kuonji', flag: 'kuonji' }
       ],
       replayOptions: [
-        { tx: '◇弁護士にタダで法律相談をねじ込む', next: 'route_fuyuki', flag: 'fuyuki', when: () => hasExtendedJokes() },
-        { tx: '◇姪っ子さんのネイル談義、延長戦', next: 'route_misaki', flag: 'misaki', when: () => hasExtendedJokes() },
-        { tx: '◇爺の三十年分の愚痴、取材モード', next: 'route_kuonji', flag: 'kuonji', when: () => hasExtendedJokes() }
+        { tx: '◇弁護士にタダで法律相談をねじ込む', next: 'gag_c1_fuyuki', flag: 'fuyuki', when: () => hasExtendedJokes() },
+        { tx: '◇姪っ子さんのネイル談義、延長戦', next: 'gag_c1_misaki', flag: 'misaki', when: () => hasExtendedJokes() },
+        { tx: '◇爺の三十年分の愚痴、取材モード', next: 'gag_c1_kuonji', flag: 'kuonji', when: () => hasExtendedJokes() }
       ]
     }
+  },
+
+  // ---- 4週目ギャグ前座（choice_01 用）本編の route_* へ合流 ----
+  'gag_c1_fuyuki': {
+    bg: 'hall',
+    lines: [
+      { sp: '神原 律', tx: '「冬木さん、無料で法律相談ひとつ、よろしいですか」' },
+      { sp: '冬木 綾乃', tx: '「……タダで弁護士の頭を借りる度胸、\n意外とお持ちなのね、神原さん」' },
+      { sp: '水無月 透', tx: '（律のは度胸じゃなくて、校正者の職業病だと思う）' }
+    ],
+    next: 'route_fuyuki'
+  },
+  'gag_c1_misaki': {
+    bg: 'hall',
+    lines: [
+      { sp: '神原 律', tx: '「瀬戸さんのネイル、一本ずつ赤みが違うのね。\n……こだわりが、凄い」' },
+      { sp: '瀬戸 美咲', tx: '「きゃっ、気づいてくれた！？　\n律さん、見る目あるー！」' },
+      { sp: '神原 律', tx: '（……三時間コースの予感。\nでも、廊下のあの声のことも、聞いておきたい）' }
+    ],
+    next: 'route_misaki'
+  },
+  'gag_c1_kuonji': {
+    bg: 'hall',
+    lines: [
+      { sp: '神原 律', tx: '「久遠寺さん。三十年のあいだ、\n溜まっているお話、伺わせてください」' },
+      { sp: '久遠寺 貞三', tx: '「おお、よくぞお聞きくださいました。\nそれはもう、三十年前のあの初春から……」' },
+      { sp: '水無月 透', tx: '（これ、朝までパターンだ）' }
+    ],
+    next: 'route_kuonji'
   },
 
   'route_fuyuki': {
@@ -802,11 +831,41 @@ const scenes = {
         { tx: '久遠寺に、昔の話を詳しく聞く', next: 'investigate_past' }
       ],
       replayOptions: [
-        { tx: '◇弁護士の手荷物に、校正者権限で介入', next: 'investigate_fuyuki', when: () => hasExtendedJokes() },
-        { tx: '◇暖炉に頭を突っ込む覚悟', next: 'investigate_fireplace', when: () => hasExtendedJokes() },
-        { tx: '◇爺の昔語り、第十八番を所望', next: 'investigate_past', when: () => hasExtendedJokes() }
+        { tx: '◇弁護士の手荷物に、校正者権限で介入', next: 'gag_inv_fuyuki', when: () => hasExtendedJokes() },
+        { tx: '◇暖炉に頭を突っ込む覚悟', next: 'gag_inv_fireplace', when: () => hasExtendedJokes() },
+        { tx: '◇爺の昔語り、第十八番を所望', next: 'gag_inv_past', when: () => hasExtendedJokes() }
       ]
     }
+  },
+
+  // ---- 4週目ギャグ前座（choice_investigation 用）本編へ合流 ----
+  'gag_inv_fuyuki': {
+    bg: 'hall',
+    lines: [
+      { sp: '神原 律', tx: '「冬木さん、失礼。\n校正者権限で、机の上、検閲させてください」' },
+      { sp: '冬木 綾乃', tx: '「……『校正者権限』という単語の法的根拠、\n私の知る限り、この宇宙にはまだ無いのだけれど」' },
+      { sp: '神原 律', tx: '「誤字の摘発に、法律は追いつかないんですよ」' }
+    ],
+    next: 'investigate_fuyuki'
+  },
+  'gag_inv_fireplace': {
+    bg: 'hall',
+    lines: [
+      { sp: '神原 律', tx: '「透、頭を支えてて。薪入れの奥まで覗くから」' },
+      { sp: '水無月 透', tx: '「おい、髪、焦げるぞ！」' },
+      { sp: '神原 律', tx: '「代わりの編集者を、用意しておくわ」' },
+      { sp: '水無月 透', tx: '「俺は編集者だっての！」' }
+    ],
+    next: 'investigate_fireplace'
+  },
+  'gag_inv_past': {
+    bg: 'salon',
+    lines: [
+      { sp: '神原 律', tx: '「久遠寺さん、三十年の昔話、\n十八番のお話をお願いします」' },
+      { sp: '久遠寺 貞三', tx: '「十八番……と申しますると、\nやはり、あの二十年前のご夫婦のお話に戻ってしまいますが」' },
+      { sp: '神原 律', tx: '（狙い通り。\nこの爺の十八番が、今日の鍵になるはず）' }
+    ],
+    next: 'investigate_past'
   },
 
   'investigate_fuyuki': {
@@ -961,14 +1020,71 @@ const scenes = {
         { tx: '犯人はいない（事故・自殺）と述べる', next: 'end_check', apply: () => { gameState.accuse = 'none'; } }
       ],
       replayOptions: [
-        { tx: '◇「榊さん、文鎮がもう白状してるわよ」', next: 'end_check', apply: () => { gameState.accuse = 'sakaki'; gameState.alone = false; }, when: () => hasExtendedJokes() },
-        { tx: '◇弁護士を、依頼人の前で告発してみる', next: 'end_check', apply: () => { gameState.accuse = 'fuyuki'; }, when: () => hasExtendedJokes() },
-        { tx: '◇「美咲さん、そのネイルごと連行します」', next: 'end_check', apply: () => { gameState.accuse = 'misaki'; }, when: () => hasExtendedJokes() },
-        { tx: '◇爺に濡れ衣、三十年分の忠義が泣く', next: 'end_check', apply: () => { gameState.accuse = 'kuonji'; }, when: () => hasExtendedJokes() },
-        { tx: '◇幼馴染が犯人、という同人誌的展開', next: 'end_check', apply: () => { gameState.accuse = 'mizuki'; }, when: () => hasExtendedJokes() },
-        { tx: '◇推理を投げて、紅茶を淹れ直す', next: 'end_check', apply: () => { gameState.accuse = 'none'; }, when: () => hasExtendedJokes() }
+        { tx: '◇「榊さん、文鎮がもう白状してるわよ」', next: 'gag_acc_sakaki', apply: () => { gameState.accuse = 'sakaki'; gameState.alone = false; }, when: () => hasExtendedJokes() },
+        { tx: '◇弁護士を、依頼人の前で告発してみる', next: 'gag_acc_fuyuki', apply: () => { gameState.accuse = 'fuyuki'; }, when: () => hasExtendedJokes() },
+        { tx: '◇「美咲さん、そのネイルごと連行します」', next: 'gag_acc_misaki', apply: () => { gameState.accuse = 'misaki'; }, when: () => hasExtendedJokes() },
+        { tx: '◇爺に濡れ衣、三十年分の忠義が泣く', next: 'gag_acc_kuonji', apply: () => { gameState.accuse = 'kuonji'; }, when: () => hasExtendedJokes() },
+        { tx: '◇幼馴染が犯人、という同人誌的展開', next: 'gag_acc_mizuki', apply: () => { gameState.accuse = 'mizuki'; }, when: () => hasExtendedJokes() },
+        { tx: '◇推理を投げて、紅茶を淹れ直す', next: 'gag_acc_none', apply: () => { gameState.accuse = 'none'; }, when: () => hasExtendedJokes() }
       ]
     }
+  },
+
+  // ---- 4週目ギャグ前座（final_accuse 用）accuse フラグは apply で設定済、end_check へ合流 ----
+  'gag_acc_sakaki': {
+    bg: 'accuse',
+    lines: [
+      { sp: '神原 律', tx: '「榊さん。文鎮がもう白状してるわよ」' },
+      { sp: '榊 亮', tx: '「なんだその言い方……文鎮が喋るか、クソ！」' },
+      { sp: '冬木 綾乃', tx: '「……比喩のようですよ、榊さん」' }
+    ],
+    next: 'end_check'
+  },
+  'gag_acc_fuyuki': {
+    bg: 'accuse',
+    lines: [
+      { sp: '神原 律', tx: '「冬木先生。\n依頼人を殺した顧問弁護士を、ここで告発します」' },
+      { sp: '冬木 綾乃', tx: '「『依頼人を殺した』と仮定した上での告発、\n名誉毀損のリスク、ちゃんと計算されたの？」' },
+      { sp: '神原 律', tx: '「もちろん。校正済みです」' }
+    ],
+    next: 'end_check'
+  },
+  'gag_acc_misaki': {
+    bg: 'accuse',
+    lines: [
+      { sp: '神原 律', tx: '「美咲さん。そのネイルごと、お話を伺います」' },
+      { sp: '瀬戸 美咲', tx: '「やだぁ、銀座まで行ったやつ、ちょっと保護して～！」' },
+      { sp: '水無月 透', tx: '（ネイルの保護って概念、司法にはないぞ……）' }
+    ],
+    next: 'end_check'
+  },
+  'gag_acc_kuonji': {
+    bg: 'accuse',
+    lines: [
+      { sp: '神原 律', tx: '「久遠寺さん。もしかして、あなたが――」' },
+      { sp: '久遠寺 貞三', tx: '「……お嬢様。三十年仕えた爺、\n濡れ衣の重さは、すでに充分に存じておりますれば」' },
+      { sp: '神原 律', tx: '（……やだ、今のは強すぎた。後で必ず謝ろう）' }
+    ],
+    next: 'end_check'
+  },
+  'gag_acc_mizuki': {
+    bg: 'accuse',
+    lines: [
+      { sp: '神原 律', tx: '「透、あんたが犯人よ」' },
+      { sp: '水無月 透', tx: '「何の冗談だよ。俺、証拠なんて一つも――\n……あ」' },
+      { sp: '神原 律', tx: '「……冗談に乗らなくていいから」' },
+      { sp: '水無月 透', tx: '「律、お前、さらっと怖いこと言うよな」' }
+    ],
+    next: 'end_check'
+  },
+  'gag_acc_none': {
+    bg: 'hall',
+    lines: [
+      { sp: '神原 律', tx: '「……ちょっと、紅茶、淹れ直しましょうか」' },
+      { sp: '冬木 綾乃', tx: '「……神原さん、あなた、まさか」' },
+      { sp: '神原 律', tx: '「校正は、十分寝かせてからする主義なの」' }
+    ],
+    next: 'end_check'
   },
 
   'end_check': {
