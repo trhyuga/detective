@@ -1796,6 +1796,17 @@ function setCharacter(speaker, text, expr) {
   }
 }
 
+// キャラ画像のプリロード（初回表示の遅延を防ぐ）
+function preloadCharacterImages() {
+  const expressions = ['normal', 'shock', 'grave'];
+  for (const id of Object.values(CHAR_MAP)) {
+    for (const e of expressions) {
+      const img = new Image();
+      img.src = `assets/images/characters/${id}-${e}.png`;
+    }
+  }
+}
+
 function showChapterTitle(num, name, cb) {
   // 章明けはオート・スキップを一旦解除してじっくり見せる
   if (autoMode) setAutoMode(false);
@@ -2483,7 +2494,8 @@ document.addEventListener('keydown', (e) => {
 loadMeta();
 initSnow();
 refreshFinaleCTA();
-updateClueCount(); // HUD 表示状態を初期反映
+updateClueCount();
+preloadCharacterImages(); // 初回表示の遅延を防ぐ
 // 続きから・章選択・エンディングは autoSlot/seenEndings/readScenes をロード後に反映
 </script>
 
