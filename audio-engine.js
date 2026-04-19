@@ -100,7 +100,7 @@
       #audio-mute-btn {
         position: absolute;
         top: calc(0.6em + env(safe-area-inset-top));
-        right: calc(5.4em + env(safe-area-inset-right));
+        right: calc(7em + env(safe-area-inset-right));
         z-index: 17;
         background: rgba(5, 8, 16, 0.65);
         border: 1px solid rgba(184, 153, 104, 0.3);
@@ -128,7 +128,7 @@
       @media (max-width: 520px) {
         #audio-mute-btn {
           right: calc(0.6em + env(safe-area-inset-right));
-          top: calc(3em + env(safe-area-inset-top));
+          top: calc(3.6em + env(safe-area-inset-top));
         }
       }
     `;
@@ -254,30 +254,17 @@
     );
   }
 
-  // ---- goToScene のフック ----
-  function hookGoToScene() {
-    if (typeof window.goToScene !== 'function') {
-      // 未定義なら少し待ってリトライ（defer 後だが念のため）
-      setTimeout(hookGoToScene, 100);
-      return;
+  // ---- シーン切替フック（inline goToScene から呼ばれる） ----
+  function onScene(scene) {
+    if (!scene) return;
+    try {
+      let bgmKey = scene.bgm;
+      if (!bgmKey && scene.bg) bgmKey = BG_TO_BGM[scene.bg];
+      if (bgmKey) playBgm(bgmKey);
+      if (scene.se) playSe(scene.se);
+    } catch (e) {
+      console.warn('[audio] onScene error:', e);
     }
-    const original = window.goToScene;
-    window.goToScene = function (key) {
-      const result = original.apply(this, arguments);
-      try {
-        const scene = (typeof scenes !== 'undefined') ? scenes[key] : null;
-        if (scene) {
-          // BGM 決定：scene.bgm 優先、無ければ bg からデフォルト
-          let bgmKey = scene.bgm;
-          if (!bgmKey && scene.bg) bgmKey = BG_TO_BGM[scene.bg];
-          if (bgmKey) playBgm(bgmKey);
-          if (scene.se) playSe(scene.se);
-        }
-      } catch (e) {
-        console.warn('[audio] scene hook error:', e);
-      }
-      return result;
-    };
   }
 
   // ---- showFin / restart のフック ----
@@ -293,13 +280,14 @@
     }
   }
 
-  // ---- 公開 API（必要なら手動呼び出し） ----
+  // ---- 公開 API ----
   window.audioEngine = {
     playBgm,
     stopBgm,
     playSe,
     toggleMute,
-    isMuted: () => state.muted
+    isMuted: () => state.muted,
+    onScene  // inline goToScene が呼ぶ
   };
 
   // ---- 初期化 ----
@@ -307,7 +295,6 @@
     try { loadPrefs(); } catch (e) { console.warn('[audio] loadPrefs:', e); }
     try { setupUI(); } catch (e) { console.warn('[audio] setupUI:', e); }
     try { setupFirstInteraction(); } catch (e) { console.warn('[audio] setupFI:', e); }
-    try { hookGoToScene(); } catch (e) { console.warn('[audio] hookGoToScene:', e); }
     try { hookEndingHandlers(); } catch (e) { console.warn('[audio] hookEnd:', e); }
     console.log('[audio] engine ready');
   }

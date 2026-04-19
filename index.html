@@ -1794,6 +1794,10 @@ function goToScene(key) {
   if (scene.bg) setBackground(scene.bg);
   // シーン遷移時はキャラ画像を一旦リセット（地の文から始まることが多い）
   if (scene.chapter) setCharacter(null);
+  // オーディオエンジンに通知（BGM/SE 切替）
+  if (window.audioEngine && window.audioEngine.onScene) {
+    window.audioEngine.onScene(scene);
+  }
   if (scene.chapter) {
     showChapterTitle(scene.chapter.num, scene.chapter.name, () => showLine());
   } else {
