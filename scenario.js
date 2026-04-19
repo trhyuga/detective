@@ -1081,7 +1081,7 @@ const scenes = {
         },
         {
           tx: '自分ひとりで決断する',
-          next: 'final_accuse',
+          next: 'finale_stance',
           apply: () => { gameState.talk_to_mizuki_final = false; }
         }
       ],
@@ -1094,7 +1094,7 @@ const scenes = {
         },
         {
           tx: '孤独な名探偵ロールを演じ切る',
-          next: 'final_accuse',
+          next: 'finale_stance',
           apply: () => { gameState.talk_to_mizuki_final = false; },
           when: () => hasExtendedJokes()
         }
@@ -1113,7 +1113,27 @@ const scenes = {
       { sp: '', tx: '律は目を閉じ、深く息を吐いた。\n告発の言葉を、選びとる時間がやってくる。' }
     ],
     onEnd: () => { gameState.investigate_count++; },
-    next: 'final_accuse'
+    next: 'finale_stance'
+  },
+
+  // ---- 告発前の構え（告発する／保留／事故説）----
+  'finale_stance': {
+    bg: 'accuse',
+    lines: [
+      { sp: '', tx: '告発の時が、迫っていた。' },
+      { sp: '神原 律', tx: '（この夜、どう向き合うか。\nまず、そこから決めなければ）' }
+    ],
+    choice: {
+      prompt: '── 今夜、どうする？ ──',
+      options: [
+        { tx: '今ここで、告発に踏み切る', next: 'final_accuse' },
+        { tx: '警戒態勢で、朝を待つ', next: 'serial_01', apply: () => { gameState.accuse = 'wait'; } },
+        { tx: '犯人はいない（事故・自殺）と述べる', next: 'end_check', apply: () => { gameState.accuse = 'none'; } }
+      ],
+      replayOptions: [
+        { tx: '推理を投げて、紅茶を淹れ直す', next: 'gag_acc_none', apply: () => { gameState.accuse = 'none'; }, when: () => hasExtendedJokes() }
+      ]
+    }
   },
 
   'final_accuse': {
@@ -1126,17 +1146,14 @@ const scenes = {
         { tx: '冬木 綾乃 を告発する', next: 'end_check', apply: () => { gameState.accuse = 'fuyuki'; } },
         { tx: '瀬戸 美咲 を告発する', next: 'end_check', apply: () => { gameState.accuse = 'misaki'; } },
         { tx: '久遠寺 貞三 を告発する', next: 'end_check', apply: () => { gameState.accuse = 'kuonji'; } },
-        { tx: '水無月 透 を告発する', next: 'end_check', apply: () => { gameState.accuse = 'mizuki'; } },
-        { tx: '今は告発せず、警戒態勢で朝を待つ', next: 'serial_01', apply: () => { gameState.accuse = 'wait'; } },
-        { tx: '犯人はいない（事故・自殺）と述べる', next: 'end_check', apply: () => { gameState.accuse = 'none'; } }
+        { tx: '水無月 透 を告発する', next: 'end_check', apply: () => { gameState.accuse = 'mizuki'; } }
       ],
       replayOptions: [
         { tx: '「榊さん、文鎮がもう白状してるわよ」', next: 'gag_acc_sakaki', apply: () => { gameState.accuse = 'sakaki'; gameState.alone = false; }, when: () => hasExtendedJokes() },
         { tx: '弁護士を、依頼人の前で告発してみる', next: 'gag_acc_fuyuki', apply: () => { gameState.accuse = 'fuyuki'; }, when: () => hasExtendedJokes() },
         { tx: '「美咲さん、そのネイルごと連行します」', next: 'gag_acc_misaki', apply: () => { gameState.accuse = 'misaki'; }, when: () => hasExtendedJokes() },
         { tx: '爺に濡れ衣、三十年分の忠義が泣く', next: 'gag_acc_kuonji', apply: () => { gameState.accuse = 'kuonji'; }, when: () => hasExtendedJokes() },
-        { tx: '幼馴染が犯人、という同人誌的展開', next: 'gag_acc_mizuki', apply: () => { gameState.accuse = 'mizuki'; }, when: () => hasExtendedJokes() },
-        { tx: '推理を投げて、紅茶を淹れ直す', next: 'gag_acc_none', apply: () => { gameState.accuse = 'none'; }, when: () => hasExtendedJokes() }
+        { tx: '幼馴染が犯人、という同人誌的展開', next: 'gag_acc_mizuki', apply: () => { gameState.accuse = 'mizuki'; }, when: () => hasExtendedJokes() }
       ]
     }
   },
