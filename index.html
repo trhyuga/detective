@@ -1853,8 +1853,10 @@ function goToScene(key) {
   if (skipMode && wasUnread) setSkipMode(false);
   // 既読フラグ
   meta.readScenes[key] = true;
-  // 章境界でオートセーブ
-  if (scene.chapter) {
+  // 毎シーン、オートセーブ（続きから が直近のシーンに戻れるように）
+  // ただしエンディングシーンに到達した場合は autoSlot を上書きしない
+  // （プレイ後にタイトルへ戻ったあと、途中から やり直す用の起点として直前の章を残す）
+  if (!key.startsWith('end_') && !key.startsWith('serial_end_') && key !== 'end_check') {
     meta.autoSlot = snapshotState();
   }
   saveMeta();
@@ -2226,11 +2228,13 @@ function refreshFinaleCTA() {
 }
 
 document.getElementById('btn-title-continue').addEventListener('click', () => {
-  const snap = meta.autoSlot || meta.slots.find(s => s);
-  if (!snap) {
+  // 最新タイムスタンプのスロットを使う（オートセーブと手動セーブから）
+  const candidates = [meta.autoSlot, ...meta.slots].filter(Boolean);
+  if (candidates.length === 0) {
     alert('セーブデータがありません。');
     return;
   }
+  const snap = candidates.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))[0];
   document.getElementById('title-screen').classList.add('hidden');
   document.getElementById('action-bar').classList.add('show');
   restoreState(snap);
