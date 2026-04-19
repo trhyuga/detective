@@ -200,8 +200,8 @@ const scenes = {
       ],
       replayOptions: [
         { tx: '★「一周目の私は、もっと優しかったわよ？」', next: 'flavor_unpack_meta', when: () => isReplay() },
-        { tx: '◇透のネクタイの曲がりを原稿扱いで指摘する', next: 'flavor_unpack_a', when: () => hasExtendedJokes() },
-        { tx: '◇枕投げの構えでベッドから一撃', next: 'flavor_unpack_c', when: () => hasExtendedJokes() }
+        { tx: '透のネクタイの曲がりを原稿扱いで指摘する', next: 'flavor_unpack_a', when: () => hasExtendedJokes() },
+        { tx: '枕投げの構えでベッドから一撃', next: 'flavor_unpack_c', when: () => hasExtendedJokes() }
       ]
     }
   },
@@ -273,8 +273,8 @@ const scenes = {
       ],
       replayOptions: [
         { tx: '★久遠寺さんに、お得意料理を尋ねる', next: 'flavor_dinner_kuonji', when: () => isReplay() },
-        { tx: '◇美咲さんの爪、寒色系の校正を入れる', next: 'flavor_dinner_nail', when: () => hasExtendedJokes() },
-        { tx: '◇白鷺さんのワインを「父君比で七十点」と採点', next: 'flavor_dinner_wine', when: () => hasExtendedJokes() }
+        { tx: '美咲さんの爪、寒色系の校正を入れる', next: 'flavor_dinner_nail', when: () => hasExtendedJokes() },
+        { tx: '白鷺さんのワインを「父君比で七十点」と採点', next: 'flavor_dinner_wine', when: () => hasExtendedJokes() }
       ]
     }
   },
@@ -413,9 +413,9 @@ const scenes = {
         { tx: '久遠寺に、この館のことを聞く', next: 'route_kuonji', flag: 'kuonji' }
       ],
       replayOptions: [
-        { tx: '◇弁護士にタダで法律相談をねじ込む', next: 'gag_c1_fuyuki', flag: 'fuyuki', when: () => hasExtendedJokes() },
-        { tx: '◇姪っ子さんのネイル談義、延長戦', next: 'gag_c1_misaki', flag: 'misaki', when: () => hasExtendedJokes() },
-        { tx: '◇爺の三十年分の愚痴、取材モード', next: 'gag_c1_kuonji', flag: 'kuonji', when: () => hasExtendedJokes() }
+        { tx: '弁護士にタダで法律相談をねじ込む', next: 'gag_c1_fuyuki', flag: 'fuyuki', when: () => hasExtendedJokes() },
+        { tx: '姪っ子さんのネイル談義、延長戦', next: 'gag_c1_misaki', flag: 'misaki', when: () => hasExtendedJokes() },
+        { tx: '爺の三十年分の愚痴、取材モード', next: 'gag_c1_kuonji', flag: 'kuonji', when: () => hasExtendedJokes() }
       ]
     }
   },
@@ -542,8 +542,8 @@ const scenes = {
       ],
       replayOptions: [
         { tx: '★ベッドで透に「好きな作家の話」を振る', next: 'flavor_thirst_books', when: () => isReplay() },
-        { tx: '◇深夜二時のアイス、二十八歳の自己決定権', next: 'flavor_thirst_tea', when: () => hasExtendedJokes() },
-        { tx: '◇透を叩き起こし、朝までトークライブ開催', next: 'flavor_thirst_mizuki', when: () => hasExtendedJokes() }
+        { tx: '深夜二時のアイス、二十八歳の自己決定権', next: 'flavor_thirst_tea', when: () => hasExtendedJokes() },
+        { tx: '透を叩き起こし、朝までトークライブ開催', next: 'flavor_thirst_mizuki', when: () => hasExtendedJokes() }
       ]
     }
   },
@@ -754,8 +754,8 @@ const scenes = {
       ],
       replayOptions: [
         { tx: '★透と「別ルートだったら」を妄想する', next: 'flavor_breath_imagine', when: () => isReplay() },
-        { tx: '◇透にヨガ呼吸法を要求、暖炉の前で一礼', next: 'flavor_breath_silence', when: () => hasExtendedJokes() },
-        { tx: '◇父の名台詞を朗読調で再演する', next: 'flavor_breath_father', when: () => hasExtendedJokes() }
+        { tx: '透にヨガ呼吸法を要求、暖炉の前で一礼', next: 'flavor_breath_silence', when: () => hasExtendedJokes() },
+        { tx: '父の名台詞を朗読調で再演する', next: 'flavor_breath_father', when: () => hasExtendedJokes() }
       ]
     }
   },
@@ -831,9 +831,9 @@ const scenes = {
         { tx: '久遠寺に、昔の話を詳しく聞く', next: 'investigate_past' }
       ],
       replayOptions: [
-        { tx: '◇弁護士の手荷物に、校正者権限で介入', next: 'gag_inv_fuyuki', when: () => hasExtendedJokes() },
-        { tx: '◇暖炉に頭を突っ込む覚悟', next: 'gag_inv_fireplace', when: () => hasExtendedJokes() },
-        { tx: '◇爺の昔語り、第十八番を所望', next: 'gag_inv_past', when: () => hasExtendedJokes() }
+        { tx: '弁護士の手荷物に、校正者権限で介入', next: 'gag_inv_fuyuki', when: () => hasExtendedJokes() },
+        { tx: '暖炉に頭を突っ込む覚悟', next: 'gag_inv_fireplace', when: () => hasExtendedJokes() },
+        { tx: '爺の昔語り、第十八番を所望', next: 'gag_inv_past', when: () => hasExtendedJokes() }
       ]
     }
   },
@@ -976,13 +976,13 @@ const scenes = {
       ],
       replayOptions: [
         {
-          tx: '◇幼馴染権限で脳味噌を一時間だけ貸してもらう',
+          tx: '幼馴染権限で脳味噌を一時間だけ貸してもらう',
           next: 'finale_with_mizuki',
           apply: () => { gameState.talk_to_mizuki_final = true; },
           when: () => hasExtendedJokes()
         },
         {
-          tx: '◇孤独な名探偵ロールを演じ切る',
+          tx: '孤独な名探偵ロールを演じ切る',
           next: 'final_accuse',
           apply: () => { gameState.talk_to_mizuki_final = false; },
           when: () => hasExtendedJokes()
@@ -1020,12 +1020,12 @@ const scenes = {
         { tx: '犯人はいない（事故・自殺）と述べる', next: 'end_check', apply: () => { gameState.accuse = 'none'; } }
       ],
       replayOptions: [
-        { tx: '◇「榊さん、文鎮がもう白状してるわよ」', next: 'gag_acc_sakaki', apply: () => { gameState.accuse = 'sakaki'; gameState.alone = false; }, when: () => hasExtendedJokes() },
-        { tx: '◇弁護士を、依頼人の前で告発してみる', next: 'gag_acc_fuyuki', apply: () => { gameState.accuse = 'fuyuki'; }, when: () => hasExtendedJokes() },
-        { tx: '◇「美咲さん、そのネイルごと連行します」', next: 'gag_acc_misaki', apply: () => { gameState.accuse = 'misaki'; }, when: () => hasExtendedJokes() },
-        { tx: '◇爺に濡れ衣、三十年分の忠義が泣く', next: 'gag_acc_kuonji', apply: () => { gameState.accuse = 'kuonji'; }, when: () => hasExtendedJokes() },
-        { tx: '◇幼馴染が犯人、という同人誌的展開', next: 'gag_acc_mizuki', apply: () => { gameState.accuse = 'mizuki'; }, when: () => hasExtendedJokes() },
-        { tx: '◇推理を投げて、紅茶を淹れ直す', next: 'gag_acc_none', apply: () => { gameState.accuse = 'none'; }, when: () => hasExtendedJokes() }
+        { tx: '「榊さん、文鎮がもう白状してるわよ」', next: 'gag_acc_sakaki', apply: () => { gameState.accuse = 'sakaki'; gameState.alone = false; }, when: () => hasExtendedJokes() },
+        { tx: '弁護士を、依頼人の前で告発してみる', next: 'gag_acc_fuyuki', apply: () => { gameState.accuse = 'fuyuki'; }, when: () => hasExtendedJokes() },
+        { tx: '「美咲さん、そのネイルごと連行します」', next: 'gag_acc_misaki', apply: () => { gameState.accuse = 'misaki'; }, when: () => hasExtendedJokes() },
+        { tx: '爺に濡れ衣、三十年分の忠義が泣く', next: 'gag_acc_kuonji', apply: () => { gameState.accuse = 'kuonji'; }, when: () => hasExtendedJokes() },
+        { tx: '幼馴染が犯人、という同人誌的展開', next: 'gag_acc_mizuki', apply: () => { gameState.accuse = 'mizuki'; }, when: () => hasExtendedJokes() },
+        { tx: '推理を投げて、紅茶を淹れ直す', next: 'gag_acc_none', apply: () => { gameState.accuse = 'none'; }, when: () => hasExtendedJokes() }
       ]
     }
   },
@@ -1169,11 +1169,11 @@ const scenes = {
         }
       ],
       replayOptions: [
-        { tx: '◇法と秩序、テーマ曲を脳内再生する',
+        { tx: '法と秩序、テーマ曲を脳内再生する',
           next: 'end_true_standard',
           apply: () => { gameState.choice_empathy = false; },
           when: () => hasExtendedJokes() },
-        { tx: '◇二十年の重み、編集者として共感する',
+        { tx: '二十年の重み、編集者として共感する',
           next: 'end_true_plus',
           apply: () => { gameState.choice_empathy = true; },
           when: () => hasExtendedJokes() }
