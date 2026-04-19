@@ -153,6 +153,8 @@ const scenes = {
   'prologue_01': {
     chapter: { num: '― 序 章 ―', name: '招かれざる客たち' },
     bg: 'exterior',
+    bgm: 'main',
+    se: 'blizzard',
     lines: [
       { sp: '', tx: '────── 長野県・奥秩父山系、標高一七〇〇メートル。' },
       { sp: '', tx: '吹雪は、昼過ぎからやむ気配を見せなかった。' },
@@ -434,6 +436,7 @@ const scenes = {
 
   'route_misaki': {
     bg: 'corridor',
+    se: 'phone',
     lines: [
       { sp: '', tx: '廊下に出ると、二階の方から人の気配がした。\n律は音を立てずに階段を上る。' },
       { sp: '瀬戸 美咲', tx: '「……だから、もう少しだけ。お願い……佐伯さん」' },
@@ -486,6 +489,8 @@ const scenes = {
   'converge_02': {
     chapter: { num: '― 第 二 章 ―', name: '最初の違和感' },
     bg: 'bedroom',
+    bgm: 'tension',
+    se: 'clock',
     lines: [
       { sp: '', tx: '――深夜二時。' },
       { sp: '', tx: '吹き付ける風の音が、館の軋みとなって響く。\n雪はやむどころか、ますます強くなっていた。' },
@@ -581,6 +586,7 @@ const scenes = {
   'ch3_01': {
     chapter: { num: '― 第 三 章 ―', name: '朝の発見' },
     bg: 'dining',
+    se: 'door',
     lines: [
       { sp: '', tx: '翌朝、二日目。' },
       { sp: '', tx: '朝食の時間になっても、主の白鷺清吾は現れなかった。' },
@@ -595,6 +601,7 @@ const scenes = {
 
   'ch3_02': {
     bg: 'study-body',
+    bgm: 'shock',
     lines: [
       { sp: '', tx: '白鷺清吾は、重厚な革張りのソファに深く沈み込んでいた。\n首は力なく垂れ、その側頭部からは血が流れている。' },
       { sp: '水無月 透', tx: '「嘘だろ……。白鷺さん！」' },
@@ -692,6 +699,7 @@ const scenes = {
   'ch5_intro': {
     chapter: { num: '― 第 五 章 ―', name: '夜の書斎' },
     bg: 'corridor',
+    bgm: 'deduce',
     lines: [
       { sp: '', tx: '――二日目、二十一時。' },
       { sp: '', tx: '短い冬の陽はとうに落ち、\n窓の外は再び雪と夜に閉ざされていた。' },
@@ -855,6 +863,7 @@ const scenes = {
   // ============== 終章：二重奏の真実 ==============
   'finale_01': {
     chapter: { num: '― 終 章 ―', name: '二重奏の真実' },
+    bgm: 'accuse',
     bg: 'hall',
     lines: [
       { sp: '', tx: '――午後四時。\n短い冬の陽が、山の稜線に沈もうとしている。' },
@@ -997,6 +1006,7 @@ const scenes = {
   // ============== エンディング ==============
   'end_true': {
     bg: 'accuse',
+    bgm: 'true',
     lines: [
       { sp: '神原 律', tx: '「犯人はあなたです、冬木綾乃さん」' },
       { sp: '冬木 綾乃', tx: '「……根拠を、聞かせてもらえるかしら」' },
@@ -1073,6 +1083,7 @@ const scenes = {
 
   'end_true_plus': {
     bg: 'dawn',
+    bgm: 'dawn',
     lines: [
       { sp: '神原 律', tx: '「冬木さん。私には、あなたの二十年が――\nどれだけ重いものだったか、全てを分かるとは言えません」' },
       { sp: '神原 律', tx: '「でも、あなたが一人で背負ってきたものを、\nもう、あなた一人だけのものにはしないで下さい」' },
@@ -1098,6 +1109,7 @@ const scenes = {
 
   'end_normal': {
     bg: 'dawn',
+    bgm: 'dawn',
     lines: [
       { sp: '神原 律', tx: '「榊さん。あなたが、白鷺さんを殺害しましたね」' },
       { sp: '榊 亮', tx: '「――ふざけるな！　証拠はあるのか、証拠は！」' },
@@ -1125,6 +1137,7 @@ const scenes = {
 
   'end_bad_misaki': {
     bg: 'corridor',
+    bgm: 'bad',
     lines: [
       { sp: '神原 律', tx: '「美咲さん。あなたが深夜、空き客室にひとり籠って、\nずっと電話を続けていたのを、私は知っています」' },
       { sp: '神原 律', tx: '「あなたが、白鷺さんを殺したのでは？」' },
@@ -1144,6 +1157,7 @@ const scenes = {
 
   'end_bad_fuyuki_unproven': {
     bg: 'hall',
+    bgm: "bad",
     lines: [
       { sp: '神原 律', tx: '「……冬木さん。あなたが、真犯人ですね」' },
       { sp: '冬木 綾乃', tx: '「神原さん。あなたの直感は、確かに鋭い。\n――でも、それを裏づける証拠は？」' },
@@ -1171,6 +1185,7 @@ const scenes = {
   'final_ep_01': {
     chapter: { num: '― 最 終 回 ―', name: '二重奏の底譜' },
     bg: 'hall',
+    bgm: "main2",
     lines: [
       { sp: '', tx: '――白嶺荘に、その夜、七人が揃った。' },
       { sp: '', tx: '吹雪の中、最後の車が玄関に停まる。\n神原律と、水無月透。' },
@@ -1184,6 +1199,7 @@ const scenes = {
 
   'final_ep_02': {
     bg: 'dining',
+    bgm: "tension",
     lines: [
       { sp: '', tx: '夕食の席。' },
       { sp: '', tx: '瀬戸美咲が、雪の結晶を象ったネイルを自慢した。\n榊亮は、白鷺清吾に硬い視線を送ったまま、ろくに皿に手をつけなかった。' },
@@ -1201,6 +1217,7 @@ const scenes = {
 
   'final_ep_03': {
     bg: 'hall',
+    bgm: "tension",
     lines: [
       { sp: '', tx: '夕食が終わり、人々が散っていく。' },
       { sp: '', tx: '榊亮が白鷺清吾を書斎へ呼び止め、\n「示談金の件は、今夜限りで――」と切り出した。' },
@@ -1218,6 +1235,7 @@ const scenes = {
 
   'final_ep_04': {
     bg: 'study-body',
+    bgm: "shock",
     lines: [
       { sp: '', tx: '翌朝。' },
       { sp: '', tx: '白鷺清吾が、書斎のソファで倒れているのが発見された。' },
@@ -1235,6 +1253,7 @@ const scenes = {
 
   'final_ep_05': {
     bg: 'salon',
+    bgm: "deduce",
     lines: [
       { sp: '', tx: '昼。' },
       { sp: '', tx: '神原律の観察眼は、確かに鋭かった。' },
@@ -1252,6 +1271,7 @@ const scenes = {
 
   'final_ep_06': {
     bg: 'accuse',
+    bgm: "accuse",
     lines: [
       { sp: '', tx: '吹雪が、嘘のようにやんだ朝。' },
       { sp: '', tx: '神原律は、皆の前で榊亮を告発した。' },
@@ -1265,6 +1285,7 @@ const scenes = {
 
   'final_ep_07': {
     bg: 'dawn',
+    bgm: "dawn",
     lines: [
       { sp: '', tx: '玄関先。' },
       { sp: '', tx: '神原律と水無月透が、車に乗り込もうとしていた。' },
@@ -1279,6 +1300,7 @@ const scenes = {
 
   'final_ep_08': {
     bg: 'flashback',
+    bgm: "flashback",
     lines: [
       { sp: '', tx: '――さて。' },
       { sp: '', tx: 'ここからは、独白を許してもらおう。' },
@@ -1587,6 +1609,7 @@ const scenes = {
   // --- 連続殺人ルートのエンディング ---
   'serial_end_stopped2': {
     bg: 'dawn',
+    bgm: "bad",
     lines: [
       { sp: '神原 律', tx: '「榊さん。白鷺さんを殺害したのは、あなたです」' },
       { sp: '神原 律', tx: '「凶器の文鎮、袖口の血痕、\n二十三時二十分の廊下でのあなたの様子。すべてが繋がっています」' },
@@ -1608,6 +1631,7 @@ const scenes = {
 
   'serial_end_stopped3': {
     bg: 'dawn',
+    bgm: "bad",
     lines: [
       { sp: '神原 律', tx: '「……榊さん。白鷺さんを殺したのは、あなたです」' },
       { sp: '神原 律', tx: '「文鎮、袖口、廊下――\nもう、逃げ場はありません」' },
@@ -1629,6 +1653,7 @@ const scenes = {
 
   'serial_end_fuyuki_mid': {
     bg: 'hall',
+    bgm: "bad",
     lines: [
       { sp: '神原 律', tx: '「犯人は、あなたです。冬木綾乃さん」' },
       { sp: '冬木 綾乃', tx: '「……根拠は？」' },
@@ -1647,6 +1672,7 @@ const scenes = {
 
   'serial_end_fuyuki_late': {
     bg: 'hall',
+    bgm: "bad",
     lines: [
       { sp: '神原 律', tx: '「冬木綾乃さん。あなたが、三人を殺した真犯人です」' },
       { sp: '冬木 綾乃', tx: '「……証拠は？　まだ揃わないのでしょう？」' },
@@ -1665,6 +1691,7 @@ const scenes = {
 
   'serial_end_wrong_mid': {
     bg: 'hall',
+    bgm: "bad",
     lines: [
       { sp: '神原 律', tx: '「……あなたが、犯人だ」' },
       { sp: '', tx: '律が指さしたのは、事件と何の関係もない人物だった。' },
@@ -1681,6 +1708,7 @@ const scenes = {
 
   'serial_end_massacre': {
     bg: 'corridor',
+    bgm: "bad",
     lines: [
       { sp: '神原 律', tx: '「……もう、誰を疑えばいいのかも、わからない」' },
       { sp: '水無月 透', tx: '「律。……まだ、お前だけは、俺が守るから」' },
@@ -1703,6 +1731,7 @@ const scenes = {
 
   'end_bad_generic': {
     bg: 'corridor',
+    bgm: "bad",
     lines: [
       { sp: '神原 律', tx: '「……この事件は、事故でも自殺でもない。\nでも、私にはまだ、決定打が見えない」' },
       { sp: '', tx: '律の推理は、決定的な証拠を掴み損ねていた。' },
@@ -1721,6 +1750,7 @@ const scenes = {
 
   'end_normal_b': {
     bg: 'dawn',
+    bgm: "dawn",
     lines: [
       { sp: '神原 律', tx: '「榊さん。あなたが、白鷺さんを殺害しましたね」' },
       { sp: '神原 律', tx: '「文鎮の血痕、袖口の付着物、\n現場の状況。すべてが、あなたを指しています」' },
@@ -1744,6 +1774,7 @@ const scenes = {
 
   'end_normal_c': {
     bg: 'dawn',
+    bgm: "dawn",
     lines: [
       { sp: '神原 律', tx: '「榊さん。あなたが白鷺さんを手にかけた。\n――でも、それだけではないですよね」' },
       { sp: '神原 律', tx: '「美咲さん。昨夜、空き客室にひとり籠って、\nずっと佐伯さんと電話していましたね？」' },
@@ -1768,6 +1799,7 @@ const scenes = {
 
   'end_bad_ice': {
     bg: 'corridor',
+    bgm: "bad",
     lines: [
       { sp: '神原 律', tx: '（証拠は揃っている。\n榊さんを、一人で問い質したほうがいい。他人を巻き込む前に）' },
       { sp: '', tx: '律は、榊の自室へと一人で向かった。' },
@@ -1789,6 +1821,7 @@ const scenes = {
 
   'end_bad_fire': {
     bg: 'hall',
+    bgm: "bad",
     lines: [
       { sp: '神原 律', tx: '「犯人は、あなただ」' },
       { sp: '', tx: '律の指が差したのは、\n――事件に何の関わりもない人物だった。' },
@@ -1810,6 +1843,7 @@ const scenes = {
 
   'end_bad_silent': {
     bg: 'hall',
+    bgm: "bad",
     lines: [
       { sp: '神原 律', tx: '（……冬木さんの動機は、分かった。\n二十年。両親を奪われた、その長さは）' },
       { sp: '神原 律', tx: '（そして、白鷺という男が、\n私の父にも何をしていたか――父は、最期まで語らなかった）' },
