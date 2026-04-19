@@ -76,11 +76,35 @@
       linear-gradient(180deg, #050810 0%, #0a0e14 50%, #0d1119 100%);
   }
 
+  /* ===== キャラクター ポートレート ===== */
+  #character-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0;
+    transition: opacity 0.55s ease;
+    pointer-events: none;
+  }
+  #character-layer.show { opacity: 1; }
+  /* 周囲の文字読みやすさ用ヴィネット */
+  #character-layer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(180deg, transparent 55%, rgba(5, 8, 16, 0.55) 100%),
+      radial-gradient(ellipse 100% 100% at 50% 50%, transparent 60%, rgba(5, 8, 16, 0.35) 100%);
+  }
+
   .snow {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    z-index: 2;
+    z-index: 3;
     overflow: hidden;
   }
   .snow span {
@@ -1159,6 +1183,7 @@
 <body>
 <div id="game">
   <div class="scene-bg" id="scene-bg"></div>
+  <div id="character-layer"></div>
   <div class="snow" id="snow"></div>
 
   <div id="hud">伏線 <span class="clue-count" id="clue-count">0</span>/8</div>
@@ -1605,6 +1630,49 @@ function setBackground(bgClass) {
   bg.className = 'scene-bg bg-' + bgClass;
 }
 
+// ==========================================================================
+// キャラクター ポートレート
+// ==========================================================================
+const CHAR_MAP = {
+  '神原 律':       'ritsu',
+  '水無月 透':     'mizuki',
+  '白鷺 清吾':     'shirasagi',
+  '冬木 綾乃':     'fuyuki',
+  '榊 亮':         'sakaki',
+  '瀬戸 美咲':     'misaki',
+  '久遠寺 貞三':   'kuonji'
+};
+let currentCharKey = null;
+
+function detectExpression(text) {
+  if (!text) return 'normal';
+  // 短い「……」だけの台詞や重い独白
+  if (/^「[\s…\.\-、]+」$/.test(text)) return 'grave';
+  if (/(死んで|殺し|終わり|許さない|もう、限界|消えて|二十年)/.test(text)) return 'grave';
+  // 強い感情
+  if (/[！!]/.test(text)) return 'shock';
+  if (/(クソッ|ふざけるな|嘘だろ|やだやだ|やめて|ダメ)/.test(text)) return 'shock';
+  return 'normal';
+}
+
+function setCharacter(speaker, text, expr) {
+  const layer = document.getElementById('character-layer');
+  const id = CHAR_MAP[speaker];
+  if (!id) {
+    if (currentCharKey !== null) {
+      layer.classList.remove('show');
+      currentCharKey = null;
+    }
+    return;
+  }
+  const e = expr || detectExpression(text);
+  const key = id + '-' + e;
+  if (currentCharKey === key && layer.classList.contains('show')) return;
+  layer.style.backgroundImage = `url('assets/images/characters/${id}-${e}.png')`;
+  layer.classList.add('show');
+  currentCharKey = key;
+}
+
 function showChapterTitle(num, name, cb) {
   const el = document.getElementById('chapter-title');
   document.getElementById('chapter-num').textContent = num;
@@ -1677,6 +1745,7 @@ function showLine() {
   const line = lines[currentLineIdx];
   if (!line) return;
   document.getElementById('speaker').textContent = line.sp || '';
+  setCharacter(line.sp, line.tx, line.expr);
   pushLog(line.sp || '', line.tx);
   typeText(line.tx);
 }
@@ -1718,6 +1787,8 @@ function goToScene(key) {
   saveMeta();
 
   if (scene.bg) setBackground(scene.bg);
+  // シーン遷移時はキャラ画像を一旦リセット（地の文から始まることが多い）
+  if (scene.chapter) setCharacter(null);
   if (scene.chapter) {
     showChapterTitle(scene.chapter.num, scene.chapter.name, () => showLine());
   } else {
@@ -1729,6 +1800,7 @@ function showFin() {
   // 他の表示を落とす
   if (autoMode) setAutoMode(false);
   if (skipMode) setSkipMode(false);
+  setCharacter(null);
   document.getElementById('ending-screen').classList.remove('show');
   document.getElementById('action-bar').classList.remove('show');
   document.getElementById('choices').classList.remove('show');
@@ -1736,6 +1808,7 @@ function showFin() {
 }
 
 function showEndingScreen(info) {
+  setCharacter(null);
   // エンディング到達記録
   meta.seenEndings[currentSceneKey] = (meta.seenEndings[currentSceneKey] || 0) + 1;
   saveMeta();
@@ -2083,6 +2156,7 @@ document.getElementById('btn-title-settings').addEventListener('click', () => op
 
 document.getElementById('restart-btn').addEventListener('click', () => {
   resetGameState();
+  setCharacter(null);
   document.getElementById('ending-screen').classList.remove('show');
   document.getElementById('action-bar').classList.remove('show');
   document.getElementById('title-screen').classList.remove('hidden');
