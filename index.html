@@ -1972,15 +1972,15 @@ function showEndingScreen(info) {
     .join('<br>');
   const count = Object.keys(gameState).filter(k => k.startsWith('has_clue_') && gameState[k]).length;
 
-  let routeLabel = '（未選択）';
+  let firstEncounter = '（誰とも話さず）';
   switch (gameState.route_choice) {
-    case 'fuyuki': routeLabel = '冬木ルート'; break;
-    case 'misaki': routeLabel = '美咲ルート'; break;
-    case 'kuonji': routeLabel = '久遠寺ルート'; break;
+    case 'fuyuki': firstEncounter = '冬木と対話'; break;
+    case 'misaki': firstEncounter = '美咲の様子を見に'; break;
+    case 'kuonji': firstEncounter = '久遠寺の昔話を'; break;
   }
 
   document.getElementById('ending-summary').innerHTML = `
-    <strong>第一章ルート:</strong> ${routeLabel}<br>
+    <strong>第一章の行動:</strong> ${firstEncounter}<br>
     <strong>入手した手がかり: ${count} / 8</strong><br>
     <strong>調査行動: ${gameState.investigate_count} 回</strong><br><br>
     ${clues || '（手がかりなし）'}<br><br>
