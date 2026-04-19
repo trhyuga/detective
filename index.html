@@ -635,6 +635,7 @@
     color: var(--accent-gold);
     font-weight: 500;
   }
+  #hud.hidden { display: none; }
 
   #ending-screen {
     position: absolute;
@@ -1715,12 +1716,18 @@ function addClue(key) {
   if (gameState[key]) return;
   gameState[key] = true;
   updateClueCount();
-  showClueNotify(clueDescriptions[key]);
+  // 伏線の可視化は仮犯人告発後（NORMAL 到達後）のみ
+  if (hasReachedNormal()) {
+    showClueNotify(clueDescriptions[key]);
+  }
 }
 
 function updateClueCount() {
   const count = Object.keys(gameState).filter(k => k.startsWith('has_clue_') && gameState[k]).length;
   document.getElementById('clue-count').textContent = count;
+  // HUD 本体の表示も NORMAL 到達後のみ
+  const hud = document.getElementById('hud');
+  if (hud) hud.classList.toggle('hidden', !hasReachedNormal());
 }
 
 function showClueNotify(text) {
@@ -2469,6 +2476,7 @@ document.addEventListener('keydown', (e) => {
 loadMeta();
 initSnow();
 refreshFinaleCTA();
+updateClueCount(); // HUD 表示状態を初期反映
 // 続きから・章選択・エンディングは autoSlot/seenEndings/readScenes をロード後に反映
 </script>
 
