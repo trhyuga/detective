@@ -1999,15 +1999,19 @@ function openPanel(id) {
   document.querySelectorAll('.panel.show').forEach(p => p.classList.remove('show'));
   const el = document.getElementById(id);
   if (!el) return;
-  if (id === 'panel-log') renderLog();
-  if (id === 'panel-save') renderSlots();
-  if (id === 'panel-clues') renderClues();
-  if (id === 'panel-profiles') renderProfiles();
-  if (id === 'panel-chapter') renderChapters();
-  if (id === 'panel-endings') renderEndings();
-  if (id === 'panel-settings') renderSettings();
+  // レンダリングが失敗してもパネル自体は開く
+  try {
+    if (id === 'panel-log') renderLog();
+    else if (id === 'panel-save') renderSlots();
+    else if (id === 'panel-clues') renderClues();
+    else if (id === 'panel-profiles') renderProfiles();
+    else if (id === 'panel-chapter') renderChapters();
+    else if (id === 'panel-endings') renderEndings();
+    else if (id === 'panel-settings') renderSettings();
+  } catch (e) {
+    console.warn('[panel] render failed for', id, e);
+  }
   el.classList.add('show');
-  // パネル表示中はオート・スキップを停止
   clearTimeout(autoAdvanceTimer);
   clearTimeout(skipAdvanceTimer);
 }
@@ -2262,23 +2266,27 @@ document.getElementById('btn-title-finale').addEventListener('click', () => {
 function refreshFinaleCTA() {
   const btn = document.getElementById('btn-title-finale');
   const titleMain = document.querySelector('.title-main');
-  if (!btn || !titleMain) return;
-  const unlocked = hasSeenAllEndings();
-  btn.classList.toggle('hidden', !unlocked);
-  titleMain.classList.toggle('allclear', unlocked);
+  if (btn) btn.classList.toggle('hidden', !hasSeenAllEndings());
+  if (titleMain) titleMain.classList.toggle('allclear', hasSeenAllEndings());
+
+  // その他のタイトルボタンも進捗に合わせて表示制御
+  const hasSave = !!(meta.autoSlot || meta.slots.some(s => s));
+  const seenAny = isReplay();
+  const cont = document.getElementById('btn-title-continue');
+  const chap = document.getElementById('btn-title-chapter');
+  const ends = document.getElementById('btn-title-endings');
+  if (cont) cont.classList.toggle('hidden', !hasSave);
+  if (chap) chap.classList.toggle('hidden', !seenAny);
+  if (ends) ends.classList.toggle('hidden', !seenAny);
 }
 
 document.getElementById('btn-title-continue').addEventListener('click', () => {
-  // 最新タイムスタンプのスロットを使う（オートセーブと手動セーブから）
-  const candidates = [meta.autoSlot, ...meta.slots].filter(Boolean);
-  if (candidates.length === 0) {
+  const hasAny = meta.autoSlot || meta.slots.some(s => s);
+  if (!hasAny) {
     alert('セーブデータがありません。');
     return;
   }
-  const snap = candidates.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))[0];
-  document.getElementById('title-screen').classList.add('hidden');
-  document.getElementById('action-bar').classList.add('show');
-  restoreState(snap);
+  openPanel('panel-save');
 });
 
 
