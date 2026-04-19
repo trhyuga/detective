@@ -304,11 +304,12 @@
 
   // ---- 初期化 ----
   function init() {
-    loadPrefs();
-    setupUI();
-    setupFirstInteraction();
-    hookGoToScene();
-    hookEndingHandlers();
+    try { loadPrefs(); } catch (e) { console.warn('[audio] loadPrefs:', e); }
+    try { setupUI(); } catch (e) { console.warn('[audio] setupUI:', e); }
+    try { setupFirstInteraction(); } catch (e) { console.warn('[audio] setupFI:', e); }
+    try { hookGoToScene(); } catch (e) { console.warn('[audio] hookGoToScene:', e); }
+    try { hookEndingHandlers(); } catch (e) { console.warn('[audio] hookEnd:', e); }
+    console.log('[audio] engine ready');
   }
 
   if (document.readyState === 'loading') {

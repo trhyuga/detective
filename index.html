@@ -1656,21 +1656,26 @@ function detectExpression(text) {
 }
 
 function setCharacter(speaker, text, expr) {
-  const layer = document.getElementById('character-layer');
-  const id = CHAR_MAP[speaker];
-  if (!id) {
-    if (currentCharKey !== null) {
-      layer.classList.remove('show');
-      currentCharKey = null;
+  try {
+    const layer = document.getElementById('character-layer');
+    if (!layer) return;
+    const id = CHAR_MAP[speaker];
+    if (!id) {
+      if (currentCharKey !== null) {
+        layer.classList.remove('show');
+        currentCharKey = null;
+      }
+      return;
     }
-    return;
+    const e = expr || detectExpression(text);
+    const key = id + '-' + e;
+    if (currentCharKey === key && layer.classList.contains('show')) return;
+    layer.style.backgroundImage = `url('assets/images/characters/${id}-${e}.png')`;
+    layer.classList.add('show');
+    currentCharKey = key;
+  } catch (err) {
+    console.warn('[char] setCharacter failed:', err);
   }
-  const e = expr || detectExpression(text);
-  const key = id + '-' + e;
-  if (currentCharKey === key && layer.classList.contains('show')) return;
-  layer.style.backgroundImage = `url('assets/images/characters/${id}-${e}.png')`;
-  layer.classList.add('show');
-  currentCharKey = key;
 }
 
 function showChapterTitle(num, name, cb) {
@@ -2113,13 +2118,23 @@ function resetGameState() {
 // 入力ハンドラ
 // ==========================================================================
 function startNewGame() {
-  resetGameState();
-  document.getElementById('title-screen').classList.add('hidden');
-  document.getElementById('action-bar').classList.add('show');
-  setTimeout(() => goToScene('prologue_01'), 800);
+  console.log('[start] startNewGame called');
+  try {
+    resetGameState();
+    document.getElementById('title-screen').classList.add('hidden');
+    document.getElementById('action-bar').classList.add('show');
+    setTimeout(() => {
+      console.log('[start] goToScene(prologue_01)');
+      try { goToScene('prologue_01'); }
+      catch (e) { console.error('[start] goToScene failed:', e); }
+    }, 800);
+  } catch (e) {
+    console.error('[start] startNewGame failed:', e);
+  }
 }
 
 document.getElementById('start-btn').addEventListener('click', startNewGame);
+console.log('[init] start button wired');
 
 document.getElementById('btn-title-finale').addEventListener('click', () => {
   if (!hasSeenAllEndings()) return;
