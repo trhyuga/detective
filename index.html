@@ -419,8 +419,8 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    padding: calc(2em + env(safe-area-inset-top)) 1.5em calc(2em + env(safe-area-inset-bottom));
-    background: rgba(5, 8, 16, 0.72);
+    padding: calc(1.2em + env(safe-area-inset-top)) 1.2em calc(3em + env(safe-area-inset-bottom));
+    background: rgba(5, 8, 16, 0.82);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
     overflow-y: auto;
@@ -431,6 +431,14 @@
   /* 内側 padding-top で視覚的にも中央寄せに見える */
   #choices > :first-child { margin-top: auto; }
   #choices > :last-child  { margin-bottom: auto; }
+  /* スクロールバーを常時可視化（Chromium / Safari / Firefox） */
+  #choices { scrollbar-width: thin; scrollbar-color: rgba(184,153,104,0.45) transparent; }
+  #choices::-webkit-scrollbar { width: 5px; }
+  #choices::-webkit-scrollbar-thumb {
+    background: rgba(184, 153, 104, 0.45);
+    border-radius: 3px;
+  }
+  #choices::-webkit-scrollbar-track { background: transparent; }
   .choice-prompt {
     color: var(--accent-ice);
     font-size: 0.85rem;
@@ -443,20 +451,20 @@
   .choice-btn {
     width: 100%;
     max-width: 440px;
-    padding: 0.95em 1.2em;
-    margin: 0.3em 0;
+    padding: 0.8em 1.1em;
+    margin: 0.22em 0;
     background: var(--choice-bg);
     border: 1px solid var(--choice-border);
     color: var(--ink);
     font-family: inherit;
-    font-size: 0.95rem;
-    letter-spacing: 0.1em;
+    font-size: 0.92rem;
+    letter-spacing: 0.08em;
     text-align: left;
     cursor: pointer;
     transition: background-color 0.25s, border-color 0.25s, transform 0.15s;
     position: relative;
-    line-height: 1.5;
-    min-height: 44px;
+    line-height: 1.4;
+    min-height: 40px;
     flex-shrink: 0;
   }
   .choice-btn:active {
@@ -474,33 +482,43 @@
   .choice-btn::before {
     content: '◇';
     color: var(--accent-gold);
-    margin-right: 0.8em;
+    margin-right: 0.6em;
     opacity: 0.6;
   }
   /* 狭い画面 / 選択肢が多いシーン向けの圧縮 */
-  @media (max-height: 720px), (max-width: 520px) {
-    .choice-btn {
-      padding: 0.75em 1em;
-      margin: 0.22em 0;
-      font-size: 0.9rem;
-      min-height: 40px;
-    }
-    .choice-prompt { margin-bottom: 1em; }
-    #choices {
-      padding-top: calc(1.2em + env(safe-area-inset-top));
-      padding-bottom: calc(1.2em + env(safe-area-inset-bottom));
-    }
-  }
-  @media (max-height: 560px) {
+  @media (max-height: 760px), (max-width: 520px) {
     .choice-btn {
       padding: 0.55em 0.9em;
-      margin: 0.15em 0;
+      margin: 0.18em 0;
       font-size: 0.85rem;
-      min-height: 34px;
+      line-height: 1.35;
+      min-height: 36px;
+    }
+    .choice-btn::before { margin-right: 0.4em; }
+    .choice-prompt {
+      font-size: 0.78rem;
+      margin-bottom: 0.8em;
+      letter-spacing: 0.2em;
+    }
+    #choices {
+      padding-top: calc(0.8em + env(safe-area-inset-top));
+      padding-bottom: calc(2.5em + env(safe-area-inset-bottom));
+    }
+  }
+  @media (max-height: 620px) {
+    .choice-btn {
+      padding: 0.4em 0.75em;
+      margin: 0.12em 0;
+      font-size: 0.8rem;
+      line-height: 1.25;
+      min-height: 30px;
+    }
+    .choice-btn::before {
+      content: none;
     }
     .choice-prompt {
-      font-size: 0.75rem;
-      margin-bottom: 0.6em;
+      font-size: 0.7rem;
+      margin-bottom: 0.4em;
     }
   }
 
