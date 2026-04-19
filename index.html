@@ -1596,6 +1596,8 @@ function setSkipMode(on) {
   if (skipMode) scheduleSkipAdvance();
 }
 
+let postChapterBoost = false;
+
 function scheduleAutoAdvance() {
   clearTimeout(autoAdvanceTimer);
   if (!autoMode) return;
@@ -1603,7 +1605,11 @@ function scheduleAutoAdvance() {
   if (document.getElementById('choices').classList.contains('show')) return;
   if (document.getElementById('ending-screen').classList.contains('show')) return;
   if (isTyping) return;
-  autoAdvanceTimer = setTimeout(() => { advance(); }, meta.settings.autoDelay);
+  // 章明けの第一文はじっくり読ませる（+1.8秒）
+  const base = meta.settings.autoDelay;
+  const delay = postChapterBoost ? base + 1800 : base;
+  postChapterBoost = false;
+  autoAdvanceTimer = setTimeout(() => { advance(); }, delay);
 }
 
 function scheduleSkipAdvance() {
@@ -1615,6 +1621,13 @@ function scheduleSkipAdvance() {
   // 既読シーンのみスキップ。未読に入ったら自動停止
   if (!meta.readScenes[currentSceneKey]) {
     setSkipMode(false);
+    return;
+  }
+  // 章明けの第一文はスキップ中でも一瞬見せる
+  if (postChapterBoost) {
+    postChapterBoost = false;
+    if (isTyping) skipTyping();
+    skipAdvanceTimer = setTimeout(() => { advance(); }, 900);
     return;
   }
   if (isTyping) skipTyping();
@@ -1694,6 +1707,10 @@ function setCharacter(speaker, text, expr) {
 }
 
 function showChapterTitle(num, name, cb) {
+  // 章明けはオート・スキップを一旦解除してじっくり見せる
+  if (autoMode) setAutoMode(false);
+  if (skipMode) setSkipMode(false);
+  postChapterBoost = true;
   const el = document.getElementById('chapter-title');
   document.getElementById('chapter-num').textContent = num;
   document.getElementById('chapter-name').textContent = name;
@@ -1747,6 +1764,8 @@ function typeText(text, cb) {
 function afterLineRendered() {
   scheduleAutoAdvance();
   scheduleSkipAdvance();
+  // どのモードでも章明け第一文の処理が済んだらフラグを下ろす
+  postChapterBoost = false;
 }
 
 function skipTyping() {
