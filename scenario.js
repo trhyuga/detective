@@ -15,7 +15,8 @@ const clueDescriptions = {
   has_clue_E: '遺体の異常な出血量',
   has_clue_F: '冬木の手帳と古い新聞',
   has_clue_G: '美咲の電話の男性の声',
-  has_clue_H: '久遠寺の20年前の証言'
+  has_clue_H: '久遠寺の20年前の証言',
+  has_clue_I: '水無月透が畳んだ言葉'
 };
 
 // ==========================================================================
@@ -443,12 +444,14 @@ const scenes = {
       options: [
         { tx: '冬木綾乃に話しかける', next: 'route_fuyuki', flag: 'fuyuki' },
         { tx: '美咲の様子が気になる。廊下に出る', next: 'route_misaki', flag: 'misaki' },
-        { tx: '久遠寺に、この館のことを聞く', next: 'route_kuonji', flag: 'kuonji' }
+        { tx: '久遠寺に、この館のことを聞く', next: 'route_kuonji', flag: 'kuonji' },
+        { tx: '水無月透と、テラスで夜風に当たる', next: 'route_mizuki', flag: 'mizuki' }
       ],
       replayOptions: [
         { tx: '弁護士にタダで法律相談をねじ込む', next: 'gag_c1_fuyuki', flag: 'fuyuki', when: () => hasExtendedJokes() },
         { tx: '姪っ子さんのネイル談義、延長戦', next: 'gag_c1_misaki', flag: 'misaki', when: () => hasExtendedJokes() },
-        { tx: '爺の三十年分の愚痴、取材モード', next: 'gag_c1_kuonji', flag: 'kuonji', when: () => hasExtendedJokes() }
+        { tx: '爺の三十年分の愚痴、取材モード', next: 'gag_c1_kuonji', flag: 'kuonji', when: () => hasExtendedJokes() },
+        { tx: '幼馴染をテラスに連行、雪山吐露タイム', next: 'gag_c1_mizuki', flag: 'mizuki', when: () => hasExtendedJokes() }
       ]
     }
   },
@@ -480,6 +483,16 @@ const scenes = {
       { sp: '水無月 透', tx: '（これ、朝までパターンだ）' }
     ],
     next: 'route_kuonji'
+  },
+  'gag_c1_mizuki': {
+    bg: 'hall',
+    lines: [
+      { sp: '神原 律', tx: '「透。お前、テラスで三分、正座」' },
+      { sp: '水無月 透', tx: '「凍死させる気か？」' },
+      { sp: '神原 律', tx: '「幼馴染権限で、夜風吐露タイム宣言」' },
+      { sp: '水無月 透', tx: '「その権限、どこで発行されたんだよ……」' }
+    ],
+    next: 'route_mizuki'
   },
 
   'route_fuyuki': {
@@ -540,6 +553,56 @@ const scenes = {
       { sp: '神原 律', tx: '（二十年前の、若い夫婦……）' }
     ],
     onEnd: () => { addClue('has_clue_H'); gameState.investigate_count++; },
+    next: 'converge_01'
+  },
+
+  'route_mizuki': {
+    bg: 'hall',
+    ambient: 'blizzard',
+    lines: [
+      { sp: '神原 律', tx: '「透。少し、外の空気」' },
+      { sp: '水無月 透', tx: '「……この吹雪で？　\nお前、雪山の風に風流を感じる派だったか？」' },
+      { sp: '神原 律', tx: '「テラスの庇があるところまででいいの。\n……五分だけ、いい？」' },
+      { sp: '', tx: '律は肩に羽織をかけて、ガラス戸を細く開けた。\n凍えた空気が、一息で肺の奥まで届く。' },
+      { sp: '水無月 透', tx: '「……ちゃんと、羽織ってるのな。\n十八の頃は、冬でも素足で玄関開ける子だったのに」' },
+      { sp: '神原 律', tx: '「その話、あと十五回はされそう」' },
+      { sp: '水無月 透', tx: '「してるよ、俺。折に触れて」' },
+      { sp: '', tx: '透は柄にもなく、視線を雪の方へと外した。\n律は、その一拍の沈黙を聞き取った。' },
+      { sp: '神原 律', tx: '「……透。車の中で言いかけたこと、覚えてる？」' },
+      { sp: '水無月 透', tx: '「………………」' },
+      { sp: '水無月 透', tx: '「覚えてるよ。『着いてから』って、保留にしたやつな」' },
+      { sp: '神原 律', tx: '「着いたわよ。――少なくとも、玄関までは」' },
+      { sp: '水無月 透', tx: '「……この館、なんか、妙に居心地が悪くてさ。\n今夜じゃない気がして、畳んだ」' },
+      { sp: '神原 律', tx: '（……嘘。透の「嫌な感じ」は、もっと軽い言い方をする）' },
+      { sp: '神原 律', tx: '（今、言いたくないのは、館のせいじゃない）' },
+      { sp: '水無月 透', tx: '「三日間、まだ長いからな。\nどこかで、ちゃんとタイミングが来たら」' },
+      { sp: '神原 律', tx: '「……わかった。その時を、待つ」' },
+      { sp: '水無月 透', tx: '「……校正者に待たれると、逆に追い詰められるんだよ」' },
+      { sp: '神原 律', tx: '「それが狙いよ」' },
+      { sp: '', tx: '透が、ほんの少しだけ、肩の力を抜いて笑った。' },
+      { sp: '水無月 透', tx: '「律」' },
+      { sp: '水無月 透', tx: '「お前がこの山で、何かに気を張ってるのは、\n俺にもちゃんと見えてる。――無理は、しないでくれよ」' },
+      { sp: '神原 律', tx: '「……ええ」' },
+      { sp: '', tx: '吹雪の風が、二人の間を一度だけ通り抜けた。\n透の飲み込んだ言葉は、また、雪の夜に静かに畳まれた。' }
+    ],
+    replayInserts: [
+      {
+        when: () => hasReachedNormal(),
+        at: 15,
+        lines: [
+          { sp: '神原 律', tx: '（――この人は、十八の時から、同じ言葉を畳んでいる）' },
+          { sp: '神原 律', tx: '（十年。長すぎるわよ、透）' }
+        ]
+      },
+      {
+        when: () => hasReachedTrue(),
+        at: 22,
+        lines: [
+          { sp: '神原 律', tx: '（もしこの三日間で、透が言葉を解くことがあれば。\n……私は、きっと、校正ペンを握ったまま聞くんだろう）' }
+        ]
+      }
+    ],
+    onEnd: () => { addClue('has_clue_I'); gameState.investigate_count++; },
     next: 'converge_01'
   },
 

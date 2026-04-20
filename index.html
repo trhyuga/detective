@@ -1488,6 +1488,7 @@
 const gameState = {
   has_clue_A: false, has_clue_B: false, has_clue_C: false, has_clue_D: false,
   has_clue_E: false, has_clue_F: false, has_clue_G: false, has_clue_H: false,
+  has_clue_I: false,
   investigate_count: 0,
   investigated_fireplace: false,
   route_choice: null,
@@ -2055,11 +2056,12 @@ function showEndingScreen(info) {
     case 'fuyuki': firstEncounter = '冬木と対話'; break;
     case 'misaki': firstEncounter = '美咲の様子を見に'; break;
     case 'kuonji': firstEncounter = '久遠寺の昔話を'; break;
+    case 'mizuki': firstEncounter = '透とテラスで夜風'; break;
   }
 
   document.getElementById('ending-summary').innerHTML = `
     <strong>第一章の行動:</strong> ${firstEncounter}<br>
-    <strong>入手した手がかり: ${count} / 8</strong><br>
+    <strong>入手した手がかり: ${count} / 9</strong><br>
     <strong>調査行動: ${gameState.investigate_count} 回</strong><br><br>
     ${clues || '（手がかりなし）'}<br><br>
     <span style="font-size:0.78rem; color:var(--ink-dim)">
@@ -2244,7 +2246,7 @@ function renderProfiles() {
 
 function renderClues() {
   const body = document.getElementById('clues-body');
-  const keys = ['has_clue_A','has_clue_B','has_clue_C','has_clue_D','has_clue_E','has_clue_F','has_clue_G','has_clue_H'];
+  const keys = ['has_clue_A','has_clue_B','has_clue_C','has_clue_D','has_clue_E','has_clue_F','has_clue_G','has_clue_H','has_clue_I'];
   const detail = {
     has_clue_A: '冬木綾乃が夕食時、白鷺の薬入れに自然に手を添えていた。',
     has_clue_B: '白鷺が「最近、薬の効きが悪い」と冬木にだけ零した。',
@@ -2253,7 +2255,8 @@ function renderClues() {
     has_clue_E: '白鷺遺体の打撲傷、周辺の血の飛び散りが異常に少ない。',
     has_clue_F: '冬木の手帳に「20年」の書き込みと、古い新聞記事の切り抜き。',
     has_clue_G: '美咲の電話相手「佐伯」――水無月透の元同僚。',
-    has_clue_H: '二十年前、若い夫婦が白鷺を訪ねて追い返された。'
+    has_clue_H: '二十年前、若い夫婦が白鷺を訪ねて追い返された。',
+    has_clue_I: '一日目の夜、水無月透は何かを言いかけて畳んだ。'
   };
   body.innerHTML = keys.map(k => {
     const got = gameState[k];
