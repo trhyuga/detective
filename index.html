@@ -1479,8 +1479,8 @@
   </div>
 </div>
 
-<script src="scenario.js"></script>
-<script src="audio-engine.js" defer></script>
+<script src="scenario.js?v=20260420"></script>
+<script src="audio-engine.js?v=20260420" defer></script>
 <script>
 // ==========================================================================
 // ゲーム状態
@@ -2008,8 +2008,11 @@ function goToScene(key) {
   }
   saveMeta();
 
+  // シーンレベルの bg が未指定なら、前シーンの bg-* 残りを必ず落とす。
+  // prologue_01 のように序盤は bg なし → ライン途中で初めて bg が付くパターンで
+  // 前回プレイの館画像が透けて見える事故を防ぐ。
   if (scene.bg) setBackground(scene.bg);
-  else document.getElementById('scene-bg').className = 'scene-bg'; // bg 未指定はデフォルトダーク
+  else setBackground('');
   // シーン遷移時はキャラ画像を一旦リセット（地の文から始まることが多い）
   if (scene.chapter) setCharacter(null);
   // オーディオエンジンに通知（BGM/SE/環境音 切替）
