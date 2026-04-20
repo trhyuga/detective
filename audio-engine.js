@@ -218,6 +218,31 @@
     clock: 1.2
   };
 
+  // 「効果音扱いだが尺が長い」キー。章代わりや場所移動でブツッと残ると
+  // 違和感があるので、シーン切り替え時にフェードアウトで切り落とす。
+  const LONG_SE_KEYS = { blizzard: true, fireplace: true };
+  let lastLongSeEl = null;
+  let lastLongSeKey = null;
+  let lastSceneBg = null;
+
+  function stopLongSe(fadeMs) {
+    if (!lastLongSeEl) { lastLongSeKey = null; return; }
+    const old = lastLongSeEl;
+    lastLongSeEl = null;
+    lastLongSeKey = null;
+    const ms = fadeMs || 500;
+    let t = 0;
+    const start = old.volume;
+    const fade = setInterval(() => {
+      t += 60;
+      old.volume = Math.max(0, start * (1 - t / ms));
+      if (t >= ms) {
+        clearInterval(fade);
+        try { old.pause(); old.src = ''; } catch (e) {}
+      }
+    }, 60);
+  }
+
   let audioCtx = null;
   function getAudioContext() {
     if (audioCtx) return audioCtx;
@@ -243,13 +268,28 @@
       console.warn('[audio] unknown SE key:', key);
       return;
     }
+    // 長尺 SE は前のものを切ってから鳴らす（同キーなら重ねない）
+    const isLong = !!LONG_SE_KEYS[key];
+    if (isLong) {
+      if (lastLongSeKey === key && lastLongSeEl) return;
+      stopLongSe(300);
+    }
     const gain = SE_GAIN[key] || 1;
     const baseVol = state.seVolume;
     const a = new Audio(url);
+    const rememberLong = () => {
+      if (!isLong) return;
+      lastLongSeEl = a;
+      lastLongSeKey = key;
+      a.addEventListener('ended', () => {
+        if (lastLongSeEl === a) { lastLongSeEl = null; lastLongSeKey = null; }
+      });
+    };
     // 1.0 以下なら HTML audio の volume だけで済ます
     if (gain <= 1) {
       a.volume = Math.min(1, baseVol * gain);
       a.play().catch(() => {});
+      rememberLong();
       return;
     }
     // 1.0 を超える増幅は WebAudio の GainNode で
@@ -258,6 +298,7 @@
       // フォールバック：volume を 1.0 にクランプして再生
       a.volume = Math.min(1, baseVol * gain);
       a.play().catch(() => {});
+      rememberLong();
       return;
     }
     a.crossOrigin = 'anonymous';
@@ -275,6 +316,7 @@
       a.volume = Math.min(1, baseVol * gain);
       a.play().catch(() => {});
     }
+    rememberLong();
   }
 
   // ---- 初回ユーザ操作で pending を流す ----
@@ -313,6 +355,16 @@
   function onScene(scene) {
     if (!scene) return;
     try {
+      // 章代わり or 場所移動で、前シーンから引きずってる長尺 SE を一旦切る。
+      // 新シーンが同じ長尺 SE を指定している場合は playSe 側の同キー判定に任せる。
+      const chapterChange = !!scene.chapter;
+      const bgChanged = scene.bg !== undefined && scene.bg !== lastSceneBg;
+      if (chapterChange || bgChanged) {
+        const keepingSame = scene.se && LONG_SE_KEYS[scene.se] && scene.se === lastLongSeKey;
+        if (!keepingSame) stopLongSe(400);
+      }
+      if (scene.bg !== undefined) lastSceneBg = scene.bg;
+
       let bgmKey = scene.bgm;
       if (!bgmKey && scene.bg) bgmKey = BG_TO_BGM[scene.bg];
       if (bgmKey) playBgm(bgmKey);
@@ -389,6 +441,15 @@
     }
   }
 
+  // 行単位で背景が変わった時用：場所移動なら長尺 SE を切り落とす
+  function onBgChange(bg, lineSe) {
+    if (bg === undefined || bg === null) return;
+    if (bg === lastSceneBg) return;
+    const keepingSame = lineSe && LONG_SE_KEYS[lineSe] && lineSe === lastLongSeKey;
+    if (!keepingSame) stopLongSe(400);
+    lastSceneBg = bg;
+  }
+
   // ---- 公開 API ----
   window.audioEngine = {
     playBgm,
@@ -398,7 +459,8 @@
     stopAmbient,
     toggleMute,
     isMuted: () => state.muted,
-    onScene  // inline goToScene が呼ぶ
+    onScene,  // inline goToScene が呼ぶ
+    onBgChange  // showLine が line.bg 差し替え時に呼ぶ
   };
 
   // ---- 初期化 ----
