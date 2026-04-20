@@ -2337,6 +2337,7 @@ function startNewGame() {
   try {
     resetGameState();
     document.getElementById('title-screen').classList.add('hidden');
+    document.getElementById('ending-screen').classList.remove('show');
     document.getElementById('action-bar').classList.add('show');
     setTimeout(() => {
       console.log('[start] goToScene(prologue_01)');
@@ -2355,6 +2356,7 @@ document.getElementById('btn-title-mizuki').addEventListener('click', () => {
   if (!hasReachedDetective()) return;
   resetGameState();
   document.getElementById('title-screen').classList.add('hidden');
+  document.getElementById('ending-screen').classList.remove('show');
   setTimeout(() => goToScene('mizuki_talk_01'), 600);
 });
 
@@ -2362,6 +2364,7 @@ document.getElementById('btn-title-finale').addEventListener('click', () => {
   if (!hasSeenAllEndings()) return;
   resetGameState();
   document.getElementById('title-screen').classList.add('hidden');
+  document.getElementById('ending-screen').classList.remove('show');
   // アクションバーは最終回では非表示のまま
   setTimeout(() => goToScene('final_ep_01'), 600);
 });
@@ -2442,6 +2445,7 @@ document.getElementById('btn-reset-progress').addEventListener('click', () => {
   resetAllProgress();
   alert('リセットしました。');
   closeAllPanels();
+  document.getElementById('ending-screen').classList.remove('show');
   document.getElementById('title-screen').classList.remove('hidden');
   document.getElementById('action-bar').classList.remove('show');
 });
