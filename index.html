@@ -2173,8 +2173,8 @@ function renderSlots() {
       const idx = b.dataset.loadIdx;
       const snap = idx === 'auto' ? meta.autoSlot : meta.slots[parseInt(idx, 10)];
       if (!snap) return;
+      clearEndingOverlays();
       document.getElementById('title-screen').classList.add('hidden');
-      document.getElementById('ending-screen').classList.remove('show');
       document.getElementById('choices').classList.remove('show');
       document.getElementById('action-bar').classList.add('show');
       restoreState(snap);
@@ -2284,9 +2284,9 @@ function renderChapters() {
       if (b.disabled) return;
       // 章開始にジャンプ：gameState を初期化
       resetGameState();
+      clearEndingOverlays();
       document.getElementById('title-screen').classList.add('hidden');
       document.getElementById('action-bar').classList.add('show');
-      document.getElementById('ending-screen').classList.remove('show');
       closeAllPanels();
       goToScene(b.dataset.jump);
     };
@@ -2341,12 +2341,20 @@ function resetGameState() {
 // ==========================================================================
 // 入力ハンドラ
 // ==========================================================================
+// タイトルから本編へ遷移する時に、前回のエンディング／完表示が残らないよう一括で掃除する
+function clearEndingOverlays() {
+  document.getElementById('ending-screen').classList.remove('show');
+  document.getElementById('fin-screen').classList.remove('show');
+  const ct = document.getElementById('chapter-title');
+  if (ct) ct.classList.remove('show');
+}
+
 function startNewGame() {
   console.log('[start] startNewGame called');
   try {
     resetGameState();
+    clearEndingOverlays();
     document.getElementById('title-screen').classList.add('hidden');
-    document.getElementById('ending-screen').classList.remove('show');
     document.getElementById('action-bar').classList.add('show');
     setTimeout(() => {
       console.log('[start] goToScene(prologue_01)');
@@ -2364,16 +2372,16 @@ console.log('[init] start button wired');
 document.getElementById('btn-title-mizuki').addEventListener('click', () => {
   if (!hasReachedDetective()) return;
   resetGameState();
+  clearEndingOverlays();
   document.getElementById('title-screen').classList.add('hidden');
-  document.getElementById('ending-screen').classList.remove('show');
   setTimeout(() => goToScene('mizuki_talk_01'), 600);
 });
 
 document.getElementById('btn-title-finale').addEventListener('click', () => {
   if (!hasSeenAllEndings()) return;
   resetGameState();
+  clearEndingOverlays();
   document.getElementById('title-screen').classList.add('hidden');
-  document.getElementById('ending-screen').classList.remove('show');
   // アクションバーは最終回では非表示のまま
   setTimeout(() => goToScene('final_ep_01'), 600);
 });
@@ -2414,7 +2422,7 @@ document.getElementById('btn-title-settings').addEventListener('click', () => op
 document.getElementById('restart-btn').addEventListener('click', () => {
   resetGameState();
   setCharacter(null);
-  document.getElementById('ending-screen').classList.remove('show');
+  clearEndingOverlays();
   document.getElementById('action-bar').classList.remove('show');
   document.getElementById('title-screen').classList.remove('hidden');
   refreshFinaleCTA();
@@ -2454,7 +2462,7 @@ document.getElementById('btn-reset-progress').addEventListener('click', () => {
   resetAllProgress();
   alert('リセットしました。');
   closeAllPanels();
-  document.getElementById('ending-screen').classList.remove('show');
+  clearEndingOverlays();
   document.getElementById('title-screen').classList.remove('hidden');
   document.getElementById('action-bar').classList.remove('show');
 });
@@ -2502,7 +2510,7 @@ document.querySelectorAll('[data-menu]').forEach(b => {
 document.getElementById('btn-return-title').addEventListener('click', () => {
   if (!confirm('タイトルに戻ります。\n未セーブの進行は失われます（オートセーブは維持）。')) return;
   closeAllPanels();
-  document.getElementById('ending-screen').classList.remove('show');
+  clearEndingOverlays();
   document.getElementById('action-bar').classList.remove('show');
   document.getElementById('title-screen').classList.remove('hidden');
 });
