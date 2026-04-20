@@ -714,9 +714,10 @@ const scenes = {
   'flavor_thirst_sherry': {
     bg: 'corridor',
     lines: [
-      { sp: '', tx: '律の頭に、夕食前に見かけた書斎棚の酒瓶がよぎる。' },
-      { sp: '神原 律', tx: '（……いえ、校正者として、\n他人の家の酒に手を伸ばすのは流石に一線）' },
-      { sp: '', tx: '律は大人しく廊下へ出た。\nまずは、台所の水である。', se: 'footstep' }
+      { sp: '', tx: '律の頭に、夕食前に見かけた書斎棚の酒瓶がよぎる。\n誘惑に負けて、律は一階へ下りた。' },
+      { sp: '神原 律', tx: '（書斎まで忍び込むのは流石にまずい。\n――廊下の小卓に出ていた、予備のボトルで、一口だけ）' },
+      { sp: '', tx: '細身のグラスに、琥珀色を指先ぶんだけ。\n舌の奥に、薬草の苦みに似た余韻。', se: 'footstep' },
+      { sp: '神原 律', tx: '（……ダメね。これは喉の渇きとは違う方向に連れていく酒だ。\n大人しく、台所の水に戻ろう）' }
     ],
     next: 'ch2_01'
   },
@@ -726,8 +727,10 @@ const scenes = {
       { sp: '神原 律', tx: '「透、透。起きなさい」' },
       { sp: '水無月 透', tx: '「……いや、こっちは寝るぞ、律。\n深夜二時の打ち合わせは、社則違反だ」' },
       { sp: '神原 律', tx: '「ちょっと付き合いなさい。\n喉が渇いたから台所まで」' },
-      { sp: '水無月 透', tx: '「護衛代、原稿料に上乗せな」' },
-      { sp: '', tx: '透がぶつぶつ言いながら、寝ぼけ眼で上体を起こす。\n律はそれを横目で見届けてから、廊下へ出た。' }
+      { sp: '水無月 透', tx: '「……台所、行って戻ってこい。\n俺はここで、お前の足音の数、かぞえて待つ」' },
+      { sp: '神原 律', tx: '「……それ、どういう護衛よ」' },
+      { sp: '水無月 透', tx: '「原稿料には含まれない、深夜の幼馴染特典だ」' },
+      { sp: '', tx: '律は肩をすくめて、結局は一人で毛布を跳ね除けた。\n透の声の温度だけ、廊下へ持ち出すことにする。' }
     ],
     next: 'ch2_01'
   },
@@ -1107,7 +1110,7 @@ const scenes = {
       { sp: '冬木 綾乃', tx: '「……神原さん。人には、誰にも触れられたくない過去があるものよ」' },
       { sp: '', tx: '冬木は手帳を取り上げ、万年筆を内ポケットへ仕舞い込んだ。\nその声音は静かだったが、瞳は冷たく凍っていた。' }
     ],
-    onEnd: () => { addClue('has_clue_F'); gameState.investigate_count++; },
+    onEnd: () => { addClue('has_clue_F'); gameState.investigate_count++; gameState.last_investigation = 'fuyuki'; },
     next: 'finale_01'
   },
 
@@ -1124,7 +1127,7 @@ const scenes = {
       { sp: '神原 律', tx: '（書斎から逃げる犯人が、廊下を抜け、ホールを通り、\n咄嗟に薪入れへ放り込んだ。その道中、剥がれた装飾片が廊下に落ちた）' },
       { sp: '神原 律', tx: '（暖炉で燃やすつもりだったのかもしれない。\nだが金属は燃えない。朝までの時間稼ぎが、せいぜいだった）' }
     ],
-    onEnd: () => { addClue('has_clue_C'); gameState.investigated_fireplace = true; gameState.investigate_count++; },
+    onEnd: () => { addClue('has_clue_C'); gameState.investigated_fireplace = true; gameState.investigate_count++; gameState.last_investigation = 'fireplace'; },
     next: 'finale_01'
   },
 
@@ -1153,6 +1156,7 @@ const scenes = {
     onEnd: () => {
       if (!gameState.has_clue_H) addClue('has_clue_H');
       gameState.investigate_count++;
+      gameState.last_investigation = 'past';
     },
     next: 'finale_01'
   },
@@ -1171,6 +1175,27 @@ const scenes = {
       { sp: '神原 律', tx: '（答えを出さなければ）' }
     ],
     replayInserts: [
+      {
+        when: () => gameState.last_investigation === 'fuyuki',
+        at: 2,
+        lines: [
+          { sp: '神原 律', tx: '（さっき床に落ちた新聞切り抜き。手帳の書き込み。\n弁護士の輪郭の向こうに、もう一つの顔が見え始めている）' }
+        ]
+      },
+      {
+        when: () => gameState.last_investigation === 'fireplace',
+        at: 2,
+        lines: [
+          { sp: '神原 律', tx: '（薪入れの奥の、青銅の文鎮。\n廊下の装飾片とぴたりと合う重さを、掌はまだ覚えている）' }
+        ]
+      },
+      {
+        when: () => gameState.last_investigation === 'past',
+        at: 2,
+        lines: [
+          { sp: '神原 律', tx: '（二十年前、追い返された夫婦と、小さな娘。\n久遠寺さんの瞳に映る「あの目」は、今夜、この館の中にいる）' }
+        ]
+      },
       {
         when: () => hasReachedNormal(),
         at: 2,
@@ -1249,11 +1274,28 @@ const scenes = {
   },
 
   // ---- 告発前の構え（告発する／保留／事故説）----
+  // 透に相談したかどうかで、律の構えの色味を変える。
   'finale_stance': {
     bg: 'accuse',
     lines: [
       { sp: '', tx: '告発の時が、迫っていた。' },
       { sp: '神原 律', tx: '（この夜、どう向き合うか。\nまず、そこから決めなければ）' }
+    ],
+    replayInserts: [
+      {
+        when: () => gameState.talk_to_mizuki_final,
+        at: 1,
+        lines: [
+          { sp: '', tx: '透の視線が、ホールの端から、律の肩口を支えている。\n――何かが揺らいだら、後で拾い上げてくれる人がいる。' }
+        ]
+      },
+      {
+        when: () => !gameState.talk_to_mizuki_final,
+        at: 1,
+        lines: [
+          { sp: '', tx: '透は、何も言わず、少し離れた場所で律の背中を見ていた。\n――今夜の判断は、自分一人で担うと決めた以上、そうあるべきだった。' }
+        ]
+      }
     ],
     choice: {
       prompt: '── 今夜、どうする？ ──',

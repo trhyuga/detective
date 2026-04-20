@@ -1495,6 +1495,7 @@ const gameState = {
   has_clue_I: false,
   investigate_count: 0,
   investigated_fireplace: false,
+  last_investigation: null,
   route_choice: null,
   accuse: null,
   alone: false,
@@ -2352,6 +2353,7 @@ function resetGameState() {
   gameState.talk_to_mizuki_final = false;
   gameState.investigate_count = 0;
   gameState.investigated_fireplace = false;
+  gameState.last_investigation = null;
   textLog.length = 0;
   updateClueCount();
 }
