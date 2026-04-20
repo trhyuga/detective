@@ -355,13 +355,17 @@
   function onScene(scene) {
     if (!scene) return;
     try {
-      // 章代わり or 場所移動で、前シーンから引きずってる長尺 SE を一旦切る。
-      // 新シーンが同じ長尺 SE を指定している場合は playSe 側の同キー判定に任せる。
+      // 章代わり or 場所移動で、前シーンから引きずってる長尺 SE／環境音を一旦切る。
+      // 新シーンが同じキーを明示的に指定している場合だけ継続させる。
       const chapterChange = !!scene.chapter;
       const bgChanged = scene.bg !== undefined && scene.bg !== lastSceneBg;
       if (chapterChange || bgChanged) {
-        const keepingSame = scene.se && LONG_SE_KEYS[scene.se] && scene.se === lastLongSeKey;
-        if (!keepingSame) stopLongSe(400);
+        const keepingLongSe = scene.se && LONG_SE_KEYS[scene.se] && scene.se === lastLongSeKey;
+        if (!keepingLongSe) stopLongSe(400);
+        // 環境音（ループ）は scene.ambient が未指定でも章またぎで切る。
+        // 新シーンが同じ ambient を明示指定していれば playAmbient 側の同キー判定に任せる。
+        const keepingAmbient = scene.ambient && scene.ambient !== 'stop' && scene.ambient === ambientKey;
+        if (!keepingAmbient) stopAmbient(500);
       }
       if (scene.bg !== undefined) lastSceneBg = scene.bg;
 
@@ -441,12 +445,14 @@
     }
   }
 
-  // 行単位で背景が変わった時用：場所移動なら長尺 SE を切り落とす
-  function onBgChange(bg, lineSe) {
+  // 行単位で背景が変わった時用：場所移動なら長尺 SE／環境音を切り落とす
+  function onBgChange(bg, lineSe, lineAmbient) {
     if (bg === undefined || bg === null) return;
     if (bg === lastSceneBg) return;
-    const keepingSame = lineSe && LONG_SE_KEYS[lineSe] && lineSe === lastLongSeKey;
-    if (!keepingSame) stopLongSe(400);
+    const keepingLongSe = lineSe && LONG_SE_KEYS[lineSe] && lineSe === lastLongSeKey;
+    if (!keepingLongSe) stopLongSe(400);
+    const keepingAmbient = lineAmbient && lineAmbient !== 'stop' && lineAmbient === ambientKey;
+    if (!keepingAmbient) stopAmbient(500);
     lastSceneBg = bg;
   }
 
