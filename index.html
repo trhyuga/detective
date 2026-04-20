@@ -746,6 +746,7 @@
     border-color: var(--accent-gold);
     background: rgba(184, 153, 104, 0.2);
   }
+  .action-btn.hidden { display: none; }
   .action-btn:active {
     background: rgba(184, 153, 104, 0.25);
     transform: scale(0.96);
@@ -1783,9 +1784,11 @@ function addClue(key) {
 function updateClueCount() {
   const count = Object.keys(gameState).filter(k => k.startsWith('has_clue_') && gameState[k]).length;
   document.getElementById('clue-count').textContent = count;
-  // HUD 本体の表示も NORMAL 到達後のみ
+  // HUD（伏線カウンタ）も、アクションバーの CLUES ボタンも NORMAL 到達後のみ
   const hud = document.getElementById('hud');
   if (hud) hud.classList.toggle('hidden', !hasReachedNormal());
+  const cluesBtn = document.getElementById('btn-clues');
+  if (cluesBtn) cluesBtn.classList.toggle('hidden', !hasReachedNormal());
 }
 
 function showClueNotify(text) {
@@ -2076,8 +2079,8 @@ function showEndingScreen(info) {
     <strong>調査行動: ${gameState.investigate_count} 回</strong><br><br>
     ${clues || '（手がかりなし）'}<br><br>
     <span style="font-size:0.78rem; color:var(--ink-dim)">
-    TRUE END 到達には、伏線 A・D・E・F の四つが必須。<br>
-    別のルートを通ると、違う伏線が手に入ります。
+    真の結末へ辿り着くには、複数の物証と動機、そして凶器本体の確認が必要。<br>
+    別のルートを通ると、違う手がかりが手に入ります。
     </span>
   `;
   el.classList.add('show');
@@ -2258,16 +2261,17 @@ function renderProfiles() {
 function renderClues() {
   const body = document.getElementById('clues-body');
   const keys = ['has_clue_A','has_clue_B','has_clue_C','has_clue_D','has_clue_E','has_clue_F','has_clue_G','has_clue_H','has_clue_I'];
+  // 取得後の補足。人物名は極力ぼかし、取得した「場面」や「観測」の描写に留める。
   const detail = {
-    has_clue_A: '冬木綾乃が夕食時、白鷺の薬入れに自然に手を添えていた。',
-    has_clue_B: '白鷺が「最近、薬の効きが悪い」と冬木にだけ零した。',
-    has_clue_C: '暖炉の薪入れに鈍く光る金属片／青銅の文鎮。',
-    has_clue_D: '榊の袖口に、くすんだ茶褐色の微かな血痕。',
-    has_clue_E: '白鷺遺体の打撲傷、周辺の血の飛び散りが異常に少ない。',
-    has_clue_F: '冬木の手帳に「20年」の書き込みと、古い新聞記事の切り抜き。',
-    has_clue_G: '美咲の電話相手「佐伯」――水無月透の元同僚。',
-    has_clue_H: '二十年前、若い夫婦が白鷺を訪ねて追い返された。',
-    has_clue_I: '一日目の夜、水無月透は何かを言いかけて畳んだ。'
+    has_clue_A: '夕食の席で、銀の小箱の内側を、指先が一度だけ撫でるように通った。誰の目にも留まらない、静かな一秒だった。',
+    has_clue_B: '白鷺が薬を飲んだ直後、「最近、どうも効きが悪い」と傍らに零した。',
+    has_clue_C: '廊下の絨毯に落ちていた装飾片と、暖炉の薪入れに沈んでいた青銅の文鎮。側面の欠けが完全一致。',
+    has_clue_D: '翌朝、ある袖口の内側にくすんだ茶褐色の血痕。夕食時にはまだ無かったはず。',
+    has_clue_E: '遺体の打撲傷、周辺の血の飛び散りが異常に少ない。殴られた時には既に――という疑念を残した。',
+    has_clue_F: 'ある手帳の中に「20年」の書き込みと、挟まれた古い新聞記事の切り抜き。若い夫婦の記事だった。',
+    has_clue_G: '空き客室で、美咲が深夜ずっと男性相手に切実な電話を続けていた。相手は既婚者らしい。',
+    has_clue_H: '二十年前、若い夫婦が白鷺を訪ねて懇願し、追い返されたらしい。その傍に、小さな娘が一人。',
+    has_clue_I: '一日目の夜、水無月透は何度か言いかけて、そっと言葉を畳んだ。'
   };
   body.innerHTML = keys.map(k => {
     const got = gameState[k];
@@ -2453,7 +2457,10 @@ document.getElementById('btn-skip').addEventListener('click', () => {
 });
 document.getElementById('btn-log').addEventListener('click', () => openPanel('panel-log'));
 document.getElementById('btn-save').addEventListener('click', () => openPanel('panel-save'));
-document.getElementById('btn-clues').addEventListener('click', () => openPanel('panel-clues'));
+document.getElementById('btn-clues').addEventListener('click', () => {
+  if (!hasReachedNormal()) return; // NORMAL 未到達では伏線パネルを開かない
+  openPanel('panel-clues');
+});
 document.getElementById('btn-menu').addEventListener('click', () => openPanel('panel-menu'));
 
 // 設定
