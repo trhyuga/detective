@@ -1480,8 +1480,8 @@
   </div>
 </div>
 
-<script src="scenario.js?v=20260420"></script>
-<script src="audio-engine.js?v=20260420" defer></script>
+<script src="scenario.js?v=20260420b"></script>
+<script src="audio-engine.js?v=20260420b" defer></script>
 <script>
 // ==========================================================================
 // ゲーム状態
@@ -2372,11 +2372,21 @@ function startNewGame() {
   try {
     resetGameState();
     clearEndingOverlays();
+    // 前セッションの AUTO / SKIP がタイトル遷移を跨いで残っていると、
+    // 再スタート直後にシーンを自動で最後まで走らせてしまい、
+    // 運が悪いと次のエンディングまで着地して再び ending-screen が出る。
+    if (autoMode) setAutoMode(false);
+    if (skipMode) setSkipMode(false);
     document.getElementById('title-screen').classList.add('hidden');
     document.getElementById('action-bar').classList.add('show');
     setTimeout(() => {
       console.log('[start] goToScene(prologue_01)');
-      try { goToScene('prologue_01'); }
+      try {
+        // 800ms のフェード待ちの間に万一何かが overlay を再表示していたら、
+        // シーン開始の直前でもう一度 ending-screen を剥がしておく。
+        clearEndingOverlays();
+        goToScene('prologue_01');
+      }
       catch (e) { console.error('[start] goToScene failed:', e); }
     }, 800);
   } catch (e) {
@@ -2391,17 +2401,21 @@ document.getElementById('btn-title-mizuki').addEventListener('click', () => {
   if (!hasReachedDetective()) return;
   resetGameState();
   clearEndingOverlays();
+  if (autoMode) setAutoMode(false);
+  if (skipMode) setSkipMode(false);
   document.getElementById('title-screen').classList.add('hidden');
-  setTimeout(() => goToScene('mizuki_talk_01'), 600);
+  setTimeout(() => { clearEndingOverlays(); goToScene('mizuki_talk_01'); }, 600);
 });
 
 document.getElementById('btn-title-finale').addEventListener('click', () => {
   if (!hasSeenAllEndings()) return;
   resetGameState();
   clearEndingOverlays();
+  if (autoMode) setAutoMode(false);
+  if (skipMode) setSkipMode(false);
   document.getElementById('title-screen').classList.add('hidden');
   // アクションバーは最終回では非表示のまま
-  setTimeout(() => goToScene('final_ep_01'), 600);
+  setTimeout(() => { clearEndingOverlays(); goToScene('final_ep_01'); }, 600);
 });
 
 function refreshFinaleCTA() {
