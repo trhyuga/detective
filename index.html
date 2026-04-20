@@ -1938,9 +1938,19 @@ function showLine() {
   if (!line) return;
   document.getElementById('speaker').textContent = line.sp || '';
   setCharacter(line.sp, line.tx, line.expr);
+  // 行単位で背景差し替え
+  if (line.bg) setBackground(line.bg);
   // 行単位の SE（特定セリフに紐づく効果音）
   if (line.se && window.audioEngine && window.audioEngine.playSe) {
     window.audioEngine.playSe(line.se);
+  }
+  // 行単位の環境音（ループ）。'stop' or null は停止
+  if (Object.prototype.hasOwnProperty.call(line, 'ambient') && window.audioEngine) {
+    if (line.ambient && line.ambient !== 'stop') {
+      window.audioEngine.playAmbient && window.audioEngine.playAmbient(line.ambient);
+    } else {
+      window.audioEngine.stopAmbient && window.audioEngine.stopAmbient();
+    }
   }
   pushLog(line.sp || '', line.tx);
   typeText(line.tx);
@@ -1987,9 +1997,10 @@ function goToScene(key) {
   saveMeta();
 
   if (scene.bg) setBackground(scene.bg);
+  else document.getElementById('scene-bg').className = 'scene-bg'; // bg 未指定はデフォルトダーク
   // シーン遷移時はキャラ画像を一旦リセット（地の文から始まることが多い）
   if (scene.chapter) setCharacter(null);
-  // オーディオエンジンに通知（BGM/SE 切替）
+  // オーディオエンジンに通知（BGM/SE/環境音 切替）
   if (window.audioEngine && window.audioEngine.onScene) {
     window.audioEngine.onScene(scene);
   }

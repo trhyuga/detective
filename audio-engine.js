@@ -295,6 +295,11 @@
         state.pendingSe = null;
         playSe(k);
       }
+      if (state.pendingAmbient) {
+        const k = state.pendingAmbient;
+        state.pendingAmbient = null;
+        playAmbient(k);
+      }
       ['click', 'touchstart', 'keydown'].forEach(ev =>
         document.removeEventListener(ev, handler, true)
       );
@@ -312,9 +317,63 @@
       if (!bgmKey && scene.bg) bgmKey = BG_TO_BGM[scene.bg];
       if (bgmKey) playBgm(bgmKey);
       if (scene.se) playSe(scene.se);
+      // 環境音（ループSE）。scene.ambient = 'fireplace' / 'blizzard' / null / 'stop'
+      if (Object.prototype.hasOwnProperty.call(scene, 'ambient')) {
+        if (scene.ambient && scene.ambient !== 'stop') {
+          playAmbient(scene.ambient);
+        } else {
+          stopAmbient();
+        }
+      }
     } catch (e) {
       console.warn('[audio] onScene error:', e);
     }
+  }
+
+  // ---- 環境音（ループ SE）制御 ----
+  let ambientEl = null;
+  let ambientKey = null;
+  function playAmbient(key) {
+    if (!key) return;
+    if (state.muted) return;
+    if (!state.interacted) { state.pendingAmbient = key; return; }
+    if (ambientKey === key && ambientEl) return; // 既に同じ環境音
+    stopAmbient(400);
+    const url = SE_FILES[key];
+    if (!url) { console.warn('[audio] unknown ambient key:', key); return; }
+    const gain = SE_GAIN[key] || 1;
+    const baseVol = state.seVolume * 0.55;
+    const a = new Audio(url);
+    a.loop = true;
+    a.volume = 0;
+    a.play().catch(() => {});
+    const target = Math.min(1, baseVol * gain);
+    let t = 0;
+    const fade = setInterval(() => {
+      t += 0.08;
+      const f = Math.min(1, t);
+      a.volume = f * target;
+      if (f >= 1) clearInterval(fade);
+    }, 80);
+    ambientEl = a;
+    ambientKey = key;
+  }
+  function stopAmbient(fadeMs) {
+    if (!ambientEl) { ambientKey = null; return; }
+    const old = ambientEl;
+    ambientEl = null;
+    ambientKey = null;
+    const ms = fadeMs || 600;
+    let t = 0;
+    const start = old.volume;
+    const fade = setInterval(() => {
+      t += 80;
+      old.volume = Math.max(0, start * (1 - t / ms));
+      if (t >= ms) {
+        clearInterval(fade);
+        try { old.pause(); old.src = ''; } catch (e) {}
+      }
+    }, 80);
   }
 
   // ---- showFin / restart のフック ----
@@ -335,6 +394,8 @@
     playBgm,
     stopBgm,
     playSe,
+    playAmbient,
+    stopAmbient,
     toggleMute,
     isMuted: () => state.muted,
     onScene  // inline goToScene が呼ぶ
