@@ -1797,6 +1797,8 @@ function showClueNotify(text) {
 
 function setBackground(bgClass) {
   const bg = document.getElementById('scene-bg');
+  // 外部ツールや手動でセットされた inline style を念のため剥がす
+  bg.style.cssText = '';
   if (!bgClass) {
     bg.className = 'scene-bg';
     return;
@@ -1837,6 +1839,7 @@ function setCharacter(speaker, text, expr) {
     if (!id) {
       if (currentCharKey !== null) {
         layer.classList.remove('show');
+        layer.style.backgroundImage = '';
         currentCharKey = null;
       }
       return;
@@ -2620,6 +2623,17 @@ document.addEventListener('keydown', (e) => {
 });
 
 // 初期化
+// 予め scene-bg / character-layer を確実にクリーンな状態にしておく。
+// ブラウザの bfcache 復元や iOS の前景化復帰などで、前回の class/style が
+// 残って見えるケースの保険。
+setBackground('');
+(function resetCharacterLayerOnBoot() {
+  const layer = document.getElementById('character-layer');
+  if (layer) {
+    layer.classList.remove('show');
+    layer.style.backgroundImage = '';
+  }
+})();
 loadMeta();
 initSnow();
 refreshFinaleCTA();
