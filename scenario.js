@@ -1249,7 +1249,20 @@ const scenes = {
     ],
     onEnd: () => {
       const accuse = gameState.accuse;
-      const trueClues = gameState.has_clue_A && gameState.has_clue_D && gameState.has_clue_E && gameState.has_clue_F;
+      // 真犯人（冬木）告発の成立条件：物証・動機・凶器本体の五点セットが揃ってはじめて、完璧な推理が可能になる
+      // ・A 冬木の薬入れ接触（毒混入の物証）
+      // ・B 白鷺の「薬の効きが悪い」発言（毒が効き始めていた傍証）
+      // ・D 榊の袖口血痕（殴打の実行犯を特定し「二重奏」を示すのに必須）
+      // ・E 遺体の異常な出血量（殴打は死後、の核心論拠）
+      // ・F 冬木の手帳と古い新聞切り抜き（20年越しの動機と正体）
+      // ・investigated_fireplace 暖炉の薪入れで凶器本体（青銅の文鎮）を実見したこと
+      const trueClues =
+        gameState.has_clue_A &&
+        gameState.has_clue_B &&
+        gameState.has_clue_D &&
+        gameState.has_clue_E &&
+        gameState.has_clue_F &&
+        gameState.investigated_fireplace;
 
       if (accuse === 'fuyuki' && trueClues) {
         goToScene('end_true');
@@ -1483,16 +1496,19 @@ const scenes = {
       { sp: '神原 律', tx: '「……冬木さん。あなたが、真犯人ですね」' },
       { sp: '冬木 綾乃', tx: '「神原さん。あなたの直感は、確かに鋭い。\n――でも、それを裏づける証拠は？」' },
       { sp: '神原 律', tx: '「……………………」' },
+      { sp: '冬木 綾乃', tx: '「殴打の凶器は、実見されたかしら。\n私と毒を結びつける物証は、揃っていらっしゃる？」' },
+      { sp: '冬木 綾乃', tx: '「私の二十年を指差す手帳と新聞、\nそれらの原本を、あなたは、この手に取って確かめましたか」' },
+      { sp: '神原 律', tx: '「…………」' },
       { sp: '冬木 綾乃', tx: '「根拠のない告発は、名誉毀損ですよ。\n私は顧問弁護士として、この館の秩序を守る立場にある」' },
-      { sp: '', tx: ' 冬木の声は、弁護士のそれに戻っていた。\n周囲の視線は、律から冬木へ、そしてまた律へ。' },
+      { sp: '', tx: '冬木の声は、弁護士のそれに戻っていた。\n周囲の視線は、律から冬木へ、そしてまた律へ。' },
       { sp: '榊 亮', tx: '「なんだよ……結局、見当違いかよ！」' },
-      { sp: '', tx: '律の推理は空転し、事件は振り出しに戻った。\nそして、冬木だけが知っていた。\n――あと一歩、彼女に届かなかった証拠の所在を。' }
+      { sp: '', tx: '律の推理は空転し、事件は振り出しに戻った。\nそして、冬木だけが知っていた。\n――あと幾つか、彼女に届かなかった証拠の所在を。' }
     ],
     onEnd: () => showEndingScreen({
       type: 'bad',
       tag: '― BAD END ―',
       title: '証拠なき告発',
-      text: '真犯人を見抜いた直感は正しかった。\nしかし証拠が足りない。薬と、血痕と、出血量と、過去――四つ全てが揃わなければ、あの女は落ちない。'
+      text: '真犯人を見抜いた直感は、確かに正しかった。\nだが、凶器本体、袖口の血痕、出血量の異常、薬入れへの接触、そして二十年の計画書――\nこの五つ全てを手の中に握らなければ、弁護士の理屈はほどけない。'
     })
   },
 
@@ -1765,6 +1781,7 @@ const scenes = {
       gameState.has_clue_F = true;
       gameState.has_clue_G = true;
       gameState.has_clue_H = true;
+      gameState.investigated_fireplace = true;
       updateClueCount();
     },
     next: 'detective_03'
