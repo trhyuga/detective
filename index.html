@@ -1411,6 +1411,23 @@
         </div>
       </div>
       <div class="panel-section">
+        <h3>セーブデータのバックアップ</h3>
+        <div style="font-size: 0.75rem; color: var(--ink-dim); line-height: 1.7; margin-bottom: 0.6em;">
+          ブラウザのキャッシュを消すとセーブも消えます。<br>
+          大切な進捗は下のボタンでエクスポートし、テキストを保管してください。
+        </div>
+        <div class="seg-group" style="margin-bottom: 0.5em;">
+          <button class="seg-btn" id="btn-save-export" style="flex: 1;">エクスポート</button>
+          <button class="seg-btn" id="btn-save-import" style="flex: 1;">インポート</button>
+        </div>
+        <textarea id="save-iobox" rows="4" style="
+          width: 100%; box-sizing: border-box;
+          background: rgba(10, 14, 20, 0.8); border: 1px solid var(--choice-border);
+          color: var(--ink); font-family: monospace; font-size: 0.7rem;
+          padding: 0.5em; border-radius: 2px; resize: vertical;"
+          placeholder="ここに書き出されます。別の端末で復元するにはテキストを貼り付けてインポート。"></textarea>
+      </div>
+      <div class="panel-section">
         <h3>その他</h3>
         <div class="seg-group">
           <button class="seg-btn" id="btn-reset-progress" style="flex: 1;">
@@ -1509,12 +1526,45 @@ function loadMeta() {
     if (Array.isArray(obj.slots)) meta.slots = obj.slots;
     if (obj.autoSlot) meta.autoSlot = obj.autoSlot;
   } catch (e) { /* ignore */ }
+  // ブラウザにストレージの永続化を依頼（プライバシーモード下などで evict されない）
+  try {
+    if (navigator.storage && navigator.storage.persist) {
+      navigator.storage.persist().then(granted => {
+        console.log('[storage] persistent =', granted);
+      }).catch(() => {});
+    }
+  } catch (e) { /* ignore */ }
 }
 
 function saveMeta() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(meta));
   } catch (e) { /* quota etc */ }
+}
+
+// メタ全体を JSON でエクスポート／インポート
+function exportMetaJSON() {
+  try {
+    return JSON.stringify(meta, null, 2);
+  } catch (e) {
+    return '';
+  }
+}
+function importMetaJSON(text) {
+  if (!text) return false;
+  try {
+    const obj = JSON.parse(text);
+    if (typeof obj !== 'object' || !obj) return false;
+    if (obj.settings) Object.assign(meta.settings, obj.settings);
+    if (obj.readScenes) meta.readScenes = obj.readScenes;
+    if (obj.seenEndings) meta.seenEndings = obj.seenEndings;
+    if (Array.isArray(obj.slots)) meta.slots = obj.slots;
+    meta.autoSlot = obj.autoSlot || null;
+    saveMeta();
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
 
 function resetAllProgress() {
@@ -2383,6 +2433,42 @@ document.getElementById('btn-reset-progress').addEventListener('click', () => {
   closeAllPanels();
   document.getElementById('title-screen').classList.remove('hidden');
   document.getElementById('action-bar').classList.remove('show');
+});
+
+// セーブのエクスポート／インポート
+document.getElementById('btn-save-export').addEventListener('click', () => {
+  const box = document.getElementById('save-iobox');
+  const json = exportMetaJSON();
+  box.value = json;
+  box.select();
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(json);
+      alert('セーブデータをコピーしました。安全な場所に保管してください。');
+    } else {
+      document.execCommand && document.execCommand('copy');
+      alert('セーブデータを書き出しました。テキストを選択してコピーしてください。');
+    }
+  } catch (e) {
+    alert('セーブデータを書き出しました。テキストを選択してコピーしてください。');
+  }
+});
+
+document.getElementById('btn-save-import').addEventListener('click', () => {
+  const box = document.getElementById('save-iobox');
+  const text = box.value.trim();
+  if (!text) {
+    alert('テキスト欄に、以前エクスポートしたデータを貼り付けてからインポートを押してください。');
+    return;
+  }
+  if (!confirm('現在の進捗を上書きしてインポートします。よろしいですか？')) return;
+  if (importMetaJSON(text)) {
+    alert('インポートしました。');
+    refreshFinaleCTA();
+    updateClueCount();
+  } else {
+    alert('データの読み込みに失敗しました。テキストが正しいか確認してください。');
+  }
 });
 
 // メニューハブ → 各パネル
