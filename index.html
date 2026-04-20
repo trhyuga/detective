@@ -1950,9 +1950,9 @@ function showLine() {
   // 行単位で背景差し替え
   if (line.bg) {
     setBackground(line.bg);
-    // 場所が変わるなら、引きずっている長尺 SE を一旦切る
+    // 場所が変わるなら、引きずっている長尺 SE／環境音を一旦切る
     if (window.audioEngine && window.audioEngine.onBgChange) {
-      window.audioEngine.onBgChange(line.bg, line.se);
+      window.audioEngine.onBgChange(line.bg, line.se, line.ambient);
     }
   }
   // 行単位の SE（特定セリフに紐づく効果音）
