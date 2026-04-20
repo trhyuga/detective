@@ -1796,6 +1796,10 @@ function showClueNotify(text) {
 
 function setBackground(bgClass) {
   const bg = document.getElementById('scene-bg');
+  if (!bgClass) {
+    bg.className = 'scene-bg';
+    return;
+  }
   bg.className = 'scene-bg bg-' + bgClass;
 }
 
