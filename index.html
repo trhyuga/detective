@@ -1281,7 +1281,7 @@
   <div id="character-layer"></div>
   <div class="snow" id="snow"></div>
 
-  <div id="hud">伏線 <span class="clue-count" id="clue-count">0</span>/8</div>
+  <div id="hud">伏線 <span class="clue-count" id="clue-count">0</span>/9</div>
 
   <div id="action-bar">
     <button class="action-btn" id="btn-auto" title="オート (A)">AUTO</button>
@@ -1598,6 +1598,7 @@ function restoreState(snap) {
   const scene = scenes[currentSceneKey];
   if (scene) {
     if (scene.bg) setBackground(scene.bg);
+    else setBackground('');
     if (scene.lines && currentLineIdx < scene.lines.length) {
       showLine();
     }
@@ -2346,11 +2347,14 @@ function resetGameState() {
 // 入力ハンドラ
 // ==========================================================================
 // タイトルから本編へ遷移する時に、前回のエンディング／完表示が残らないよう一括で掃除する
+// 背景レイヤも前回のシーンの bg-* クラスが残ったままだと、
+// タイトルのフェードアウト中にその画像が透けて見えてしまうので、ここで落とす。
 function clearEndingOverlays() {
   document.getElementById('ending-screen').classList.remove('show');
   document.getElementById('fin-screen').classList.remove('show');
   const ct = document.getElementById('chapter-title');
   if (ct) ct.classList.remove('show');
+  setBackground('');
 }
 
 function startNewGame() {
