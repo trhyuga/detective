@@ -152,7 +152,9 @@
 
   // ---- BGM 切替（クロスフェード） ----
   function playBgm(key) {
-    if (!key || state.currentBgm === key) return;
+    // 明示的な空指定（key=null/'/undefined）はフェードアウト扱い
+    if (!key) { stopBgm(800); return; }
+    if (state.currentBgm === key) return;
     if (!state.interacted) {
       state.pendingBgm = key;
       return;

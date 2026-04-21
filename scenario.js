@@ -505,6 +505,17 @@ const scenes = {
       { sp: '', tx: '扉が完全に閉まる。\n廊下には、硬く握り締められた拳の輪郭だけが、気配として残った。' },
       { sp: '神原 律', tx: '（……五年前の会社、家族、そして今夜の「上乗せ」。\n――これを言われた後の人間は、静かには眠れない）' }
     ],
+    replayInserts: [
+      // 既に K を持っている周回ではこの一文だけ短く確認に置き換える役割は持たないが、
+      // 真犯人ルートで TRUE 探求中の律が聞き直しに来た時、短い回想として残す。
+      {
+        when: () => hasReachedTrue() && gameState.has_clue_K,
+        at: 6,
+        lines: [
+          { sp: '神原 律', tx: '（……この夜の言い争いは、もう、覚えている。\n今夜の私が探すべき音は、ここではない）' }
+        ]
+      }
+    ],
     onEnd: () => { addClue('has_clue_K'); },
     next: 'choice_01'
   },
@@ -1270,8 +1281,8 @@ const scenes = {
     onEnd: () => {
       addClue('has_clue_F');
       // 手帳から滑り落ちた古い新聞切り抜きは、まさに二十年前の若い夫婦の話。
-      // H の核心はここで既に律の目に入っているので、同時に取得しておく。
-      addClue('has_clue_H');
+      // H の核心はここで律の目に入るので、未取得なら同時付与する。
+      if (!gameState.has_clue_H) addClue('has_clue_H');
       gameState.investigate_count++;
       gameState.investigations_done = (gameState.investigations_done || 0) + 1;
       gameState.last_investigation = 'fuyuki';
