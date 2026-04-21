@@ -2336,25 +2336,22 @@ function renderEndings() {
   const main = endingDefs.filter(e => !e.extra);
   const mainSeen = main.filter(e => meta.seenEndings[e.id]).length;
 
-  // ヒント開放のティア:
-  // - 既読 1 つ以上 or NORMAL 到達 → タイトルを開示
-  // - NORMAL 到達 → 1 行ヒントを開示
-  // - TRUE 到達 / メイン残り 3 つ以下 → 具体的な到達条件を開示
-  const seenAny = isReplay();
+  // 開示ティア:
+  // - NORMAL 到達 → タイトルを開示
+  // - TRUE 到達 → タイトル + 1 行ヒント
+  // - メイン残り 3 つ以下 → タイトル + 具体的な到達条件（ヒントより優先）
   const reachedN = hasReachedNormal();
   const reachedT = hasReachedTrue();
   const mainLeft = main.length - mainSeen;
-  const showTitle = seenAny || reachedN;
-  const showHint = reachedN;
-  const showCond = reachedT || mainLeft <= 3;
+  const showTitle = reachedN;
+  const showHint = reachedT;
+  const showCond = mainLeft <= 3;
 
   let html = `<div class="collection-stat">到達 ${mainSeen} / ${main.length}</div>`;
-  if (showHint && !reachedT) {
+  if (showCond) {
+    html += `<div class="collection-note">残り少ないので、具体的な到達条件を開示しています。</div>`;
+  } else if (showHint) {
     html += `<div class="collection-note">未到達のエンディングには、ヒントが添えられています。</div>`;
-  } else if (showCond && !reachedT && mainLeft <= 3) {
-    html += `<div class="collection-note">残り少ないので、具体的な到達条件まで開示しています。</div>`;
-  } else if (reachedT) {
-    html += `<div class="collection-note">未到達エンディングの到達条件が開示されています。</div>`;
   }
 
   html += endingDefs.map(e => {
