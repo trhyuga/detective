@@ -1514,6 +1514,9 @@ const gameState = {
   has_clue_I: false,
   has_clue_J: false,
   investigate_count: 0,
+  investigations_done: 0,
+  investigate_snow_done: false,
+  investigate_mizuki_done: false,
   last_investigation: null,
   route_choice: null,
   accuse: null,
@@ -2404,6 +2407,9 @@ function resetGameState() {
   gameState.choice_empathy = false;
   gameState.talk_to_mizuki_final = false;
   gameState.investigate_count = 0;
+  gameState.investigations_done = 0;
+  gameState.investigate_snow_done = false;
+  gameState.investigate_mizuki_done = false;
   gameState.last_investigation = null;
   textLog.length = 0;
   updateClueCount();

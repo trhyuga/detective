@@ -1119,10 +1119,9 @@ const scenes = {
       { sp: '神原 律', tx: '（何を、確かめる？）' }
     ],
     choice: {
+      // 夜はそう長くない。NORMAL 前は一晩に 1 ヶ所だけ、NORMAL 到達後は
+      // 2 ヶ所までが限度。全部調べるような都合の良い時間は用意されていない。
       prompt: '── 夜の白嶺荘で、どこを調べる？ ──',
-      // 取得済みのフラグは選択肢から外す。1 周目は一度だけ調査して finale へ。
-      // NORMAL 到達後は「もう十分」を選ぶまで調査を繰り返せる（investigate_* の next が
-      // hasReachedNormal() で choice_investigation へループする）。
       options: [
         { tx: '冬木綾乃の持ち物を確認する', next: 'investigate_fuyuki',
           when: () => !gameState.has_clue_F },
@@ -1132,6 +1131,11 @@ const scenes = {
           when: () => !gameState.has_clue_H },
         { tx: '★白鷺の書斎の薬棚を、もう一度あらためる', next: 'investigate_poison',
           when: () => hasReachedNormal() && !gameState.has_clue_J },
+        // 不正解枠：時間を消費するだけで、伏線は得られない。
+        { tx: '吹雪の裏庭を見に出る', next: 'investigate_snow',
+          when: () => !gameState.investigate_snow_done },
+        { tx: '透ともう一度、作戦を練り直す', next: 'investigate_mizuki_consult',
+          when: () => !gameState.investigate_mizuki_done },
         { tx: '……もう十分だ。告発の準備に入る', next: 'finale_01',
           when: () => hasReachedNormal() }
       ],
@@ -1200,9 +1204,14 @@ const scenes = {
       // H の核心はここで既に律の目に入っているので、同時に取得しておく。
       addClue('has_clue_H');
       gameState.investigate_count++;
+      gameState.investigations_done = (gameState.investigations_done || 0) + 1;
       gameState.last_investigation = 'fuyuki';
     },
-    next: () => hasReachedNormal() ? 'choice_investigation' : 'finale_01'
+    next: () => {
+      // NORMAL 到達後は一晩に最大 2 回まで調査できる。NORMAL 前は 1 回で切り上げ。
+      const limit = hasReachedNormal() ? 2 : 1;
+      return gameState.investigations_done >= limit ? 'finale_01' : 'choice_investigation';
+    }
   },
 
   'investigate_fireplace': {
@@ -1218,8 +1227,16 @@ const scenes = {
       { sp: '神原 律', tx: '（書斎から逃げる犯人が、廊下を抜け、ホールを通り、\n咄嗟に薪入れへ放り込んだ。その道中、剥がれた装飾片が廊下に落ちた）' },
       { sp: '神原 律', tx: '（暖炉で燃やすつもりだったのかもしれない。\nだが金属は燃えない。朝までの時間稼ぎが、せいぜいだった）' }
     ],
-    onEnd: () => { addClue('has_clue_C'); gameState.investigate_count++; gameState.last_investigation = 'fireplace'; },
-    next: () => hasReachedNormal() ? 'choice_investigation' : 'finale_01'
+    onEnd: () => {
+      addClue('has_clue_C');
+      gameState.investigate_count++;
+      gameState.investigations_done = (gameState.investigations_done || 0) + 1;
+      gameState.last_investigation = 'fireplace';
+    },
+    next: () => {
+      const limit = hasReachedNormal() ? 2 : 1;
+      return gameState.investigations_done >= limit ? 'finale_01' : 'choice_investigation';
+    }
   },
 
   'investigate_past': {
@@ -1247,9 +1264,13 @@ const scenes = {
     onEnd: () => {
       if (!gameState.has_clue_H) addClue('has_clue_H');
       gameState.investigate_count++;
+      gameState.investigations_done = (gameState.investigations_done || 0) + 1;
       gameState.last_investigation = 'past';
     },
-    next: () => hasReachedNormal() ? 'choice_investigation' : 'finale_01'
+    next: () => {
+      const limit = hasReachedNormal() ? 2 : 1;
+      return gameState.investigations_done >= limit ? 'finale_01' : 'choice_investigation';
+    }
   },
 
   // 白鷺の書斎・薬棚を調べる。前周 NORMAL で打撲と出血量の矛盾を既に知っている律だけが、
@@ -1271,9 +1292,59 @@ const scenes = {
     onEnd: () => {
       addClue('has_clue_J');
       gameState.investigate_count++;
+      gameState.investigations_done = (gameState.investigations_done || 0) + 1;
       gameState.last_investigation = 'poison';
     },
-    next: () => hasReachedNormal() ? 'choice_investigation' : 'finale_01'
+    next: () => {
+      const limit = hasReachedNormal() ? 2 : 1;
+      return gameState.investigations_done >= limit ? 'finale_01' : 'choice_investigation';
+    }
+  },
+
+  // 不正解枠 1：裏庭の吹雪を見に出る。犯人の脱出跡を期待して出るが、何も残っていない。
+  // 時間だけが消費される。フラグは立たず、同じ選択肢は再選択できないようガードする。
+  'investigate_snow': {
+    bg: 'courtyard',
+    ambient: 'blizzard',
+    lines: [
+      { sp: '神原 律', tx: '（犯人が、外へ逃げた足跡でも残っていれば――）' },
+      { sp: '', tx: '裏口の扉を押し開けると、吹雪が頬を叩いた。\n視界は三メートル先で白く溶け、何の輪郭も保たない。', se: 'snow' },
+      { sp: '', tx: '庭のあるべき地面は、分厚い雪の層でのっぺりと均され、\n律が昨夜、仮に足跡を残していたとしても、もう残らないだろう。' },
+      { sp: '神原 律', tx: '（……駄目。ここには、時間の手がかりは残っていない）' },
+      { sp: '', tx: '律はすぐに引き返した。\n羽織の肩に、結晶が幾つか張り付いたまま、融ける気配もない。' }
+    ],
+    onEnd: () => {
+      gameState.investigate_snow_done = true;
+      gameState.investigations_done = (gameState.investigations_done || 0) + 1;
+      gameState.last_investigation = 'snow';
+    },
+    next: () => {
+      const limit = hasReachedNormal() ? 2 : 1;
+      return gameState.investigations_done >= limit ? 'finale_01' : 'choice_investigation';
+    }
+  },
+
+  // 不正解枠 2：透と作戦会議。気持ちは整うが、物証は得られない。
+  'investigate_mizuki_consult': {
+    bg: 'hall',
+    lines: [
+      { sp: '神原 律', tx: '「透、……もう一度、並べ直したい。\n何が確かで、何が推測なのか」' },
+      { sp: '水無月 透', tx: '「……言っておくけど、俺は編集者であって、\n刑事ドラマの相棒じゃないからな」' },
+      { sp: '神原 律', tx: '「それでも、聞いてほしいの」' },
+      { sp: '水無月 透', tx: '「わかった。とりあえず、ここまで出ている名前で、\n消去法で二つ、三つ、並べてみる」' },
+      { sp: '', tx: '透は膝の上で指を折りながら、律の推理を一度、整理してくれた。' },
+      { sp: '水無月 透', tx: '「――悪いな、俺から出せるのはここまでだ。\nあと一歩の物証は、お前の足で拾うしかない」' },
+      { sp: '神原 律', tx: '（……そうね。\n心の芯だけ、少しだけ整った気がする）' }
+    ],
+    onEnd: () => {
+      gameState.investigate_mizuki_done = true;
+      gameState.investigations_done = (gameState.investigations_done || 0) + 1;
+      gameState.last_investigation = 'mizuki_consult';
+    },
+    next: () => {
+      const limit = hasReachedNormal() ? 2 : 1;
+      return gameState.investigations_done >= limit ? 'finale_01' : 'choice_investigation';
+    }
   },
 
   // ============== 終章（章タイトルは1周目は「真実の時」、2周目以降「二重奏の真実」） ==============
