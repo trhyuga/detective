@@ -1689,10 +1689,11 @@ function effectiveLines(scene) {
 function effectiveChoice(scene) {
   if (!scene || !scene.choice) return scene ? scene.choice : null;
   const base = scene.choice;
-  if (!base.replayOptions) return base;
-  const extras = base.replayOptions.filter(o => !o.when || o.when());
-  if (extras.length === 0) return base;
-  return { prompt: base.prompt, options: [...base.options, ...extras] };
+  const baseOptions = (base.options || []).filter(o => !o.when || o.when());
+  const extras = (base.replayOptions || []).filter(o => !o.when || o.when());
+  // 何も絞っていないなら元の choice をそのまま返す（旧動作を保つ）
+  if (extras.length === 0 && baseOptions.length === (base.options ? base.options.length : 0)) return base;
+  return { prompt: base.prompt, options: [...baseOptions, ...extras] };
 }
 
 

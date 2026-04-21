@@ -158,7 +158,7 @@ const endingDefs = [
     cond: '榊告発 + C（文鎮）+ G（美咲の電話相手の名前）。' },
   { id: 'end_true_standard',        type: 'true',   num: 'ED 9', title: '二重奏の終止符',
     hint: '二つの旋律に気づき、罪を罪として裁く。',
-    cond: '冬木を告発 + 物証 A / B / D / E / F / J を全て揃え、「罪は罪として警察へ」を選択。' },
+    cond: '冬木を告発 + 物証 A / B / E / F / J を全て揃え、「罪は罪として警察へ」を選択。' },
   { id: 'end_true_plus',            type: 'true',   num: 'ED10', title: '雪解けの約束',
     hint: '二つの旋律に気づき、二十年の重みに寄り添う。',
     cond: 'TRUE 条件 + 伏線 H（二十年前の夫婦）+ 「動機に寄り添い、自首を促す」を選択。' },
@@ -1116,22 +1116,32 @@ const scenes = {
   'choice_investigation': {
     bg: 'hall',
     lines: [
-      { sp: '神原 律', tx: '（何を、最初に確かめる？）' }
+      { sp: '神原 律', tx: '（何を、確かめる？）' }
     ],
     choice: {
       prompt: '── 夜の白嶺荘で、どこを調べる？ ──',
+      // 取得済みのフラグは選択肢から外す。1 周目は一度だけ調査して finale へ。
+      // NORMAL 到達後は「もう十分」を選ぶまで調査を繰り返せる（investigate_* の next が
+      // hasReachedNormal() で choice_investigation へループする）。
       options: [
-        { tx: '冬木綾乃の持ち物を確認する', next: 'investigate_fuyuki' },
-        { tx: '暖炉と薪入れを、もう一度調べる', next: 'investigate_fireplace' },
-        { tx: '久遠寺に、昔の話を詳しく聞く', next: 'investigate_past' }
+        { tx: '冬木綾乃の持ち物を確認する', next: 'investigate_fuyuki',
+          when: () => !gameState.has_clue_F },
+        { tx: '暖炉と薪入れを、もう一度調べる', next: 'investigate_fireplace',
+          when: () => !gameState.has_clue_C },
+        { tx: '久遠寺に、昔の話を詳しく聞く', next: 'investigate_past',
+          when: () => !gameState.has_clue_H },
+        { tx: '★白鷺の書斎の薬棚を、もう一度あらためる', next: 'investigate_poison',
+          when: () => hasReachedNormal() && !gameState.has_clue_J },
+        { tx: '……もう十分だ。告発の準備に入る', next: 'finale_01',
+          when: () => hasReachedNormal() }
       ],
       replayOptions: [
-        // NORMAL 到達後に解放される毒物証ルート。一度 NORMAL で違和感（殴打と
-        // 出血の矛盾）を見た律が、二周目以降、薬棚を自発的に疑うようになる。
-        { tx: '★白鷺の書斎の薬棚を、もう一度あらためる', next: 'investigate_poison', when: () => hasReachedNormal() },
-        { tx: '弁護士の手荷物に、校正者権限で介入', next: 'gag_inv_fuyuki', when: () => hasExtendedJokes() },
-        { tx: '暖炉に頭を突っ込む覚悟', next: 'gag_inv_fireplace', when: () => hasExtendedJokes() },
-        { tx: '爺の昔語り、第十八番を所望', next: 'gag_inv_past', when: () => hasExtendedJokes() }
+        { tx: '弁護士の手荷物に、校正者権限で介入', next: 'gag_inv_fuyuki',
+          when: () => hasExtendedJokes() && !gameState.has_clue_F },
+        { tx: '暖炉に頭を突っ込む覚悟', next: 'gag_inv_fireplace',
+          when: () => hasExtendedJokes() && !gameState.has_clue_C },
+        { tx: '爺の昔語り、第十八番を所望', next: 'gag_inv_past',
+          when: () => hasExtendedJokes() && !gameState.has_clue_H }
       ]
     }
   },
@@ -1184,8 +1194,15 @@ const scenes = {
       { sp: '冬木 綾乃', tx: '「……神原さん。人には、誰にも触れられたくない過去があるものよ」' },
       { sp: '', tx: '冬木は手帳を取り上げ、万年筆を内ポケットへ仕舞い込んだ。\nその声音は静かだったが、瞳は冷たく凍っていた。' }
     ],
-    onEnd: () => { addClue('has_clue_F'); gameState.investigate_count++; gameState.last_investigation = 'fuyuki'; },
-    next: 'finale_01'
+    onEnd: () => {
+      addClue('has_clue_F');
+      // 手帳から滑り落ちた古い新聞切り抜きは、まさに二十年前の若い夫婦の話。
+      // H の核心はここで既に律の目に入っているので、同時に取得しておく。
+      addClue('has_clue_H');
+      gameState.investigate_count++;
+      gameState.last_investigation = 'fuyuki';
+    },
+    next: () => hasReachedNormal() ? 'choice_investigation' : 'finale_01'
   },
 
   'investigate_fireplace': {
@@ -1202,7 +1219,7 @@ const scenes = {
       { sp: '神原 律', tx: '（暖炉で燃やすつもりだったのかもしれない。\nだが金属は燃えない。朝までの時間稼ぎが、せいぜいだった）' }
     ],
     onEnd: () => { addClue('has_clue_C'); gameState.investigate_count++; gameState.last_investigation = 'fireplace'; },
-    next: 'finale_01'
+    next: () => hasReachedNormal() ? 'choice_investigation' : 'finale_01'
   },
 
   'investigate_past': {
@@ -1232,7 +1249,7 @@ const scenes = {
       gameState.investigate_count++;
       gameState.last_investigation = 'past';
     },
-    next: 'finale_01'
+    next: () => hasReachedNormal() ? 'choice_investigation' : 'finale_01'
   },
 
   // 白鷺の書斎・薬棚を調べる。前周 NORMAL で打撲と出血量の矛盾を既に知っている律だけが、
@@ -1256,7 +1273,7 @@ const scenes = {
       gameState.investigate_count++;
       gameState.last_investigation = 'poison';
     },
-    next: 'finale_01'
+    next: () => hasReachedNormal() ? 'choice_investigation' : 'finale_01'
   },
 
   // ============== 終章（章タイトルは1周目は「真実の時」、2周目以降「二重奏の真実」） ==============
@@ -1502,24 +1519,18 @@ const scenes = {
     ],
     onEnd: () => {
       const accuse = gameState.accuse;
-      // NORMAL（榊告発成立）には C（薪入れの文鎮 = 凶器本体）が必須。
-      // TRUE（冬木告発成立）には、毒の物証 J・動機の身元 F・A/B/D/E を揃える。
-      // 文鎮 C は榊の殴打を成立させる証拠なので、TRUE 側には直接含めない。
+      // NORMAL（榊告発）に必要なのは、榊側の物証だけ：
+      //   C（薪入れの文鎮本体）と D（袖口の血痕）。A・B・E は検死ルートで自動取得される。
+      // TRUE（冬木告発）に必要なのは、冬木側の物証だけ：
+      //   A（薬入れの指先）・B（薬の効きが悪い愚痴）・E（出血量の異常＝殴打は死因ではない）・
+      //   F（手帳と新聞）・J（薬棚の粉）。榊側の D/C は含めない。
       // TRUE+（寄り添う分岐）は追加で H（20年前の夫婦の記録）を握っている時。
-      const normalClues =
-        gameState.has_clue_A &&
-        gameState.has_clue_B &&
-        gameState.has_clue_C &&
-        gameState.has_clue_D &&
-        gameState.has_clue_E;
       const trueClues =
         gameState.has_clue_A &&
         gameState.has_clue_B &&
-        gameState.has_clue_D &&
         gameState.has_clue_E &&
         gameState.has_clue_F &&
         gameState.has_clue_J;
-      const trueDeep = trueClues && gameState.has_clue_H;
 
       if (accuse === 'fuyuki' && trueClues) {
         goToScene('end_true');
