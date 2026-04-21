@@ -20,7 +20,8 @@ const clueDescriptions = {
   has_clue_G: '空き客室から漏れた深夜の電話',
   has_clue_H: '二十年前、山荘を訪ねた若い夫婦の噂',
   has_clue_I: '幼馴染が畳み続けている言葉',
-  has_clue_J: '心臓薬のシートに残された、未知の粉の痕'
+  has_clue_J: '心臓薬のシートに残された、未知の粉の痕',
+  has_clue_K: '書斎前で漏れ聞いた、示談金の言い争い'
 };
 
 // ==========================================================================
@@ -134,70 +135,70 @@ const chapterJumps = [
 const endingDefs = [
   { id: 'end_bad_generic',          type: 'bad',    num: 'ED 1', title: '雪に閉ざされた沈黙',
     hint: 'どこも調べきれず、誰も指差せないまま朝を迎える。',
-    cond: '調査の足跡が浅く、最終局面でも犯人を選び切れなかった時。' },
+    cond: '調査も告発もほぼ成立せず、館に夜が明ける。' },
   { id: 'end_bad_misaki',           type: 'bad',    num: 'ED 2', title: '誤った告発',
     hint: '事件と直接関係のない人物の秘密を、犯行と取り違える。',
-    cond: '最終告発で、姪を指差した時。' },
+    cond: '最終告発で瀬戸美咲を指差した時。' },
   { id: 'end_bad_ice',              type: 'bad',    num: 'ED 3', title: '探偵、氷の下に',
     hint: '正しい相手を、たった一人で問い詰めにいく。',
     cond: '最終告発で「榊を一人で追い詰める」を選んだ時。' },
   { id: 'end_bad_fire',             type: 'bad',    num: 'ED 4', title: '燃える山荘',
     hint: '事件と無関係な者を犯人に仕立て、館の秩序が崩れる。',
-    cond: '最終告発で、久遠寺または水無月透を指差した時。' },
+    cond: '最終告発で久遠寺貞三または水無月透を指差した時。' },
   { id: 'end_bad_silent',           type: 'bad',    num: 'ED 5', title: '静かなる共犯',
-    hint: '気づいた者の沈黙が、別の何かを呼び寄せる。',
-    cond: 'ある人物の手帳を見たうえで、最終告発を保留した時。' },
+    hint: '気づいた者の沈黙が、やがて自分の喉元にも回ってくる。',
+    cond: '伏線 F を握ったまま、最終告発を保留した時。' },
   { id: 'end_normal',               type: 'normal', num: 'ED 6', title: '嵐の明けた朝 (A)',
-    hint: '物証を揃えて、皆の前で真っ直ぐに告発する。',
-    cond: '榊を皆の前で告発 + 伏線 C（薪入れの文鎮本体）+ 伏線 D（榊の袖口の血痕）を両方揃える。' },
+    hint: '物証と動機を揃えて、皆の前で真っ直ぐに告発する。',
+    cond: '榊を皆の前で告発 + C（文鎮）+ D（袖口の血痕）+ K（示談金の言い争い）+ 透と相談せず + 美咲の電話相手の名前は未取得。' },
   { id: 'end_normal_b',             type: 'normal', num: 'ED 7', title: '嵐の明けた朝 (B)',
-    hint: 'A と同じ告発を、幼馴染に確認を取ったうえで進める。',
-    cond: '榊告発 + C + D + 告発前に透と相談。' },
+    hint: '同じ告発を、幼馴染に確認を取った上で踏み切る。',
+    cond: '榊告発 + C + D + K + 告発前に水無月透と相談。' },
   { id: 'end_normal_c',             type: 'normal', num: 'ED 8', title: '嵐の明けた朝 (C)',
-    hint: '美咲の秘密も拾ったうえで、榊を告発する。',
-    cond: '榊告発 + C + D + G（美咲の電話相手の名前）。' },
+    hint: '美咲の秘密まで拾ったうえで、榊を告発する。',
+    cond: '榊告発 + C + D + K + G（美咲の電話相手の名前）+ 透と相談せず。' },
   { id: 'end_true_standard',        type: 'true',   num: 'ED 9', title: '二重奏の終止符',
     hint: '二つの旋律に気づき、罪を罪として裁く。',
-    cond: '冬木を告発 + 物証 A / B / E / F / J を全て揃え、「罪は罪として警察へ」を選択。' },
+    cond: '冬木綾乃を告発 + 物証 A / B / E / F / J を全て揃え、「罪は罪として警察へ」を選択。' },
   { id: 'end_true_plus',            type: 'true',   num: 'ED10', title: '雪解けの約束',
     hint: '二つの旋律に気づき、二十年の重みに寄り添う。',
-    cond: 'TRUE 条件 + 伏線 H（二十年前の夫婦）+ 「動機に寄り添い、自首を促す」を選択。' },
+    cond: 'TRUE 条件 + H（二十年前の夫婦の記録）+ 「動機に寄り添い、自首を促す」を選択。' },
   { id: 'end_bad_fuyuki_unproven',  type: 'bad',    num: '---',  title: '証拠なき告発', extra: true,
-    hint: '直感だけで真犯人を指差しても、理屈は一歩も動かない。',
-    cond: '最終告発で冬木を選び、TRUE 条件の物証が揃っていない時。' },
+    hint: '直感だけでは、弁護士の理屈はほどけない。',
+    cond: '最終告発で冬木綾乃を選び、A / B / E / F / J のいずれかが欠けている時。' },
   { id: 'end_sakaki_weak',          type: 'bad',    num: '---',  title: '詰め切れなかった朝', extra: true,
-    hint: '物証が片手落ちのまま、榊を告発してしまう。',
-    cond: '榊告発 + 伏線 C（文鎮本体）/ D（袖口の血痕）のいずれかが欠けている時。' },
+    hint: '物証か動機のどこかが片手落ちのまま、榊を告発してしまう。',
+    cond: '榊告発 + C / D / K のいずれかを掴み損ねている時。' },
   { id: 'serial_end_stopped2',      type: 'bad',    num: 'SR 1', title: '二度目の朝、届かぬ手', extra: true,
-    hint: '二夜目に踏み切り、文鎮を掴んだうえで榊を告発する。',
-    cond: '告発を一夜先送り → 二夜目に榊を告発 + 文鎮実見済み。' },
+    hint: '一夜先送りにした末、二夜目に踏み切って榊を告発する。',
+    cond: '一夜目に告発を保留 → 二夜目に榊を告発 + 伏線 C（文鎮本体）を掴んでいる。' },
   { id: 'serial_end_stopped3',      type: 'bad',    num: 'SR 2', title: '三度目の朝、遅すぎた手', extra: true,
-    hint: '三夜目まで待ち、それでも文鎮を掲げて榊を呼ぶ。',
-    cond: '告発を二夜先送り → 三夜目に榊を告発 + 文鎮実見済み。' },
+    hint: '二夜送り延ばした末、三夜目に文鎮を掲げて榊を呼ぶ。',
+    cond: '二夜先送り → 三夜目に榊を告発 + C（文鎮）を掴んでいる。' },
   { id: 'serial_end_fuyuki_mid',    type: 'bad',    num: 'SR 3', title: '証拠なき告発の代償', extra: true,
     hint: '二夜目、根拠が揃わないまま、別の誰かを指差す。',
-    cond: '告発を一夜先送り → 二夜目に冬木を、物証なしで告発。' },
+    cond: '一夜先送り → 二夜目に冬木綾乃を、物証なしで告発。' },
   { id: 'serial_end_fuyuki_late',   type: 'bad',    num: 'SR 4', title: '遅すぎた直感', extra: true,
     hint: '三夜目まで来て、ようやく直感が一人を名指す。',
-    cond: '告発を二夜先送り → 三夜目に冬木を告発（物証は不問）。' },
+    cond: '二夜先送り → 三夜目に冬木綾乃を告発（物証の有無は問わない）。' },
   { id: 'serial_end_wrong_mid',     type: 'bad',    num: 'SR 5', title: '誤った告発、崩れる館', extra: true,
-    hint: '二夜目、見当違いの相手を指差して秩序を壊す。',
-    cond: '告発を一夜先送り → 二夜目に美咲を告発、または無関係を選ぶ。' },
+    hint: '二夜目、見当違いの相手を指差して、館の秩序を壊す。',
+    cond: '一夜先送り → 二夜目に美咲または無関係を告発。' },
   { id: 'serial_end_massacre',      type: 'bad',    num: 'SR 6', title: '白嶺、全滅', extra: true,
-    hint: '三夜目まで何も決められず、夜が全てを刈り取る。',
-    cond: '告発を二夜先送り → 三夜目も告発を保留した時。' },
+    hint: '三夜目まで誰も指差せず、夜が全てを刈り取る。',
+    cond: '二夜先送り → 三夜目も告発を保留した時。' },
   { id: 'serial_end_sakaki_deny_mid',  type: 'bad', num: '---', title: '詰め切れない二夜目', extra: true,
-    hint: '二夜目、物証が薄いまま榊を呼べば、彼は口を閉ざす。',
-    cond: '告発を一夜先送り → 二夜目に榊を告発、ただし文鎮は未確認。' },
+    hint: '二夜目、物証の薄いまま榊を呼べば、彼は口を閉ざす。',
+    cond: '一夜先送り → 二夜目に榊を告発、ただし C（文鎮）が未取得。' },
   { id: 'serial_end_sakaki_deny_late', type: 'bad', num: '---', title: '詰め切れない三夜目', extra: true,
-    hint: '三夜目になっても、物証が無ければ榊は折れない。',
-    cond: '告発を二夜先送り → 三夜目に榊を告発、ただし文鎮は未確認。' },
+    hint: '三夜目まで来ても、物証が薄ければ榊は折れない。',
+    cond: '二夜先送り → 三夜目に榊を告発、ただし C（文鎮）が未取得。' },
   { id: 'end_detective',            type: 'true',   num: 'DX',  title: '雪嶺の超特急', extra: true,
-    hint: '全てを知った状態で、夕食の席から夜を作り直す。',
-    cond: 'NORMAL と TRUE の両方に到達した次の周回、序章で開く特別な選択肢。' },
+    hint: '事件を起こさせない――全てを知った律が、夕食の席で手を伸ばす。',
+    cond: 'NORMAL と TRUE の両方に到達した周回、序章 prologue_03_pill の直後に開く特別選択肢。' },
   { id: 'mizuki_reveal',            type: 'true',   num: 'SP',  title: '言いそびれた三日間', extra: true,
-    hint: '事件の終わったあとの、ささやかな後日談。',
-    cond: 'NORMAL + TRUE 既読後、タイトルから開放される「透の話」。' }
+    hint: '事件の終わった、ある秋の午後の話。',
+    cond: 'NORMAL + TRUE 両方到達後、タイトル画面から開放される「透の話」。' }
 ];
 
 // ==========================================================================
@@ -482,15 +483,40 @@ const scenes = {
           { sp: '水無月 透', tx: '（律、あの二人……ただの元上司と部下じゃないみたいだ）' },
           { sp: '神原 律', tx: '（五年前、榊さんの会社を飲み込んだのは白鷺さん……\nそう噂に聞いたことがある）' }
         ]
-      },
-      {
-        when: () => hasReachedNormal(),
-        at: 7,
-        lines: [
-          { sp: '白鷺 清吾', tx: '（……示談金の件、また少し上乗せさせてもらうよ。\n今夜、書斎でね）' },
-          { sp: '', tx: '白鷺の囁きは、律の耳にも、かろうじて届いていた。\n榊の拳が、テーブルの下で一度だけ握りしめられる。' }
-        ]
       }
+    ],
+    choice: {
+      prompt: '── 書斎へ向かう二人 ──',
+      options: [
+        { tx: '二人が書斎へ上がる気配を、もう少しだけ耳で追う', next: 'prologue_04_listen' },
+        { tx: '深く首を突っ込まずに、自室へ引き上げる', next: 'prologue_04_retire' }
+      ]
+    }
+  },
+
+  // 書斎前の気配を追う：榊と白鷺の「示談金」の言い争いを漏れ聞く。K 取得。
+  'prologue_04_listen': {
+    bg: 'hall',
+    lines: [
+      { sp: '', tx: '律は、暖炉の前から少しだけ階段の方へ足を寄せた。\n――二人の背中は、ちょうど二階の廊下の角を折れたところだった。' },
+      { sp: '', tx: '書斎の扉が、半ば閉じる。\nその隙間から、抑えられた声が、ほんの切れ端だけ漏れてきた。' },
+      { sp: '白鷺 清吾', tx: '「……示談金の件、また少し上乗せさせてもらうよ。\n君の会社も、家族も、もう、私の胸三寸だろう」' },
+      { sp: '榊 亮', tx: '「――っ」' },
+      { sp: '', tx: '扉が完全に閉まる。\n廊下には、硬く握り締められた拳の輪郭だけが、気配として残った。' },
+      { sp: '神原 律', tx: '（……五年前の会社、家族、そして今夜の「上乗せ」。\n――これを言われた後の人間は、静かには眠れない）' }
+    ],
+    onEnd: () => { addClue('has_clue_K'); },
+    next: 'choice_01'
+  },
+
+  // 耳を立てずに引き上げた場合：K は取れない。
+  'prologue_04_retire': {
+    bg: 'hall',
+    lines: [
+      { sp: '水無月 透', tx: '「律、部屋、戻るぞ」' },
+      { sp: '神原 律', tx: '「……ええ」' },
+      { sp: '', tx: '二人の背中が書斎へ消えるのと、律の足音が廊下を戻るのは、ほぼ同時だった。' },
+      { sp: '', tx: '扉の向こうで何が話されたのかは、少なくとも律の耳には、届かなかった。' }
     ],
     next: 'choice_01'
   },
@@ -1652,9 +1678,10 @@ const scenes = {
         goToScene('end_bad_fuyuki_unproven');
       } else if (accuse === 'sakaki' && gameState.alone) {
         goToScene('end_bad_ice');
-      } else if (accuse === 'sakaki' && (!gameState.has_clue_C || !gameState.has_clue_D)) {
-        // NORMAL 成立条件：凶器本体（C）＋榊自身の袖口の血痕（D）の両方が必要。
-        // どちらかでも欠けていれば、榊は最後まで認めない。
+      } else if (accuse === 'sakaki' && (!gameState.has_clue_C || !gameState.has_clue_D || !gameState.has_clue_K)) {
+        // NORMAL 成立条件：
+        //   C（凶器本体）＋ D（榊の袖口の血痕）＋ K（示談金の言い争いを漏れ聞いた目撃）
+        //   の三点が揃ってはじめて、榊は観念する。動機（K）と物証（C/D）が揃う形。
         goToScene('end_sakaki_weak');
       } else if (accuse === 'sakaki' && gameState.talk_to_mizuki_final) {
         goToScene('end_normal_b');
@@ -2267,6 +2294,7 @@ const scenes = {
       gameState.has_clue_H = true;
       gameState.has_clue_I = true;
       gameState.has_clue_J = true;
+      gameState.has_clue_K = true;
       updateClueCount();
     },
     next: 'detective_03'
