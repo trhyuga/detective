@@ -1324,9 +1324,6 @@
     <button class="title-start" id="start-btn">は じ め る</button>
     <div class="title-menu">
       <button class="title-menu-btn finale hidden" id="btn-title-finale">最 終 回</button>
-      <!-- DEBUG_FINALE_START: 検証用・最終回の無条件解放。不要になったらこのコメント間を削除 -->
-      <button class="title-menu-btn finale" id="btn-title-finale-debug">［検証］最終回</button>
-      <!-- DEBUG_FINALE_END -->
       <button class="title-menu-btn mizuki hidden" id="btn-title-mizuki">透 の 話</button>
       <button class="title-menu-btn" id="btn-title-continue">続きから</button>
       <button class="title-menu-btn" id="btn-title-chapter">章選択</button>
@@ -2422,21 +2419,6 @@ document.getElementById('btn-title-finale').addEventListener('click', () => {
   // アクションバーは最終回では非表示のまま
   setTimeout(() => { clearEndingOverlays(); goToScene('final_ep_01'); }, 600);
 });
-
-// DEBUG_FINALE_START: 検証用・最終回の無条件解放。不要になったらこのブロックごと削除
-(function wireDebugFinale() {
-  const btn = document.getElementById('btn-title-finale-debug');
-  if (!btn) return;
-  btn.addEventListener('click', () => {
-    resetGameState();
-    clearEndingOverlays();
-    if (autoMode) setAutoMode(false);
-    if (skipMode) setSkipMode(false);
-    document.getElementById('title-screen').classList.add('hidden');
-    setTimeout(() => { clearEndingOverlays(); goToScene('final_ep_01'); }, 600);
-  });
-})();
-// DEBUG_FINALE_END
 
 function refreshFinaleCTA() {
   const btn = document.getElementById('btn-title-finale');
