@@ -147,6 +147,8 @@ const endingDefs = [
   { id: 'serial_end_fuyuki_late',   type: 'bad',    num: 'SR 4', title: '遅すぎた直感', extra: true },
   { id: 'serial_end_wrong_mid',     type: 'bad',    num: 'SR 5', title: '誤った告発、崩れる館', extra: true },
   { id: 'serial_end_massacre',      type: 'bad',    num: 'SR 6', title: '白嶺、全滅', extra: true },
+  { id: 'serial_end_sakaki_deny_mid',  type: 'bad', num: '---', title: '詰め切れない二夜目', extra: true },
+  { id: 'serial_end_sakaki_deny_late', type: 'bad', num: '---', title: '詰め切れない三夜目', extra: true },
   { id: 'end_detective',            type: 'true',   num: 'DX',  title: '雪嶺の超特急', extra: true },
   { id: 'mizuki_reveal',            type: 'true',   num: 'SP',  title: '言いそびれた三日間', extra: true }
 ];
@@ -2188,7 +2190,7 @@ const scenes = {
     choice: {
       prompt: '── この場で、誰を告発する？ ──',
       options: [
-        { tx: '榊 亮 を告発する（白鷺殺害）', next: 'serial_check_mid', apply: () => { gameState.accuse = 'sakaki'; } },
+        { tx: '榊 亮 を告発する', next: 'serial_check_mid', apply: () => { gameState.accuse = 'sakaki'; } },
         { tx: '冬木 綾乃 を告発する', next: 'serial_check_mid', apply: () => { gameState.accuse = 'fuyuki'; } },
         { tx: '瀬戸 美咲 を告発する', next: 'serial_check_mid', apply: () => { gameState.accuse = 'misaki'; } },
         { tx: 'まだ確証がない。もう一晩、警戒で耐える', next: 'serial_night3', apply: () => { gameState.accuse = 'wait'; } }
@@ -2201,8 +2203,12 @@ const scenes = {
     lines: [{ sp: '', tx: '…………。' }],
     onEnd: () => {
       const accuse = gameState.accuse;
-      if (accuse === 'sakaki' && gameState.has_clue_C && gameState.has_clue_D) {
+      if (accuse === 'sakaki' && gameState.investigated_fireplace) {
+        // 文鎮本体まで掴んでいる → 榊は白鷺殺害を認める
         goToScene('serial_end_stopped2');
+      } else if (accuse === 'sakaki') {
+        // 物証不足 → 榊は認めず、館の空気だけが荒れていく
+        goToScene('serial_end_sakaki_deny_mid');
       } else if (accuse === 'fuyuki') {
         goToScene('serial_end_fuyuki_mid');
       } else if (accuse === 'misaki') {
@@ -2258,7 +2264,7 @@ const scenes = {
     choice: {
       prompt: '━━ これが最後の告発。誰を？ ━━',
       options: [
-        { tx: '榊 亮 を告発する（白鷺殺害）', next: 'serial_check_late', apply: () => { gameState.accuse = 'sakaki'; } },
+        { tx: '榊 亮 を告発する', next: 'serial_check_late', apply: () => { gameState.accuse = 'sakaki'; } },
         { tx: '冬木 綾乃 を告発する', next: 'serial_check_late', apply: () => { gameState.accuse = 'fuyuki'; } },
         { tx: 'もう誰も疑えない。このまま朝を待つ', next: 'serial_check_late', apply: () => { gameState.accuse = 'wait'; } }
       ]
@@ -2270,8 +2276,10 @@ const scenes = {
     lines: [{ sp: '', tx: '…………。' }],
     onEnd: () => {
       const accuse = gameState.accuse;
-      if (accuse === 'sakaki' && gameState.has_clue_C && gameState.has_clue_D) {
+      if (accuse === 'sakaki' && gameState.investigated_fireplace) {
         goToScene('serial_end_stopped3');
+      } else if (accuse === 'sakaki') {
+        goToScene('serial_end_sakaki_deny_late');
       } else if (accuse === 'fuyuki') {
         goToScene('serial_end_fuyuki_late');
       } else {
@@ -2424,6 +2432,51 @@ const scenes = {
       tag: '― SERIAL END MASSACRE ―',
       title: '白嶺、全滅',
       text: '迷いが、六つの命を奪った。\n雪解けの朝、この山を下りる足音は、ただ一組だけ残されていた。'
+    })
+  },
+
+  // 連続殺人ルート中盤、証拠不十分で榊を告発した場合
+  'serial_end_sakaki_deny_mid': {
+    bg: 'hall',
+    bgm: 'bad',
+    lines: [
+      { sp: '神原 律', tx: '「榊さん。あなたが、白鷺さんを殺害しましたね」' },
+      { sp: '榊 亮', tx: '「――ふざけるな！　証拠はあるのか、証拠は！」' },
+      { sp: '神原 律', tx: '「廊下で、文鎮の装飾片を見つけました。\n袖口の血痕、二十三時二十分にすれ違った時の、あなたの様子も」' },
+      { sp: '榊 亮', tx: '「装飾片？　廊下の立ち話？\n――そんなもので、俺を殺人犯に仕立てるのか」' },
+      { sp: '榊 亮', tx: '「凶器はどこにある。\n文鎮そのものが出てこない限り、俺は絶対に認めない」' },
+      { sp: '', tx: '律の喉の奥で、反論が詰まった。\n――確かに、凶器本体の所在は、まだ突き止められていない。' },
+      { sp: '冬木 綾乃', tx: '「神原さん。物証なしの告発は、\n私の職業上、黙って見過ごすわけにはいきません」' },
+      { sp: '冬木 綾乃', tx: '「榊さんの様子はご覧の通り。\nあなたの『違和感』だけでは、この輪の中では、重みが足りない」' },
+      { sp: '', tx: '告発は空転し、館の空気はさらに荒れた。\n――そしてその夜、久遠寺貞三が、地下の石段で、冷たくなって発見された。' },
+      { sp: '神原 律', tx: '（……薪入れ。あの時、\n暖炉までもう一歩踏み込んで調べていれば）' }
+    ],
+    onEnd: () => showEndingScreen({
+      type: 'bad',
+      tag: '― SERIAL END ―',
+      title: '詰め切れない二夜目',
+      text: '告発は届かず、榊は口を閉ざしたまま。\n凶器本体を掴んでいなければ、言葉はただ空を切るだけだった。'
+    })
+  },
+
+  // 連続殺人ルート終盤、証拠不十分で榊を告発した場合
+  'serial_end_sakaki_deny_late': {
+    bg: 'hall',
+    bgm: 'bad',
+    lines: [
+      { sp: '神原 律', tx: '「榊さん。……あなたが、白鷺さんを殺したんですね」' },
+      { sp: '榊 亮', tx: '「三人目が出てから言うのか、それを。\n――しかも、肝心な物証は、一つも出せないままで」' },
+      { sp: '神原 律', tx: '「廊下の装飾片、袖口の血痕――」' },
+      { sp: '榊 亮', tx: '「凶器の文鎮そのものを、あんたは手に取ったのか？\n取ってないだろう。俺は、認めない」' },
+      { sp: '', tx: '榊はそれきり、口を閉ざした。\n冬木も、弁護士として静かに律の告発を牽制した。' },
+      { sp: '', tx: '館の空気はもう、告発を支える張力を失っていた。\n三体の亡骸と、行方のわからない一人の影だけが、夜の中に残された。' },
+      { sp: '', tx: '翌朝、警察が山を上ってきた時、\n山荘の中には、すでに答えを語れる者がいなかった。' }
+    ],
+    onEnd: () => showEndingScreen({
+      type: 'bad',
+      tag: '― SERIAL END ―',
+      title: '詰め切れない三夜目',
+      text: '三人の犠牲の末の告発も、物証の一手前で止まった。\n――次は、文鎮そのものを掌で確かめてから、名前を呼ぼう。'
     })
   },
 
