@@ -2299,7 +2299,8 @@ function renderProfiles() {
 
 function renderClues() {
   const body = document.getElementById('clues-body');
-  const keys = ['has_clue_A','has_clue_B','has_clue_C','has_clue_D','has_clue_E','has_clue_F','has_clue_G','has_clue_H','has_clue_I','has_clue_J','has_clue_K'];
+  // gameState の has_clue_* を自動列挙。キー追加時に手動更新が要らない。
+  const keys = Object.keys(gameState).filter(k => k.startsWith('has_clue_')).sort();
   // 取得後の補足。人物名は極力ぼかし、取得した「場面」や「観測」の描写に留める。
   const detail = {
     has_clue_A: '夕食の席で、銀の小箱の内側を、指先が一度だけ撫でるように通った。誰の目にも留まらない、静かな一秒だった。',
@@ -2410,20 +2411,18 @@ function renderSettings() {
   });
 }
 
+// gameState の全キーを「初期値の型」に応じて元へ戻す。
+// 新フラグを追加しても、初期値が boolean / number / null のいずれかなら自動でリセットされる。
 function resetGameState() {
   Object.keys(gameState).forEach(k => {
-    if (k.startsWith('has_clue_')) gameState[k] = false;
+    const v = gameState[k];
+    if (typeof v === 'boolean') gameState[k] = false;
+    else if (typeof v === 'number') gameState[k] = 0;
+    else if (typeof v === 'string') gameState[k] = '';
+    else gameState[k] = null;
   });
-  gameState.route_choice = null;
-  gameState.accuse = null;
-  gameState.alone = false;
-  gameState.choice_empathy = false;
-  gameState.talk_to_mizuki_final = false;
-  gameState.investigate_count = 0;
-  gameState.investigations_done = 0;
-  gameState.investigate_snow_done = false;
-  gameState.investigate_mizuki_done = false;
-  gameState.last_investigation = null;
+  // current_scene だけは初期値を保つ（goToScene が直後に上書きする）。
+  gameState.current_scene = 'prologue_01';
   textLog.length = 0;
   updateClueCount();
 }
