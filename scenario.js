@@ -261,7 +261,7 @@ const scenes = {
         { tx: '無言で、透のおでこを指でひとつ小突く', next: 'flavor_unpack_c' }
       ],
       replayOptions: [
-        { tx: '★「一周目の私は、もっと優しかったわよ？」', next: 'flavor_unpack_meta', when: () => isReplay() },
+        { tx: '「一周目の私は、もっと優しかったわよ？」', next: 'flavor_unpack_meta', when: () => isReplay() },
         { tx: '透のネクタイの曲がりを原稿扱いで指摘する', next: 'flavor_unpack_a', when: () => hasExtendedJokes() },
         { tx: '枕投げの構えでベッドから一撃', next: 'flavor_unpack_c', when: () => hasExtendedJokes() }
       ]
@@ -334,7 +334,7 @@ const scenes = {
         { tx: '透の姿勢を寸評する', next: 'flavor_dinner_toru' }
       ],
       replayOptions: [
-        { tx: '★久遠寺さんに、お得意料理を尋ねる', next: 'flavor_dinner_kuonji', when: () => isReplay() },
+        { tx: '久遠寺さんに、お得意料理を尋ねる', next: 'flavor_dinner_kuonji', when: () => isReplay() },
         { tx: '美咲さんの爪、寒色系の校正を入れる', next: 'flavor_dinner_nail', when: () => hasExtendedJokes() },
         { tx: '白鷺さんのワインを「父君比で七十点」と採点', next: 'flavor_dinner_wine', when: () => hasExtendedJokes() }
       ]
@@ -735,7 +735,7 @@ const scenes = {
         { tx: '「こういう時こそ、相方を叩き起こす」', next: 'flavor_thirst_mizuki' }
       ],
       replayOptions: [
-        { tx: '★ベッドで透に「好きな作家の話」を振る', next: 'flavor_thirst_books', when: () => isReplay() },
+        { tx: 'ベッドで透に「好きな作家の話」を振る', next: 'flavor_thirst_books', when: () => isReplay() },
         { tx: '深夜二時のアイス、二十八歳の自己決定権', next: 'flavor_thirst_tea', when: () => hasExtendedJokes() },
         { tx: '透を叩き起こし、朝までトークライブ開催', next: 'flavor_thirst_mizuki', when: () => hasExtendedJokes() }
       ]
@@ -1015,7 +1015,7 @@ const scenes = {
         { tx: '無言で、暖炉の炎を一分だけ見る', next: 'flavor_breath_silence' }
       ],
       replayOptions: [
-        { tx: '★透と「別ルートだったら」を妄想する', next: 'flavor_breath_imagine', when: () => isReplay() },
+        { tx: '透と「別ルートだったら」を妄想する', next: 'flavor_breath_imagine', when: () => isReplay() },
         { tx: '透にヨガ呼吸法を要求、暖炉の前で一礼', next: 'flavor_breath_silence', when: () => hasExtendedJokes() },
         { tx: '父の名台詞を朗読調で再演する', next: 'flavor_breath_father', when: () => hasExtendedJokes() }
       ]
@@ -1129,7 +1129,7 @@ const scenes = {
           when: () => !gameState.has_clue_C },
         { tx: '久遠寺に、昔の話を詳しく聞く', next: 'investigate_past',
           when: () => !gameState.has_clue_H },
-        { tx: '★白鷺の書斎の薬棚を、もう一度あらためる', next: 'investigate_poison',
+        { tx: '白鷺の書斎の薬棚を、もう一度あらためる', next: 'investigate_poison',
           when: () => hasReachedNormal() && !gameState.has_clue_J },
         // 不正解枠：時間を消費するだけで、伏線は得られない。
         { tx: '吹雪の裏庭を見に出る', next: 'investigate_snow',
