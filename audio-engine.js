@@ -220,7 +220,7 @@
 
   // 「効果音扱いだが尺が長い」キー。章代わりや場所移動でブツッと残ると
   // 違和感があるので、シーン切り替え時にフェードアウトで切り落とす。
-  const LONG_SE_KEYS = { blizzard: true, fireplace: true };
+  const LONG_SE_KEYS = { blizzard: true, fireplace: true, phone: true };
   let lastLongSeEl = null;
   let lastLongSeKey = null;
   let lastSceneBg = null;
