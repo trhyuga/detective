@@ -433,12 +433,19 @@
   }
 
   // ---- showFin / restart のフック ----
+  // Fin 回転文字が出た瞬間に BGM を切ると唐突に感じるので、
+  // 数秒だけ本編のBGMを伸ばしてから、ゆっくりフェードアウトさせる。
   function hookEndingHandlers() {
     if (typeof window.showFin === 'function') {
       const orig = window.showFin;
       window.showFin = function () {
-        stopBgm(2400);
-        return orig.apply(this, arguments);
+        const result = orig.apply(this, arguments);
+        // 3秒の余韻を置いてから 3.5秒かけて BGM をフェードアウト
+        setTimeout(() => {
+          try { stopBgm(3500); } catch (e) {}
+          try { stopAmbient(2500); } catch (e) {}
+        }, 3000);
+        return result;
       };
     } else {
       setTimeout(hookEndingHandlers, 200);
