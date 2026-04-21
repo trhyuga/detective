@@ -1123,12 +1123,14 @@ const scenes = {
       // 2 ヶ所までが限度。全部調べるような都合の良い時間は用意されていない。
       prompt: '── 夜の白嶺荘で、どこを調べる？ ──',
       options: [
+        // 前半の choice_01 で拾えた伏線（F・H）は、ch5 で「取り直す」ことを許さない。
+        // NORMAL 到達前は、あの夜の選択が最終的な手札として残る。
         { tx: '冬木綾乃の持ち物を確認する', next: 'investigate_fuyuki',
-          when: () => !gameState.has_clue_F },
+          when: () => hasReachedNormal() && !gameState.has_clue_F },
         { tx: '暖炉と薪入れを、もう一度調べる', next: 'investigate_fireplace',
           when: () => !gameState.has_clue_C },
         { tx: '久遠寺に、昔の話を詳しく聞く', next: 'investigate_past',
-          when: () => !gameState.has_clue_H },
+          when: () => hasReachedNormal() && !gameState.has_clue_H },
         { tx: '白鷺の書斎の薬棚を、もう一度あらためる', next: 'investigate_poison',
           when: () => hasReachedNormal() && !gameState.has_clue_J },
         // 不正解枠：時間を消費するだけで、伏線は得られない。
