@@ -404,6 +404,13 @@
     margin-bottom: 1em;
     font-weight: 300;
   }
+  /* 最終話 final_ep_08 の独白専用：再読時に '私' が誰かを区別しやすいよう、
+     ほのかに色味を変え、欧文イタリック寄りにする。 */
+  .text-box.monologue {
+    color: var(--accent-gold);
+    font-style: italic;
+    letter-spacing: 0.07em;
+  }
   .text-box .caret {
     display: inline-block;
     width: 0.5em;
@@ -2049,6 +2056,10 @@ function goToScene(key) {
   else setBackground('');
   // シーン遷移時はキャラ画像を一旦リセット（地の文から始まることが多い）
   if (scene.chapter) setCharacter(null);
+  // 最終話の独白パートだけは、'私' の正体反転を視覚的に支えるために
+  // テキストボックスにモノローグ用クラスを足す。
+  const tb = document.getElementById('text-box');
+  if (tb) tb.classList.toggle('monologue', key === 'final_ep_08');
   // オーディオエンジンに通知（BGM/SE/環境音 切替）
   if (window.audioEngine && window.audioEngine.onScene) {
     window.audioEngine.onScene(scene);
