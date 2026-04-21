@@ -19,7 +19,8 @@ const clueDescriptions = {
   has_clue_F: 'ある手帳の書き込みと、古い新聞切り抜き',
   has_clue_G: '空き客室から漏れた深夜の電話',
   has_clue_H: '二十年前、山荘を訪ねた若い夫婦の噂',
-  has_clue_I: '幼馴染が畳み続けている言葉'
+  has_clue_I: '幼馴染が畳み続けている言葉',
+  has_clue_J: '心臓薬のシートに残された、未知の粉の痕'
 };
 
 // ==========================================================================
@@ -148,25 +149,25 @@ const endingDefs = [
     cond: 'ある人物の手帳を見たうえで、最終告発を保留した時。' },
   { id: 'end_normal',               type: 'normal', num: 'ED 6', title: '嵐の明けた朝 (A)',
     hint: '物証を揃えて、皆の前で真っ直ぐに告発する。',
-    cond: '榊を皆の前で告発 + 凶器本体（薪入れの文鎮）を実見済み。' },
+    cond: '榊を皆の前で告発 + 伏線 C（薪入れの文鎮本体）を実見済み。' },
   { id: 'end_normal_b',             type: 'normal', num: 'ED 7', title: '嵐の明けた朝 (B)',
     hint: 'A と同じ告発を、幼馴染に確認を取ったうえで進める。',
-    cond: '榊告発 + 文鎮実見 + 告発前に透と相談。' },
+    cond: '榊告発 + C（文鎮）+ 告発前に透と相談。' },
   { id: 'end_normal_c',             type: 'normal', num: 'ED 8', title: '嵐の明けた朝 (C)',
     hint: '美咲の秘密も拾ったうえで、榊を告発する。',
-    cond: '榊告発 + 文鎮実見 + 美咲の電話相手の名前まで掴んでいる。' },
+    cond: '榊告発 + C（文鎮）+ G（美咲の電話相手の名前）。' },
   { id: 'end_true_standard',        type: 'true',   num: 'ED 9', title: '二重奏の終止符',
     hint: '二つの旋律に気づき、罪を罪として裁く。',
-    cond: '二重奏の真犯人を全証拠（薬入れ・薬の愚痴・袖口血痕・出血量・手帳と新聞・凶器本体）で告発し、「罪は罪として警察へ」を選択。' },
+    cond: '冬木を告発 + 物証 A / B / D / E / F / J を全て揃え、「罪は罪として警察へ」を選択。' },
   { id: 'end_true_plus',            type: 'true',   num: 'ED10', title: '雪解けの約束',
     hint: '二つの旋律に気づき、二十年の重みに寄り添う。',
-    cond: 'TRUE 条件 + 「動機に寄り添い、自首を促す」を選択。' },
+    cond: 'TRUE 条件 + 伏線 H（二十年前の夫婦）+ 「動機に寄り添い、自首を促す」を選択。' },
   { id: 'end_bad_fuyuki_unproven',  type: 'bad',    num: '---',  title: '証拠なき告発', extra: true,
     hint: '直感だけで真犯人を指差しても、理屈は一歩も動かない。',
     cond: '最終告発で冬木を選び、TRUE 条件の物証が揃っていない時。' },
   { id: 'end_sakaki_weak',          type: 'bad',    num: '---',  title: '詰め切れなかった朝', extra: true,
     hint: '凶器本体まで手を伸ばさずに、榊を告発してしまう。',
-    cond: '榊告発 + 薪入れを覗かないまま最終局面に入った時。' },
+    cond: '榊告発 + 伏線 C（薪入れの文鎮本体）を掴んでいない時。' },
   { id: 'serial_end_stopped2',      type: 'bad',    num: 'SR 1', title: '二度目の朝、届かぬ手', extra: true,
     hint: '二夜目に踏み切り、文鎮を掴んだうえで榊を告発する。',
     cond: '告発を一夜先送り → 二夜目に榊を告発 + 文鎮実見済み。' },
@@ -1125,6 +1126,9 @@ const scenes = {
         { tx: '久遠寺に、昔の話を詳しく聞く', next: 'investigate_past' }
       ],
       replayOptions: [
+        // NORMAL 到達後に解放される毒物証ルート。一度 NORMAL で違和感（殴打と
+        // 出血の矛盾）を見た律が、二周目以降、薬棚を自発的に疑うようになる。
+        { tx: '★白鷺の書斎の薬棚を、もう一度あらためる', next: 'investigate_poison', when: () => hasReachedNormal() },
         { tx: '弁護士の手荷物に、校正者権限で介入', next: 'gag_inv_fuyuki', when: () => hasExtendedJokes() },
         { tx: '暖炉に頭を突っ込む覚悟', next: 'gag_inv_fireplace', when: () => hasExtendedJokes() },
         { tx: '爺の昔語り、第十八番を所望', next: 'gag_inv_past', when: () => hasExtendedJokes() }
@@ -1197,7 +1201,7 @@ const scenes = {
       { sp: '神原 律', tx: '（書斎から逃げる犯人が、廊下を抜け、ホールを通り、\n咄嗟に薪入れへ放り込んだ。その道中、剥がれた装飾片が廊下に落ちた）' },
       { sp: '神原 律', tx: '（暖炉で燃やすつもりだったのかもしれない。\nだが金属は燃えない。朝までの時間稼ぎが、せいぜいだった）' }
     ],
-    onEnd: () => { addClue('has_clue_C'); gameState.investigated_fireplace = true; gameState.investigate_count++; gameState.last_investigation = 'fireplace'; },
+    onEnd: () => { addClue('has_clue_C'); gameState.investigate_count++; gameState.last_investigation = 'fireplace'; },
     next: 'finale_01'
   },
 
@@ -1227,6 +1231,30 @@ const scenes = {
       if (!gameState.has_clue_H) addClue('has_clue_H');
       gameState.investigate_count++;
       gameState.last_investigation = 'past';
+    },
+    next: 'finale_01'
+  },
+
+  // 白鷺の書斎・薬棚を調べる。前周 NORMAL で打撲と出血量の矛盾を既に知っている律だけが、
+  // この選択肢を取れる（NORMAL 到達後の replayOptions で解放）。
+  'investigate_poison': {
+    bg: 'study',
+    lines: [
+      { sp: '神原 律', tx: '（打撲では、あんなに血は引かない。\n殴られた時、あの人の心臓はもう止まっていたはず）' },
+      { sp: '神原 律', tx: '（なら、先に命を奪ったもの――それを探しに行くしかない）' },
+      { sp: '', tx: '律は、白鷺の書斎の奥、施錠されていない薬棚を静かに開けた。' },
+      { sp: '', tx: '並んでいたのは、ジギタリス系の心臓薬の銘柄がいくつか。\nその一つ、使いかけの PTP シートに、律の指が止まった。' },
+      { sp: '神原 律', tx: '（……このカプセルの端に、ごく薄い粉が付いている）' },
+      { sp: '', tx: '指の腹に粉を僅かに移し、律は光にかざした。\n透明でもなく、白でもない――青みの差した、微かな灰白色。' },
+      { sp: '神原 律', tx: '（この色。父の資料室で、一度だけ見た――\nトリカブト系アルカロイドの精製残渣の色と、よく似ている）' },
+      { sp: '神原 律', tx: '（ジギタリスとアコニチン。\n「薬の効きが悪い」――あの愚痴の本当の意味が、ようやく繋がる）' },
+      { sp: '', tx: 'シートは元の位置に戻し、律は薬棚を静かに閉めた。\n粉を移した指先を、ハンカチで念入りに拭う。' },
+      { sp: '神原 律', tx: '（いつからか、カプセルが一つだけ、別の一錠に差し替えられていた。\n作業は、銀の小箱の蓋の内側で、ほんの一秒でいい）' }
+    ],
+    onEnd: () => {
+      addClue('has_clue_J');
+      gameState.investigate_count++;
+      gameState.last_investigation = 'poison';
     },
     next: 'finale_01'
   },
@@ -1264,6 +1292,13 @@ const scenes = {
         at: 2,
         lines: [
           { sp: '神原 律', tx: '（二十年前、追い返された夫婦と、小さな娘。\n久遠寺さんの瞳に映る「あの目」は、今夜、この館の中にいる）' }
+        ]
+      },
+      {
+        when: () => gameState.last_investigation === 'poison',
+        at: 2,
+        lines: [
+          { sp: '神原 律', tx: '（薬棚の粉の色。ジギタリスとアコニチン。\n「薬の効きが悪い」の愚痴を思い出すと、矛盾は一度にほどける）' }
         ]
       },
       {
@@ -1467,20 +1502,24 @@ const scenes = {
     ],
     onEnd: () => {
       const accuse = gameState.accuse;
-      // 真犯人（冬木）告発の成立条件：物証・動機・凶器本体の五点セットが揃ってはじめて、完璧な推理が可能になる
-      // ・A 冬木の薬入れ接触（毒混入の物証）
-      // ・B 白鷺の「薬の効きが悪い」発言（毒が効き始めていた傍証）
-      // ・D 榊の袖口血痕（殴打の実行犯を特定し「二重奏」を示すのに必須）
-      // ・E 遺体の異常な出血量（殴打は死後、の核心論拠）
-      // ・F 冬木の手帳と古い新聞切り抜き（20年越しの動機と正体）
-      // ・investigated_fireplace 暖炉の薪入れで凶器本体（青銅の文鎮）を実見したこと
+      // NORMAL（榊告発成立）には C（薪入れの文鎮 = 凶器本体）が必須。
+      // TRUE（冬木告発成立）には、毒の物証 J・動機の身元 F・A/B/D/E を揃える。
+      // 文鎮 C は榊の殴打を成立させる証拠なので、TRUE 側には直接含めない。
+      // TRUE+（寄り添う分岐）は追加で H（20年前の夫婦の記録）を握っている時。
+      const normalClues =
+        gameState.has_clue_A &&
+        gameState.has_clue_B &&
+        gameState.has_clue_C &&
+        gameState.has_clue_D &&
+        gameState.has_clue_E;
       const trueClues =
         gameState.has_clue_A &&
         gameState.has_clue_B &&
         gameState.has_clue_D &&
         gameState.has_clue_E &&
         gameState.has_clue_F &&
-        gameState.investigated_fireplace;
+        gameState.has_clue_J;
+      const trueDeep = trueClues && gameState.has_clue_H;
 
       if (accuse === 'fuyuki' && trueClues) {
         goToScene('end_true');
@@ -1488,7 +1527,7 @@ const scenes = {
         goToScene('end_bad_fuyuki_unproven');
       } else if (accuse === 'sakaki' && gameState.alone) {
         goToScene('end_bad_ice');
-      } else if (accuse === 'sakaki' && !gameState.investigated_fireplace) {
+      } else if (accuse === 'sakaki' && !gameState.has_clue_C) {
         // 凶器本体（文鎮）まで辿っていなければ榊は認めない
         goToScene('end_sakaki_weak');
       } else if (accuse === 'sakaki' && gameState.talk_to_mizuki_final) {
@@ -1553,7 +1592,7 @@ const scenes = {
         },
         {
           tx: '彼女の二十年に寄り添い、自首を促す',
-          next: 'end_true_plus',
+          next: 'end_true_check_empathy',
           apply: () => { gameState.choice_empathy = true; }
         }
       ],
@@ -1563,10 +1602,21 @@ const scenes = {
           apply: () => { gameState.choice_empathy = false; },
           when: () => hasExtendedJokes() },
         { tx: '二十年の重み、編集者として共感する',
-          next: 'end_true_plus',
+          next: 'end_true_check_empathy',
           apply: () => { gameState.choice_empathy = true; },
           when: () => hasExtendedJokes() }
       ]
+    }
+  },
+
+  // 「寄り添う」を選んだとき、律が 20 年前の夫婦の事実まで握っていれば end_true_plus。
+  // 握っていなければ、気持ちだけの共感に留まり、end_true_standard へ落ち着く。
+  'end_true_check_empathy': {
+    bg: 'dawn',
+    lines: [{ sp: '', tx: '…………。' }],
+    onEnd: () => {
+      if (gameState.has_clue_H) goToScene('end_true_plus');
+      else goToScene('end_true_standard');
     }
   },
 
@@ -2089,7 +2139,8 @@ const scenes = {
       gameState.has_clue_F = true;
       gameState.has_clue_G = true;
       gameState.has_clue_H = true;
-      gameState.investigated_fireplace = true;
+      gameState.has_clue_I = true;
+      gameState.has_clue_J = true;
       updateClueCount();
     },
     next: 'detective_03'
@@ -2251,7 +2302,7 @@ const scenes = {
     lines: [{ sp: '', tx: '…………。' }],
     onEnd: () => {
       const accuse = gameState.accuse;
-      if (accuse === 'sakaki' && gameState.investigated_fireplace) {
+      if (accuse === 'sakaki' && gameState.has_clue_C) {
         // 文鎮本体まで掴んでいる → 榊は白鷺殺害を認める
         goToScene('serial_end_stopped2');
       } else if (accuse === 'sakaki') {
@@ -2324,7 +2375,7 @@ const scenes = {
     lines: [{ sp: '', tx: '…………。' }],
     onEnd: () => {
       const accuse = gameState.accuse;
-      if (accuse === 'sakaki' && gameState.investigated_fireplace) {
+      if (accuse === 'sakaki' && gameState.has_clue_C) {
         goToScene('serial_end_stopped3');
       } else if (accuse === 'sakaki') {
         goToScene('serial_end_sakaki_deny_late');

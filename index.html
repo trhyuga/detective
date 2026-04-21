@@ -1304,7 +1304,7 @@
   <div id="character-layer"></div>
   <div class="snow" id="snow"></div>
 
-  <div id="hud">伏線 <span class="clue-count" id="clue-count">0</span>/9</div>
+  <div id="hud">伏線 <span class="clue-count" id="clue-count">0</span>/10</div>
 
   <div id="action-bar">
     <button class="action-btn" id="btn-auto" title="オート (A)">AUTO</button>
@@ -1512,8 +1512,8 @@ const gameState = {
   has_clue_A: false, has_clue_B: false, has_clue_C: false, has_clue_D: false,
   has_clue_E: false, has_clue_F: false, has_clue_G: false, has_clue_H: false,
   has_clue_I: false,
+  has_clue_J: false,
   investigate_count: 0,
-  investigated_fireplace: false,
   last_investigation: null,
   route_choice: null,
   accuse: null,
@@ -2098,7 +2098,7 @@ function showEndingScreen(info) {
 
   document.getElementById('ending-summary').innerHTML = `
     <strong>第一章の行動:</strong> ${firstEncounter}<br>
-    <strong>入手した手がかり: ${count} / 9</strong><br>
+    <strong>入手した手がかり: ${count} / 10</strong><br>
     <strong>調査行動: ${gameState.investigate_count} 回</strong><br><br>
     ${clues || '（手がかりなし）'}<br><br>
     <span style="font-size:0.78rem; color:var(--ink-dim)">
@@ -2283,7 +2283,7 @@ function renderProfiles() {
 
 function renderClues() {
   const body = document.getElementById('clues-body');
-  const keys = ['has_clue_A','has_clue_B','has_clue_C','has_clue_D','has_clue_E','has_clue_F','has_clue_G','has_clue_H','has_clue_I'];
+  const keys = ['has_clue_A','has_clue_B','has_clue_C','has_clue_D','has_clue_E','has_clue_F','has_clue_G','has_clue_H','has_clue_I','has_clue_J'];
   // 取得後の補足。人物名は極力ぼかし、取得した「場面」や「観測」の描写に留める。
   const detail = {
     has_clue_A: '夕食の席で、銀の小箱の内側を、指先が一度だけ撫でるように通った。誰の目にも留まらない、静かな一秒だった。',
@@ -2294,7 +2294,8 @@ function renderClues() {
     has_clue_F: 'ある手帳の中に、使い込まれた年月ぶんの書き込みと、挟まれた古い新聞記事の切り抜き。',
     has_clue_G: '空き客室で、美咲が深夜ずっと男性相手に切実な電話を続けていた。相手は既婚者らしい。',
     has_clue_H: '二十年前、若い夫婦が白鷺を訪ねて懇願し、追い返されたらしい。その傍に、小さな娘が一人。',
-    has_clue_I: '一日目の夜、水無月透は何度か言いかけて、そっと言葉を畳んだ。'
+    has_clue_I: '一日目の夜、水無月透は何度か言いかけて、そっと言葉を畳んだ。',
+    has_clue_J: '白鷺の書斎の薬棚、使い残しの心臓薬のシート端にごく薄く残った粉。トリカブト系のアルカロイドの可能性。'
   };
   body.innerHTML = keys.map(k => {
     const got = gameState[k];
@@ -2402,7 +2403,6 @@ function resetGameState() {
   gameState.choice_empathy = false;
   gameState.talk_to_mizuki_final = false;
   gameState.investigate_count = 0;
-  gameState.investigated_fireplace = false;
   gameState.last_investigation = null;
   textLog.length = 0;
   updateClueCount();
