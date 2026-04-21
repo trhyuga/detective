@@ -1021,6 +1021,28 @@
     margin-top: 0.3em;
     letter-spacing: 0.08em;
   }
+  .ending-entry .ending-hint {
+    font-size: 0.78rem;
+    color: var(--accent-ice);
+    margin-top: 0.45em;
+    line-height: 1.5;
+    letter-spacing: 0.02em;
+    opacity: 0.85;
+  }
+  .ending-entry .ending-cond {
+    font-size: 0.78rem;
+    color: var(--accent-gold);
+    margin-top: 0.35em;
+    line-height: 1.5;
+    letter-spacing: 0.02em;
+  }
+  .collection-note {
+    font-size: 0.78rem;
+    color: var(--ink-dim);
+    margin: 0.3em 0 1em;
+    line-height: 1.4;
+    opacity: 0.85;
+  }
   .collection-stat {
     font-size: 0.9rem;
     color: var(--accent-gold);
@@ -2313,18 +2335,52 @@ function renderEndings() {
   const body = document.getElementById('endings-body');
   const main = endingDefs.filter(e => !e.extra);
   const mainSeen = main.filter(e => meta.seenEndings[e.id]).length;
+
+  // ヒント開放のティア:
+  // - 既読 1 つ以上 or NORMAL 到達 → タイトルを開示
+  // - NORMAL 到達 → 1 行ヒントを開示
+  // - TRUE 到達 / メイン残り 3 つ以下 → 具体的な到達条件を開示
+  const seenAny = isReplay();
+  const reachedN = hasReachedNormal();
+  const reachedT = hasReachedTrue();
+  const mainLeft = main.length - mainSeen;
+  const showTitle = seenAny || reachedN;
+  const showHint = reachedN;
+  const showCond = reachedT || mainLeft <= 3;
+
   let html = `<div class="collection-stat">到達 ${mainSeen} / ${main.length}</div>`;
+  if (showHint && !reachedT) {
+    html += `<div class="collection-note">未到達のエンディングには、ヒントが添えられています。</div>`;
+  } else if (showCond && !reachedT && mainLeft <= 3) {
+    html += `<div class="collection-note">残り少ないので、具体的な到達条件まで開示しています。</div>`;
+  } else if (reachedT) {
+    html += `<div class="collection-note">未到達エンディングの到達条件が開示されています。</div>`;
+  }
+
   html += endingDefs.map(e => {
     const seen = !!meta.seenEndings[e.id];
     const cls = seen ? '' : ' locked';
     const typeMap = { bad: 'BAD', normal: 'NORMAL', true: 'TRUE' };
     const typeColor = { bad: 'var(--accent-ember)', normal: 'var(--accent-ice)', true: 'var(--accent-gold)' };
+    const titleText = seen
+      ? e.title
+      : (showTitle ? e.title : '??????');
+    const descText = seen ? (typeMap[e.type] + ' END') : '未到達';
+    let extraHtml = '';
+    if (!seen) {
+      if (showCond && e.cond) {
+        extraHtml = `<div class="ending-cond">条件：${escapeHtml(e.cond)}</div>`;
+      } else if (showHint && e.hint) {
+        extraHtml = `<div class="ending-hint">${escapeHtml(e.hint)}</div>`;
+      }
+    }
     return `<div class="ending-entry${cls}" data-ending="${e.id}">
       <span class="ending-etitle">
         <span style="color:${typeColor[e.type]};margin-right:0.8em;font-size:0.72rem;letter-spacing:0.3em;">${e.num}</span>
-        ${seen ? e.title : '??????'}
+        ${titleText}
       </span>
-      <span class="ending-edesc">${seen ? typeMap[e.type] + ' END' : '未到達'}</span>
+      <span class="ending-edesc">${descText}</span>
+      ${extraHtml}
     </div>`;
   }).join('');
   body.innerHTML = html;
