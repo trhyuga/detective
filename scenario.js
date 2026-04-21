@@ -1212,9 +1212,10 @@ const scenes = {
         { tx: '白鷺の書斎の薬棚を、もう一度あらためる', next: 'investigate_poison',
           when: () => hasReachedNormal() && !gameState.has_clue_J },
         // 不正解枠：時間を消費するだけで、伏線は得られない。
-        { tx: '吹雪の裏庭を見に出る', next: 'investigate_snow',
+        // ラベルにごく薄く「直接の手がかりにならないかもしれない」気配を残す。
+        { tx: '吹雪の裏庭を見に出る（足跡が残っているかは怪しい）', next: 'investigate_snow',
           when: () => !gameState.investigate_snow_done },
-        { tx: '透ともう一度、作戦を練り直す', next: 'investigate_mizuki_consult',
+        { tx: '透ともう一度、作戦を練り直す（物証は増えない）', next: 'investigate_mizuki_consult',
           when: () => !gameState.investigate_mizuki_done },
         { tx: '……もう十分だ。告発の準備に入る', next: 'finale_01',
           when: () => hasReachedNormal() }

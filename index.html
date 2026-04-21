@@ -2425,6 +2425,10 @@ function resetGameState() {
   gameState.current_scene = 'prologue_01';
   textLog.length = 0;
   updateClueCount();
+  // 章ジャンプや「もう一度」で再スタートする時、前の周回の長尺 SE / 環境音を持ち越さない。
+  if (window.audioEngine) {
+    if (window.audioEngine.stopAmbient) window.audioEngine.stopAmbient(0);
+  }
 }
 
 // ==========================================================================
