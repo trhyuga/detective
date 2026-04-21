@@ -13,7 +13,7 @@
 const clueDescriptions = {
   has_clue_A: '夕食の席、銀の小箱への指先',
   has_clue_B: '白鷺の「薬の効きが悪い」愚痴',
-  has_clue_C: '廊下の金属片／薪入れの文鎮',
+  has_clue_C: '薪入れから見つかった凶器本体（青銅の文鎮）',
   has_clue_D: 'ある袖口に、夕食後から残った血痕',
   has_clue_E: '遺体の異常な出血量',
   has_clue_F: 'ある手帳の書き込みと、古い新聞切り抜き',
@@ -702,7 +702,9 @@ const scenes = {
         ]
       }
     ],
-    onEnd: () => { addClue('has_clue_C'); },
+    // converge_01 で律が廊下の金属片を「拾って覚えた」だけ。
+    // これ単体では伏線として登録しない。薪入れで文鎮本体と照合して初めて
+    // 伏線 C（凶器本体）が成立する（investigate_fireplace 側で addClue）。
     next: 'converge_02'
   },
 
