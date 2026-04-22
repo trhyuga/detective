@@ -519,8 +519,11 @@ const scenes = {
         { tx: '幼馴染をテラスに連行、雪山吐露タイム', next: 'gag_c1_mizuki', flag: 'mizuki', when: () => hasExtendedJokes() },
         // 名探偵ルート到達後の特別解放：後日談（秋のカフェ）へ直接入る。
         // タイトル画面の専用ボタンは廃止し、本編の選択肢側から入る形に統一する。
+        // ここを押せる律は、周回のどこかで透の「畳んだ言葉」を見届けているはず。
+        // 後日談の律は累積記憶を持つ前提なので、has_clue_I を明示的に立てておく。
         { tx: '（後日談）――あの三日間を、ずっと後に、透と二人で話しなおす',
           next: 'mizuki_talk_01',
+          apply: () => { gameState.has_clue_I = true; },
           when: () => hasReachedDetective() }
       ]
     }
@@ -1752,11 +1755,11 @@ const scenes = {
       { sp: '神原 律', tx: '（――また、言いかけて止めた）' },
       { sp: '神原 律', tx: '（雪解けは、まだ先。\nでも、必ず来る）' }
     ],
-    // ch1 の route_mizuki で「畳んだ言葉」の存在を見届けた律だけが、
-    // 最後にその線を心の中で結ぶ。
+    // 周回のどこかで route_mizuki を通り、あるいは名探偵ルートまで辿り着いた律だけが、
+    // 最後にその線を心の中で結ぶ。どちらか一方でも通っていれば足りる扱い。
     replayInserts: [
       {
-        when: () => gameState.has_clue_I,
+        when: () => gameState.has_clue_I || hasReachedDetective(),
         at: 15,
         lines: [
           { sp: '神原 律', tx: '（一日目のテラス、雪解けの朝の玄関。\n同じ呼吸で畳まれた言葉が、今、もう一度、閉じた）' },
