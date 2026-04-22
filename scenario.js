@@ -516,7 +516,12 @@ const scenes = {
         { tx: '弁護士にタダで法律相談をねじ込む', next: 'gag_c1_fuyuki', flag: 'fuyuki', when: () => hasExtendedJokes() },
         { tx: '姪っ子さんのネイル談義、延長戦', next: 'gag_c1_misaki', flag: 'misaki', when: () => hasExtendedJokes() },
         { tx: '爺の三十年分の愚痴、取材モード', next: 'gag_c1_kuonji', flag: 'kuonji', when: () => hasExtendedJokes() },
-        { tx: '幼馴染をテラスに連行、雪山吐露タイム', next: 'gag_c1_mizuki', flag: 'mizuki', when: () => hasExtendedJokes() }
+        { tx: '幼馴染をテラスに連行、雪山吐露タイム', next: 'gag_c1_mizuki', flag: 'mizuki', when: () => hasExtendedJokes() },
+        // 名探偵ルート到達後の特別解放：後日談（秋のカフェ）へ直接入る。
+        // タイトル画面の専用ボタンは廃止し、本編の選択肢側から入る形に統一する。
+        { tx: '（後日談）――あの三日間を、ずっと後に、透と二人で話しなおす',
+          next: 'mizuki_talk_01',
+          when: () => hasReachedDetective() }
       ]
     }
   },
