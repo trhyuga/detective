@@ -404,6 +404,13 @@
     margin-bottom: 1em;
     font-weight: 300;
   }
+  /* 最終話 final_ep_08 の独白専用：再読時に '私' が誰かを区別しやすいよう、
+     ほのかに色味を変え、欧文イタリック寄りにする。 */
+  .text-box.monologue {
+    color: var(--accent-gold);
+    font-style: italic;
+    letter-spacing: 0.07em;
+  }
   .text-box .caret {
     display: inline-block;
     width: 0.5em;
@@ -746,6 +753,7 @@
     border-color: var(--accent-gold);
     background: rgba(184, 153, 104, 0.2);
   }
+  .action-btn.hidden { display: none; }
   .action-btn:active {
     background: rgba(184, 153, 104, 0.25);
     transform: scale(0.96);
@@ -1020,6 +1028,28 @@
     margin-top: 0.3em;
     letter-spacing: 0.08em;
   }
+  .ending-entry .ending-hint {
+    font-size: 0.78rem;
+    color: var(--accent-ice);
+    margin-top: 0.45em;
+    line-height: 1.5;
+    letter-spacing: 0.02em;
+    opacity: 0.85;
+  }
+  .ending-entry .ending-cond {
+    font-size: 0.78rem;
+    color: var(--accent-gold);
+    margin-top: 0.35em;
+    line-height: 1.5;
+    letter-spacing: 0.02em;
+  }
+  .collection-note {
+    font-size: 0.78rem;
+    color: var(--ink-dim);
+    margin: 0.3em 0 1em;
+    line-height: 1.4;
+    opacity: 0.85;
+  }
   .collection-stat {
     font-size: 0.9rem;
     color: var(--accent-gold);
@@ -1281,7 +1311,7 @@
   <div id="character-layer"></div>
   <div class="snow" id="snow"></div>
 
-  <div id="hud">伏線 <span class="clue-count" id="clue-count">0</span>/9</div>
+  <div id="hud">伏線 <span class="clue-count" id="clue-count">0</span>/11</div>
 
   <div id="action-bar">
     <button class="action-btn" id="btn-auto" title="オート (A)">AUTO</button>
@@ -1323,7 +1353,6 @@
     <button class="title-start" id="start-btn">は じ め る</button>
     <div class="title-menu">
       <button class="title-menu-btn finale hidden" id="btn-title-finale">最 終 回</button>
-      <button class="title-menu-btn mizuki hidden" id="btn-title-mizuki">透 の 話</button>
       <button class="title-menu-btn" id="btn-title-continue">続きから</button>
       <button class="title-menu-btn" id="btn-title-chapter">章選択</button>
       <button class="title-menu-btn" id="btn-title-endings">エンディング</button>
@@ -1479,8 +1508,8 @@
   </div>
 </div>
 
-<script src="scenario.js?v=20260420"></script>
-<script src="audio-engine.js?v=20260420" defer></script>
+<script src="scenario.js?v=20260420b"></script>
+<script src="audio-engine.js?v=20260420b" defer></script>
 <script>
 // ==========================================================================
 // ゲーム状態
@@ -1489,8 +1518,13 @@ const gameState = {
   has_clue_A: false, has_clue_B: false, has_clue_C: false, has_clue_D: false,
   has_clue_E: false, has_clue_F: false, has_clue_G: false, has_clue_H: false,
   has_clue_I: false,
+  has_clue_J: false,
+  has_clue_K: false,
   investigate_count: 0,
-  investigated_fireplace: false,
+  investigations_done: 0,
+  investigate_snow_done: false,
+  investigate_mizuki_done: false,
+  last_investigation: null,
   route_choice: null,
   accuse: null,
   alone: false,
@@ -1665,10 +1699,11 @@ function effectiveLines(scene) {
 function effectiveChoice(scene) {
   if (!scene || !scene.choice) return scene ? scene.choice : null;
   const base = scene.choice;
-  if (!base.replayOptions) return base;
-  const extras = base.replayOptions.filter(o => !o.when || o.when());
-  if (extras.length === 0) return base;
-  return { prompt: base.prompt, options: [...base.options, ...extras] };
+  const baseOptions = (base.options || []).filter(o => !o.when || o.when());
+  const extras = (base.replayOptions || []).filter(o => !o.when || o.when());
+  // 何も絞っていないなら元の choice をそのまま返す（旧動作を保つ）
+  if (extras.length === 0 && baseOptions.length === (base.options ? base.options.length : 0)) return base;
+  return { prompt: base.prompt, options: [...baseOptions, ...extras] };
 }
 
 
@@ -1783,9 +1818,11 @@ function addClue(key) {
 function updateClueCount() {
   const count = Object.keys(gameState).filter(k => k.startsWith('has_clue_') && gameState[k]).length;
   document.getElementById('clue-count').textContent = count;
-  // HUD 本体の表示も NORMAL 到達後のみ
+  // HUD（伏線カウンタ）も、アクションバーの CLUES ボタンも NORMAL 到達後のみ
   const hud = document.getElementById('hud');
   if (hud) hud.classList.toggle('hidden', !hasReachedNormal());
+  const cluesBtn = document.getElementById('btn-clues');
+  if (cluesBtn) cluesBtn.classList.toggle('hidden', !hasReachedNormal());
 }
 
 function showClueNotify(text) {
@@ -2018,6 +2055,10 @@ function goToScene(key) {
   else setBackground('');
   // シーン遷移時はキャラ画像を一旦リセット（地の文から始まることが多い）
   if (scene.chapter) setCharacter(null);
+  // 最終話の独白パートだけは、'私' の正体反転を視覚的に支えるために
+  // テキストボックスにモノローグ用クラスを足す。
+  const tb = document.getElementById('text-box');
+  if (tb) tb.classList.toggle('monologue', key === 'final_ep_08');
   // オーディオエンジンに通知（BGM/SE/環境音 切替）
   if (window.audioEngine && window.audioEngine.onScene) {
     window.audioEngine.onScene(scene);
@@ -2072,12 +2113,12 @@ function showEndingScreen(info) {
 
   document.getElementById('ending-summary').innerHTML = `
     <strong>第一章の行動:</strong> ${firstEncounter}<br>
-    <strong>入手した手がかり: ${count} / 9</strong><br>
+    <strong>入手した手がかり: ${count} / 11</strong><br>
     <strong>調査行動: ${gameState.investigate_count} 回</strong><br><br>
     ${clues || '（手がかりなし）'}<br><br>
     <span style="font-size:0.78rem; color:var(--ink-dim)">
-    TRUE END 到達には、伏線 A・D・E・F の四つが必須。<br>
-    別のルートを通ると、違う伏線が手に入ります。
+    真の結末へ辿り着くには、複数の物証と動機、そして凶器本体の確認が必要。<br>
+    別のルートを通ると、違う手がかりが手に入ります。
     </span>
   `;
   el.classList.add('show');
@@ -2257,17 +2298,21 @@ function renderProfiles() {
 
 function renderClues() {
   const body = document.getElementById('clues-body');
-  const keys = ['has_clue_A','has_clue_B','has_clue_C','has_clue_D','has_clue_E','has_clue_F','has_clue_G','has_clue_H','has_clue_I'];
+  // gameState の has_clue_* を自動列挙。キー追加時に手動更新が要らない。
+  const keys = Object.keys(gameState).filter(k => k.startsWith('has_clue_')).sort();
+  // 取得後の補足。人物名は極力ぼかし、取得した「場面」や「観測」の描写に留める。
   const detail = {
-    has_clue_A: '冬木綾乃が夕食時、白鷺の薬入れに自然に手を添えていた。',
-    has_clue_B: '白鷺が「最近、薬の効きが悪い」と冬木にだけ零した。',
-    has_clue_C: '暖炉の薪入れに鈍く光る金属片／青銅の文鎮。',
-    has_clue_D: '榊の袖口に、くすんだ茶褐色の微かな血痕。',
-    has_clue_E: '白鷺遺体の打撲傷、周辺の血の飛び散りが異常に少ない。',
-    has_clue_F: '冬木の手帳に「20年」の書き込みと、古い新聞記事の切り抜き。',
-    has_clue_G: '美咲の電話相手「佐伯」――水無月透の元同僚。',
-    has_clue_H: '二十年前、若い夫婦が白鷺を訪ねて追い返された。',
-    has_clue_I: '一日目の夜、水無月透は何かを言いかけて畳んだ。'
+    has_clue_A: '夕食の席で、銀の小箱の内側を、指先が一度だけ撫でるように通った。誰の目にも留まらない、静かな一秒だった。',
+    has_clue_B: '白鷺が薬を飲んだ直後、「最近、どうも効きが悪い」と傍らに零した。',
+    has_clue_C: '薪入れの奥に沈んでいた青銅の文鎮。廊下の装飾片と、側面の欠けが完全一致。凶器本体を実見して初めて成立する伏線。',
+    has_clue_D: '翌朝、ある袖口の内側にくすんだ茶褐色の血痕。夕食時にはまだ無かったはず。',
+    has_clue_E: '遺体の打撲傷、周辺の血の飛び散りが異常に少ない。殴られた時には既に――という疑念を残した。',
+    has_clue_F: 'ある手帳の中に、使い込まれた年月ぶんの書き込みと、挟まれた古い新聞記事の切り抜き。',
+    has_clue_G: '空き客室で、美咲が深夜ずっと男性相手に切実な電話を続けていた。相手は既婚者らしい。',
+    has_clue_H: '二十年前、若い夫婦が白鷺を訪ねて懇願し、追い返されたらしい。その傍に、小さな娘が一人。',
+    has_clue_I: '一日目の夜、水無月透は何度か言いかけて、そっと言葉を畳んだ。',
+    has_clue_J: '白鷺の書斎の薬棚、使い残しの心臓薬のシート端にごく薄く残った粉。トリカブト系のアルカロイドの可能性。',
+    has_clue_K: '書斎前の廊下で漏れ聞いた、白鷺から榊への「示談金の上乗せ」通告。直後の榊の沈黙が、殺意の温度に近い。'
   };
   body.innerHTML = keys.map(k => {
     const got = gameState[k];
@@ -2308,18 +2353,49 @@ function renderEndings() {
   const body = document.getElementById('endings-body');
   const main = endingDefs.filter(e => !e.extra);
   const mainSeen = main.filter(e => meta.seenEndings[e.id]).length;
+
+  // 開示ティア:
+  // - NORMAL 到達 → タイトルを開示
+  // - TRUE 到達 → タイトル + 1 行ヒント
+  // - メイン残り 3 つ以下 → タイトル + 具体的な到達条件（ヒントより優先）
+  const reachedN = hasReachedNormal();
+  const reachedT = hasReachedTrue();
+  const mainLeft = main.length - mainSeen;
+  const showTitle = reachedN;
+  const showHint = reachedT;
+  const showCond = mainLeft <= 3;
+
   let html = `<div class="collection-stat">到達 ${mainSeen} / ${main.length}</div>`;
+  if (showCond) {
+    html += `<div class="collection-note">残り少ないので、具体的な到達条件を開示しています。</div>`;
+  } else if (showHint) {
+    html += `<div class="collection-note">未到達のエンディングには、ヒントが添えられています。</div>`;
+  }
+
   html += endingDefs.map(e => {
     const seen = !!meta.seenEndings[e.id];
     const cls = seen ? '' : ' locked';
     const typeMap = { bad: 'BAD', normal: 'NORMAL', true: 'TRUE' };
     const typeColor = { bad: 'var(--accent-ember)', normal: 'var(--accent-ice)', true: 'var(--accent-gold)' };
+    const titleText = seen
+      ? e.title
+      : (showTitle ? e.title : '??????');
+    const descText = seen ? (typeMap[e.type] + ' END') : '未到達';
+    let extraHtml = '';
+    if (!seen) {
+      if (showCond && e.cond) {
+        extraHtml = `<div class="ending-cond">条件：${escapeHtml(e.cond)}</div>`;
+      } else if (showHint && e.hint) {
+        extraHtml = `<div class="ending-hint">${escapeHtml(e.hint)}</div>`;
+      }
+    }
     return `<div class="ending-entry${cls}" data-ending="${e.id}">
       <span class="ending-etitle">
         <span style="color:${typeColor[e.type]};margin-right:0.8em;font-size:0.72rem;letter-spacing:0.3em;">${e.num}</span>
-        ${seen ? e.title : '??????'}
+        ${titleText}
       </span>
-      <span class="ending-edesc">${seen ? typeMap[e.type] + ' END' : '未到達'}</span>
+      <span class="ending-edesc">${descText}</span>
+      ${extraHtml}
     </div>`;
   }).join('');
   body.innerHTML = html;
@@ -2334,19 +2410,24 @@ function renderSettings() {
   });
 }
 
+// gameState の全キーを「初期値の型」に応じて元へ戻す。
+// 新フラグを追加しても、初期値が boolean / number / null のいずれかなら自動でリセットされる。
 function resetGameState() {
   Object.keys(gameState).forEach(k => {
-    if (k.startsWith('has_clue_')) gameState[k] = false;
+    const v = gameState[k];
+    if (typeof v === 'boolean') gameState[k] = false;
+    else if (typeof v === 'number') gameState[k] = 0;
+    else if (typeof v === 'string') gameState[k] = '';
+    else gameState[k] = null;
   });
-  gameState.route_choice = null;
-  gameState.accuse = null;
-  gameState.alone = false;
-  gameState.choice_empathy = false;
-  gameState.talk_to_mizuki_final = false;
-  gameState.investigate_count = 0;
-  gameState.investigated_fireplace = false;
+  // current_scene だけは初期値を保つ（goToScene が直後に上書きする）。
+  gameState.current_scene = 'prologue_01';
   textLog.length = 0;
   updateClueCount();
+  // 章ジャンプや「もう一度」で再スタートする時、前の周回の長尺 SE / 環境音を持ち越さない。
+  if (window.audioEngine) {
+    if (window.audioEngine.stopAmbient) window.audioEngine.stopAmbient(0);
+  }
 }
 
 // ==========================================================================
@@ -2368,11 +2449,21 @@ function startNewGame() {
   try {
     resetGameState();
     clearEndingOverlays();
+    // 前セッションの AUTO / SKIP がタイトル遷移を跨いで残っていると、
+    // 再スタート直後にシーンを自動で最後まで走らせてしまい、
+    // 運が悪いと次のエンディングまで着地して再び ending-screen が出る。
+    if (autoMode) setAutoMode(false);
+    if (skipMode) setSkipMode(false);
     document.getElementById('title-screen').classList.add('hidden');
     document.getElementById('action-bar').classList.add('show');
     setTimeout(() => {
       console.log('[start] goToScene(prologue_01)');
-      try { goToScene('prologue_01'); }
+      try {
+        // 800ms のフェード待ちの間に万一何かが overlay を再表示していたら、
+        // シーン開始の直前でもう一度 ending-screen を剥がしておく。
+        clearEndingOverlays();
+        goToScene('prologue_01');
+      }
       catch (e) { console.error('[start] goToScene failed:', e); }
     }, 800);
   } catch (e) {
@@ -2383,21 +2474,15 @@ function startNewGame() {
 document.getElementById('start-btn').addEventListener('click', startNewGame);
 console.log('[init] start button wired');
 
-document.getElementById('btn-title-mizuki').addEventListener('click', () => {
-  if (!hasReachedDetective()) return;
-  resetGameState();
-  clearEndingOverlays();
-  document.getElementById('title-screen').classList.add('hidden');
-  setTimeout(() => goToScene('mizuki_talk_01'), 600);
-});
-
 document.getElementById('btn-title-finale').addEventListener('click', () => {
   if (!hasSeenAllEndings()) return;
   resetGameState();
   clearEndingOverlays();
+  if (autoMode) setAutoMode(false);
+  if (skipMode) setSkipMode(false);
   document.getElementById('title-screen').classList.add('hidden');
   // アクションバーは最終回では非表示のまま
-  setTimeout(() => goToScene('final_ep_01'), 600);
+  setTimeout(() => { clearEndingOverlays(); goToScene('final_ep_01'); }, 600);
 });
 
 function refreshFinaleCTA() {
@@ -2412,11 +2497,9 @@ function refreshFinaleCTA() {
   const cont = document.getElementById('btn-title-continue');
   const chap = document.getElementById('btn-title-chapter');
   const ends = document.getElementById('btn-title-endings');
-  const miz = document.getElementById('btn-title-mizuki');
   if (cont) cont.classList.toggle('hidden', !hasSave);
   if (chap) chap.classList.toggle('hidden', !seenAny);
   if (ends) ends.classList.toggle('hidden', !seenAny);
-  if (miz)  miz.classList.toggle('hidden', !hasReachedDetective());
 }
 
 document.getElementById('btn-title-continue').addEventListener('click', () => {
@@ -2453,7 +2536,10 @@ document.getElementById('btn-skip').addEventListener('click', () => {
 });
 document.getElementById('btn-log').addEventListener('click', () => openPanel('panel-log'));
 document.getElementById('btn-save').addEventListener('click', () => openPanel('panel-save'));
-document.getElementById('btn-clues').addEventListener('click', () => openPanel('panel-clues'));
+document.getElementById('btn-clues').addEventListener('click', () => {
+  if (!hasReachedNormal()) return; // NORMAL 未到達では伏線パネルを開かない
+  openPanel('panel-clues');
+});
 document.getElementById('btn-menu').addEventListener('click', () => openPanel('panel-menu'));
 
 // 設定

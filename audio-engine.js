@@ -152,7 +152,9 @@
 
   // ---- BGM 切替（クロスフェード） ----
   function playBgm(key) {
-    if (!key || state.currentBgm === key) return;
+    // 明示的な空指定（key=null/'/undefined）はフェードアウト扱い
+    if (!key) { stopBgm(800); return; }
+    if (state.currentBgm === key) return;
     if (!state.interacted) {
       state.pendingBgm = key;
       return;
@@ -215,12 +217,13 @@
   const SE_GAIN = {
     fireplace: 2.8,   // 薪爆ぜが元から小さめ
     heartbeat: 1.3,
-    clock: 1.2
+    clock: 1.2,
+    phone: 0.4        // 電話ノイズは他より大きめに録れているので絞る
   };
 
   // 「効果音扱いだが尺が長い」キー。章代わりや場所移動でブツッと残ると
   // 違和感があるので、シーン切り替え時にフェードアウトで切り落とす。
-  const LONG_SE_KEYS = { blizzard: true, fireplace: true };
+  const LONG_SE_KEYS = { blizzard: true, fireplace: true, phone: true };
   let lastLongSeEl = null;
   let lastLongSeKey = null;
   let lastSceneBg = null;
@@ -433,12 +436,19 @@
   }
 
   // ---- showFin / restart のフック ----
+  // Fin 回転文字が出た瞬間に BGM を切ると唐突に感じるので、
+  // 数秒だけ本編のBGMを伸ばしてから、ゆっくりフェードアウトさせる。
   function hookEndingHandlers() {
     if (typeof window.showFin === 'function') {
       const orig = window.showFin;
       window.showFin = function () {
-        stopBgm(2400);
-        return orig.apply(this, arguments);
+        const result = orig.apply(this, arguments);
+        // 3秒の余韻を置いてから 3.5秒かけて BGM をフェードアウト
+        setTimeout(() => {
+          try { stopBgm(3500); } catch (e) {}
+          try { stopAmbient(2500); } catch (e) {}
+        }, 3000);
+        return result;
       };
     } else {
       setTimeout(hookEndingHandlers, 200);
